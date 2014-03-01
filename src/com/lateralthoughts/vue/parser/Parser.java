@@ -337,6 +337,38 @@ public class Parser {
         return aisleWindowContentList;
     }
     
+    public AisleWindowContent getBookmarkedAisle(JSONObject josnObject) {
+        writeToSdcard("\n\n" + josnObject.toString());
+        AisleContext aisleContext = parseAisleData(josnObject);
+        ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();
+        try {
+            JSONObject imageObject = josnObject
+                    .getJSONObject(VueConstants.AISLE_IMAGE_OBJECT);
+            JSONArray ImageListJson = imageObject
+                    .getJSONArray(VueConstants.AISLE_IMAGE_LIST);
+            for (int index = 0; index < ImageListJson.length(); index++) {
+                AisleImageDetails aisleImageDetails = parseAisleImageData(ImageListJson
+                        .getJSONObject(index));
+                if (aisleImageDetails.mImageUrl != null
+                        && (!aisleImageDetails.mImageUrl
+                                .contains("randomurl.com"))
+                        && aisleImageDetails.mImageUrl.trim().length() > 0
+                        && aisleImageDetails.mAvailableHeight != 0
+                        && aisleImageDetails.mAvailableWidth != 0) {
+                    aisleImageDetailsList.add(aisleImageDetails);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        AisleWindowContent aisleItem = new AisleWindowContent(
+                aisleContext.mAisleId);
+        if (aisleImageDetailsList != null && aisleImageDetailsList.size() > 0) {
+            aisleItem.addAisleContent(aisleContext, aisleImageDetailsList);
+        }
+        return aisleItem;
+    }
+    
     public AisleContext parseAisleData(JSONObject josnObject) {
         AisleContext aisleContext = new AisleContext();
         try {
@@ -503,31 +535,42 @@ public class Parser {
     
     private static ArrayList<ImageRating> removeDuplicateImageRating(
             ArrayList<ImageRating> imgRatingList) {
-        int size = imgRatingList.size();
-        for (int i = 0; i < size; i++) {
-            ImageRating current;
-            if (imgRatingList.size() > i) {
-                current = imgRatingList.get(i);
-            } else {
-                break;
-            }
-            for (int j = 0; j < i; ++j) {
-                ImageRating previous;
-                if (imgRatingList.size() > j) {
-                    previous = imgRatingList.get(j);
-                } else {
-                    break;
+        
+/*          int size = imgRatingList.size(); for (int i = 0; i < size; i++) {
+          ImageRating current; if (imgRatingList.size() > i) { current =
+          imgRatingList.get(i); } else { break; } for (int j = 0; j < i; ++j) {
+         ImageRating previous; if (imgRatingList.size() > j) { previous =
+          imgRatingList.get(j); } else { break; } final boolean relation =
+          previous.compareTo(current); if (relation) { int isGrater = previous
+          .compareTime(current.mLastModifiedTimestamp); if (isGrater ==
+          ImageRating.NEW_TIME_STAMP) { imgRatingList.remove(i); } else {
+          imgRatingList.remove(j); } } } }*/
+         
+        
+        ArrayList<ImageRating> dummyList = new ArrayList<ImageRating>();
+        ArrayList<ImageRating> tempList = new ArrayList<ImageRating>();
+        ArrayList<ImageRating> finalList = new ArrayList<ImageRating>();
+        for (ImageRating item : imgRatingList) {
+            dummyList.add(item);
+        }
+        for (ImageRating item : imgRatingList) {
+            tempList.clear();
+            for (ImageRating item2 : imgRatingList) {
+                if (item.mAisleId == item2.mAisleId) {
+                    tempList.add(item2);
                 }
-                final boolean relation = previous.compareTo(current);
-                if (relation) {
-                    int isGrater = previous
-                            .compareTime(current.mLastModifiedTimestamp);
-                    if (isGrater == ImageRating.NEW_TIME_STAMP) {
-                        imgRatingList.remove(i);
-                    } else {
-                        imgRatingList.remove(j);
+            }
+            if (tempList.size() > 0) {
+                for (ImageRating tempItem : tempList) {
+                    dummyList.remove(tempItem);
+                }
+                ImageRating finalItem = tempList.get(0);
+                for (ImageRating tempItem : tempList) {
+                    if (finalItem.mLastModifiedTimestamp < tempItem.mLastModifiedTimestamp) {
+                        finalItem = tempItem;
                     }
                 }
+                finalList.add(finalItem);
             }
         }
         return imgRatingList;
@@ -574,7 +617,7 @@ public class Parser {
     
     private void writeToSdcard(String message) {
         String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/AisleResponse/");
+        File dir = new File(path + "/AisleResponseBookmark/");
         if (!dir.isDirectory()) {
             dir.mkdir();
         }

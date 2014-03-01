@@ -395,9 +395,9 @@ public class VueLoginActivity extends FragmentActivity implements
                         } else {
                             showAisleSwipeHelp();
                         }
-                    } 
-                }); 
-            } 
+                    }
+                });
+            }
         }
         try {
             HttpsURLConnection
@@ -793,12 +793,6 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void saveFacebookProfileDetails(GraphUser user) {
-        refreshBezelMenu(
-                VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
-                        + user.getId()
-                        + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
-                new FileCache(VueLoginActivity.this)
-                        .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
         String location = "";
         try {
             if (user.getLocation() != null) {
@@ -840,6 +834,7 @@ public class VueLoginActivity extends FragmentActivity implements
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
+            
             mixpanel.identify(storedUserProfile.getUserEmail());
             people.identify(vueUserProfile.getUserEmail());
             people.set("$first_name", user.getFirstName());
@@ -860,7 +855,12 @@ public class VueLoginActivity extends FragmentActivity implements
             }
             
         }
-        
+        refreshBezelMenu(
+                VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
+                        + user.getId()
+                        + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
+                new FileCache(VueLoginActivity.this)
+                        .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
     }
     
     private void updateUI(boolean fromOnActivityResult) {
@@ -1210,8 +1210,9 @@ public class VueLoginActivity extends FragmentActivity implements
             }
             vueUser = new VueUser(null, mSharedPreferencesObj.getString(
                     VueConstants.GOOGLEPLUS_USER_EMAIL, null),
-                    person.getDisplayName(), "", null, Utils.getDeviceId(),
-                    VueUser.DEFAULT_FACEBOOK_ID, googleplusId, null);
+                    person.getDisplayName(), "", System.currentTimeMillis(),
+                    Utils.getDeviceId(), VueUser.DEFAULT_FACEBOOK_ID,
+                    googleplusId, null);
             VueUser storedVueUser = null;
             try {
                 storedVueUser = Utils.readUserObjectFromFile(
@@ -1224,10 +1225,6 @@ public class VueLoginActivity extends FragmentActivity implements
                 if (storedVueUser.getGooglePlusId() != null
                         && storedVueUser.getGooglePlusId().equals(
                                 VueUser.DEFAULT_GOOGLEPLUS_ID)) {
-                    vueUser.setDeviceId(storedVueUser.getDeviceId());
-                    vueUser.setFacebookId(storedVueUser.getFacebookId());
-                    vueUser.setId(storedVueUser.getId());
-                    vueUser.setJoinTime(storedVueUser.getJoinTime());
                     writeToSdcard("Before Server login for Google+ : "
                             + new Date());
                     userManager.updateGooglePlusIdentifiedUser(person
@@ -1285,10 +1282,14 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void saveGooglePlusUserProfile(Person person) {
-        VueUserProfile storedUserProfile = null;
+        VueUserProfile storedUserProfile = new VueUserProfile(person.getImage()
+                .getUrl(), mSharedPreferencesObj.getString(
+                VueConstants.GOOGLEPLUS_USER_EMAIL, null),
+                person.getDisplayName(), null, null, null, false);
         try {
-            storedUserProfile = Utils.readUserProfileObjectFromFile(this,
-                    VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+            Utils.writeUserProfileObjectToFile(this,
+                    VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
+                    storedUserProfile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1296,19 +1297,6 @@ public class VueLoginActivity extends FragmentActivity implements
                 person.getImage().getUrl(),
                 new FileCache(VueLoginActivity.this)
                         .getVueAppUserProfilePictureFile(VueConstants.USER_PROFILE_IMAGE_FILE_NAME));
-        if (storedUserProfile == null) {
-            storedUserProfile = new VueUserProfile(person.getImage().getUrl(),
-                    mSharedPreferencesObj.getString(
-                            VueConstants.GOOGLEPLUS_USER_EMAIL, null),
-                    person.getDisplayName(), null, null, null, false);
-            try {
-                Utils.writeUserProfileObjectToFile(this,
-                        VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME,
-                        storedUserProfile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         mixpanel.identify(storedUserProfile.getUserEmail());
         people.identify(storedUserProfile.getUserEmail());
         people.set("$first_name", storedUserProfile.getUserName());

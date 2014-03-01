@@ -36,7 +36,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -336,16 +335,16 @@ public class VueLandingPageActivity extends Activity implements
                             mRefreshFalg = false;
                             invalidateOptionsMenu();
                             if (status) {
-                                if(mLandingScreenActive) {
-                                Toast.makeText(VueLandingPageActivity.this,
-                                        "New aisles received",
-                                        Toast.LENGTH_SHORT).show();
+                                if (mLandingScreenActive) {
+                                    Toast.makeText(VueLandingPageActivity.this,
+                                            "New aisles received",
+                                            Toast.LENGTH_SHORT).show();
                                 }
-                            } else { 
-                                if(mLandingScreenActive) {
-                                Toast.makeText(VueLandingPageActivity.this,
-                                        "Up to date", Toast.LENGTH_SHORT)
-                                        .show();
+                            } else {
+                                if (mLandingScreenActive) {
+                                    Toast.makeText(VueLandingPageActivity.this,
+                                            "Up to date", Toast.LENGTH_SHORT)
+                                            .show();
                                 }
                             }
                             return false;
@@ -881,10 +880,11 @@ public class VueLandingPageActivity extends Activity implements
                 
                 @Override
                 public void run() {
-                    VueApplication.getInstance().getInstalledApplications(VueLandingPageActivity.this);
+                    VueApplication.getInstance().getInstalledApplications(
+                            VueLandingPageActivity.this);
                 }
             }, 500);
-           
+            
         }
         if (Utils.sIsLoged) {
             Logging.i("profile", "profile Landing Onresume ended");
@@ -1063,22 +1063,17 @@ public class VueLandingPageActivity extends Activity implements
         DataBaseManager.getInstance(VueLandingPageActivity.this)
                 .resetDbParams();
         ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
-                .getInstance(VueLandingPageActivity.this).getAislesFromDB(
-                        bookmarked, true);
-        if(Utils.sIsLoged){
-        Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "+windowContentTemp.size());
-        }
+                .getInstance(VueLandingPageActivity.this).getAislesFromDB(null,
+                        true);
         for (AisleWindowContent w : windowContentTemp) {
-            // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME TIMES
+            // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME
+            // TIMES
             // LIST NEED TO CHECK THIS CODE BY SURENDRA.
             if (w.getImageList() != null) {
                 windowContent.add(w);
             }
         }
         if (windowContent != null && windowContent.size() > 0) {
-            if(Utils.sIsLoged){
-            Log.i("bookemarkAislesCount", "bookemarkAislesCount2: "+windowContentTemp.size());
-            }
             getActionBar().setTitle(screenName);
             mLandingScreenName = screenName;
             // ((VueLandingAislesFragment) mLandingAilsesFrag).clearBitmaps();
@@ -1088,9 +1083,6 @@ public class VueLandingPageActivity extends Activity implements
             for (AisleWindowContent content : windowContent) {
                 VueTrendingAislesDataModel.getInstance(this).addItemToList(
                         content.getAisleId(), content);
-                if(Utils.sIsLoged){
-                Log.i("bookemarkAislesCount", "bookemarkAislesCount2 adde aisleIds: "+ content.getAisleId());
-                }
             }
             VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).dataObserver();
@@ -1772,44 +1764,42 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
                     invalidateOptionsMenu();
-                    Log.i("receiver", "receiver 1");
-                    if(mLandingScreenName.equalsIgnoreCase("Trending")){
+                    if (mLandingScreenName.equalsIgnoreCase("Trending")) {
                         mTrendingRequstCount++;
-                     if(mTrendingRequstCount> 2 && mLandingScreenActive){
-                     if (!mHelpDialogShown) {
-                         try {
-                             mHelpDialogShown = true;
-                             SharedPreferences sharedPreferencesObj =  
-                                     getSharedPreferences(
-                                             VueConstants.SHAREDPREFERENCE_NAME,
-                                             0);
-                             boolean isHelpShown = sharedPreferencesObj
-                                     .getBoolean(
-                                             VueConstants.HELP_SCREEN_ACCES,
-                                             false);
-                             if (isHelpShown) {
-                                 int count = sharedPreferencesObj
-                                         .getInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT,
-                                                 0);
-                                 final int SHOW_LIMIT = 3;
-                                 if (count < SHOW_LIMIT) {
-                                     long showedTime = sharedPreferencesObj
-                                             .getLong(
-                                                     VueConstants.USER_FINDFRIENDS_OPEN_TIME,
-                                                     0);
-                                     int hours = (int) Utils
-                                             .dateDifference(showedTime);
-                                     final int DAY_LATER = 24;
-                                     if (hours > DAY_LATER) {
-                                         showInviteFriendsDialog();
-                                     }
-                                 }
-                             }
-                         } catch (Exception e) {
-                             e.printStackTrace();
-                         }
-                     }
-                     }
+                        if (mTrendingRequstCount > 2 && mLandingScreenActive) {
+                            if (!mHelpDialogShown) {
+                                try {
+                                    mHelpDialogShown = true;
+                                    SharedPreferences sharedPreferencesObj = getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                                    boolean isHelpShown = sharedPreferencesObj
+                                            .getBoolean(
+                                                    VueConstants.HELP_SCREEN_ACCES,
+                                                    false);
+                                    if (isHelpShown) {
+                                        int count = sharedPreferencesObj
+                                                .getInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT,
+                                                        0);
+                                        final int SHOW_LIMIT = 3;
+                                        if (count < SHOW_LIMIT) {
+                                            long showedTime = sharedPreferencesObj
+                                                    .getLong(
+                                                            VueConstants.USER_FINDFRIENDS_OPEN_TIME,
+                                                            0);
+                                            int hours = (int) Utils
+                                                    .dateDifference(showedTime);
+                                            final int DAY_LATER = 24;
+                                            if (hours > DAY_LATER) {
+                                                showInviteFriendsDialog();
+                                            }
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2048,8 +2038,6 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-  
-    
     private void showInviteFriendsDialog() {
         SharedPreferences sharedPreferencesObj = getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -2061,8 +2049,7 @@ public class VueLandingPageActivity extends Activity implements
         edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
                 System.currentTimeMillis());
         edit.commit();
-        final Dialog dialog = new Dialog(this,
-                R.style.Theme_Dialog_Translucent);
+        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.hintdialog);
         dialog.setCanceledOnTouchOutside(false);
@@ -2129,8 +2116,7 @@ public class VueLandingPageActivity extends Activity implements
             if (convertView == null) {
                 
                 holder = new Holder();
-                LayoutInflater mLayoutInflater = (LayoutInflater)  
-                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
                 holder.textone = (TextView) convertView
                         .findViewById(R.id.gmail);
@@ -2157,7 +2143,7 @@ public class VueLandingPageActivity extends Activity implements
         TextView textone, texttwo;
         ImageView imageone, imagetwo;
     }
-   
+    
     private void openHelpTask() {
         if (Utils.sIsLoged) {
             Logging.i("profile", "help code started");

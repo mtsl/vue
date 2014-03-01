@@ -26,7 +26,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -50,16 +49,19 @@ public class VueUserManager {
             mUpdateFBGetUserErrorListener, mUpdateFBUpdateUserErrorListener,
             mCreateGPGetUserErrorListener, mCreateGPCreateUserErrorListener,
             mCreateGPUpdateUserErrorListener, mUpdateGPGetUserErrorListener,
-            mUpdateGPUpdateUserErrorListener;
+            mUpdateGPUpdateUserErrorListener, mUpdateFBCreateUserErrorListener,
+            mUpdateGPCreateUserErrorListener;
     private int mRetryCountForCreateFbGetUser,
             mRetryCountForCreateFbCreateUser, mRetryCountForCreateFbUpdateUser,
             mRetryCountForUpdateFbGetUser, mRetryCountForUpdateFbUpdateUser,
             mRetryCountForCreateGPGetUser, mRetryCountForCreateGPCreateUser,
             mRetryCountForCreateGPUpdateUser, mRetryCountForUpdateGPGetUser,
-            mRetryCountForUpdateGPUpdateUser;
+            mRetryCountForUpdateGPUpdateUser, mRetryCountForUpdateFbCreateUser,
+            mRetryCountForUpdateGPCreateUser;
     private String mCreateFbCreateUserReq, mCreateFbUpdateUserReq,
             mUpdateFbUpdateUserReq, mCreateGPCreateUserReq,
-            mCreateGPUpdateUserReq, mUpdateGPUpdateUserReq;
+            mCreateGPUpdateUserReq, mUpdateGPUpdateUserReq,
+            mUpdateFbCreateUserReq, mUpdateGPCreateUserReq;
     private static final int MAX_LOGIN_RETRY_COUNT = 5;
     private static final String SERVER_ERROR_MESG_FOR_MAX_RETRY = "We seem to be having problems reaching the server. Please try again later.";
     private static final int DELAY_TIME = 60000;
@@ -304,17 +306,19 @@ public class VueUserManager {
                 if (null != jsonArray) {
                     VueUser vueUser = new Parser().parseUserData(jsonArray);
                     if (vueUser != null) {
-                        vueUser.setUserImageURL(userProfileImageUrl);
+                        user.setId(vueUser.getId());
+                        user.setJoinTime(vueUser.getJoinTime());
+                        user.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        vueUser.setGcmRegistrationId(sharedPreferencesObj
+                        user.setGcmRegistrationId(sharedPreferencesObj
                                 .getString(VueConstants.GCM_REGISTRATION_ID,
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = null;
                         try {
-                            userAsString = mapper.writeValueAsString(vueUser);
+                            userAsString = mapper.writeValueAsString(user);
                         } catch (JsonProcessingException e) {
                         }
                         mCreateFbUpdateUserReq = userAsString;
@@ -530,22 +534,22 @@ public class VueUserManager {
         final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
-                Log.e("VueUserManager", "get Google+ user response : "
-                        + jsonArray);
                 if (null != jsonArray) {
                     VueUser vueUser1 = new Parser().parseUserData(jsonArray);
                     if (vueUser1 != null) {
-                        vueUser1.setUserImageURL(userProfileImageUrl);
+                        vueUser.setId(vueUser1.getId());
+                        vueUser.setJoinTime(vueUser1.getJoinTime());
+                        vueUser.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        vueUser1.setGcmRegistrationId(sharedPreferencesObj
+                        vueUser.setGcmRegistrationId(sharedPreferencesObj
                                 .getString(VueConstants.GCM_REGISTRATION_ID,
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = null;
                         try {
-                            userAsString = mapper.writeValueAsString(vueUser1);
+                            userAsString = mapper.writeValueAsString(vueUser);
                             Logger.log("INFo",
                                     "GCMonGoogle+UserUpdate Request",
                                     userAsString);
@@ -553,9 +557,6 @@ public class VueUserManager {
                             e.printStackTrace();
                         }
                         mCreateGPUpdateUserReq = userAsString;
-                        Log.e("VueUserManager",
-                                "update Google+ user request 1 : "
-                                        + userAsString);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.UPDATE_USER_RESTURL,
                                 listener, mCreateGPUpdateUserErrorListener);
@@ -576,9 +577,6 @@ public class VueUserManager {
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
                             mCreateGPCreateUserReq = userAsString;
-                            Log.e("VueUserManager",
-                                    "update Google+ user request 2 : "
-                                            + userAsString);
                             UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                     userAsString,
                                     UrlConstants.CREATE_USER_RESTURL, listener,
@@ -601,9 +599,6 @@ public class VueUserManager {
                         String userAsString = mapper
                                 .writeValueAsString(vueUser);
                         mCreateGPCreateUserReq = userAsString;
-                        Log.e("VueUserManager",
-                                "update Google+ user request 3 : "
-                                        + userAsString);
                         UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
                                 userAsString, UrlConstants.CREATE_USER_RESTURL,
                                 listener, mCreateGPCreateUserErrorListener);
@@ -734,6 +729,36 @@ public class VueUserManager {
             }
         };
         
+        mUpdateFBCreateUserErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateFbCreateUser++;
+                String errorMesg = "";
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
+                }
+                writeToSdcard("After server login failure for Update facebook create user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateFbCreateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mUpdateFbCreateUserReq,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mUpdateFBCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateFbCreateUser = 0;
+                    showServerMesgForMaxTries();
+                }
+            }
+        };
+        
         final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
@@ -741,17 +766,19 @@ public class VueUserManager {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
                         showToastForSwitchingUser("Facebook");
-                        vueUser2.setUserImageURL(userProfileImageUrl);
+                        user.setJoinTime(vueUser2.getJoinTime());
+                        user.setId(vueUser2.getId());
+                        user.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        vueUser2.setGcmRegistrationId(sharedPreferencesObj
+                        user.setGcmRegistrationId(sharedPreferencesObj
                                 .getString(VueConstants.GCM_REGISTRATION_ID,
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = null;
                         try {
-                            userAsString = mapper.writeValueAsString(vueUser2);
+                            userAsString = mapper.writeValueAsString(user);
                         } catch (JsonProcessingException e) {
                         }
                         mUpdateFbUpdateUserReq = userAsString;
@@ -763,7 +790,7 @@ public class VueUserManager {
                          * VueApplication.getInstance().getRequestQueue()
                          * .add(request);
                          */
-                        callUpdateUserThread(true, userAsString, callback);
+                        callUpdateUserThread(false, userAsString, callback);
                         
                     } else {
                         try {
@@ -779,16 +806,13 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
-                            mUpdateFbUpdateUserReq = userAsString;
-                            /*
-                             * UserCreateOrUpdateRequest request = new
-                             * UserCreateOrUpdateRequest( userAsString,
-                             * UrlConstants.USER_PUT_RESTURL, listener,
-                             * mUpdateFBUpdateUserErrorListener);
-                             * VueApplication.getInstance().getRequestQueue()
-                             * .add(request);
-                             */
-                            callUpdateUserThread(true, userAsString, callback);
+                            mUpdateFbCreateUserReq = userAsString;
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    userAsString,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mUpdateFBCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
                         } catch (Exception e) {
                             
                         }
@@ -805,16 +829,12 @@ public class VueUserManager {
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
-                        mUpdateFbUpdateUserReq = userAsString;
-                        /*
-                         * UserCreateOrUpdateRequest request = new
-                         * UserCreateOrUpdateRequest( userAsString,
-                         * UrlConstants.USER_PUT_RESTURL, listener,
-                         * mUpdateFBUpdateUserErrorListener);
-                         * VueApplication.getInstance().getRequestQueue()
-                         * .add(request);
-                         */
-                        callUpdateUserThread(true, userAsString, callback);
+                        mUpdateFbCreateUserReq = userAsString;
+                        UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                userAsString, UrlConstants.CREATE_USER_RESTURL,
+                                listener, mUpdateFBCreateUserErrorListener);
+                        VueApplication.getInstance().getRequestQueue()
+                                .add(request);
                     } catch (Exception e) {
                         
                     }
@@ -941,32 +961,59 @@ public class VueUserManager {
             }
         };
         
+        mUpdateGPCreateUserErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mRetryCountForUpdateGPCreateUser++;
+                String errorMesg = "";
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "Status code : "
+                            + error.networkResponse.statusCode;
+                }
+                writeToSdcard("After server login failure for Update google+ create user: "
+                        + new Date() + "???" + errorMesg);
+                if (mRetryCountForUpdateGPCreateUser < MAX_LOGIN_RETRY_COUNT) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    mUpdateGPCreateUserReq,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mUpdateGPCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
+                        }
+                    }, DELAY_TIME);
+                } else {
+                    mRetryCountForUpdateGPCreateUser = 0;
+                    showServerMesgForMaxTries();
+                }
+            }
+        };
+        
         final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
-                Log.e("VueUserManager", "get Google+ user response : "
-                        + jsonArray);
                 if (null != jsonArray) {
                     VueUser vueUser2 = new Parser().parseUserData(jsonArray);
                     if (vueUser2 != null) {
                         showToastForSwitchingUser("G+");
-                        vueUser2.setUserImageURL(userProfileImageUrl);
+                        vueUser.setId(vueUser2.getId());
+                        vueUser.setJoinTime(vueUser2.getJoinTime());
+                        vueUser.setUserImageURL(userProfileImageUrl);
                         SharedPreferences sharedPreferencesObj = VueApplication
                                 .getInstance().getSharedPreferences(
                                         VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        vueUser2.setGcmRegistrationId(sharedPreferencesObj
+                        vueUser.setGcmRegistrationId(sharedPreferencesObj
                                 .getString(VueConstants.GCM_REGISTRATION_ID,
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = null;
                         try {
-                            userAsString = mapper.writeValueAsString(vueUser2);
+                            userAsString = mapper.writeValueAsString(vueUser);
                         } catch (JsonProcessingException e) {
                         }
                         mUpdateGPUpdateUserReq = userAsString;
-                        Log.e("VueUserManager",
-                                "update Google+ user request 1 : "
-                                        + userAsString);
                         /*
                          * UserCreateOrUpdateRequest request = new
                          * UserCreateOrUpdateRequest( userAsString,
@@ -990,19 +1037,13 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(vueUser);
-                            mUpdateGPUpdateUserReq = userAsString;
-                            Log.e("VueUserManager",
-                                    "update Google+ user request 2 : "
-                                            + userAsString);
-                            /*
-                             * UserCreateOrUpdateRequest request = new
-                             * UserCreateOrUpdateRequest( userAsString,
-                             * UrlConstants.USER_PUT_RESTURL, listener,
-                             * mUpdateGPUpdateUserErrorListener);
-                             * VueApplication.getInstance().getRequestQueue()
-                             * .add(request);
-                             */
-                            callUpdateUserThread(true, userAsString, callback);
+                            mUpdateGPCreateUserReq = userAsString;
+                            UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                    userAsString,
+                                    UrlConstants.CREATE_USER_RESTURL, listener,
+                                    mUpdateGPCreateUserErrorListener);
+                            VueApplication.getInstance().getRequestQueue()
+                                    .add(request);
                         } catch (Exception e) {
                             
                         }
@@ -1019,19 +1060,12 @@ public class VueUserManager {
                         ObjectMapper mapper = new ObjectMapper();
                         final String userAsString = mapper
                                 .writeValueAsString(vueUser);
-                        mUpdateGPUpdateUserReq = userAsString;
-                        Log.e("VueUserManager",
-                                "update Google+ user request 3 : "
-                                        + userAsString);
-                        /*
-                         * UserCreateOrUpdateRequest request = new
-                         * UserCreateOrUpdateRequest( userAsString,
-                         * UrlConstants.USER_PUT_RESTURL, listener,
-                         * mUpdateGPUpdateUserErrorListener);
-                         * VueApplication.getInstance().getRequestQueue()
-                         * .add(request);
-                         */
-                        callUpdateUserThread(true, userAsString, callback);
+                        mUpdateGPCreateUserReq = userAsString;
+                        UserCreateOrUpdateRequest request = new UserCreateOrUpdateRequest(
+                                userAsString, UrlConstants.CREATE_USER_RESTURL,
+                                listener, mUpdateGPCreateUserErrorListener);
+                        VueApplication.getInstance().getRequestQueue()
+                                .add(request);
                     } catch (Exception e) {
                         
                     }
@@ -1174,7 +1208,7 @@ public class VueUserManager {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    callUpdateUserThread(true, userString, callback);
+                    callUpdateUserThread(false, userString, callback);
                 }
             }, DELAY_TIME);
         } else {
@@ -1284,15 +1318,9 @@ public class VueUserManager {
             } catch (Exception e) {
                 facebookId = email;
             }
-            vueUser = new VueUser(null, email, firstName, lastName, null,
-                    Utils.getDeviceId(), facebookId,
-                    VueUser.DEFAULT_GOOGLEPLUS_ID, null);
-            if (storedVueUser != null) {
-                vueUser.setDeviceId(storedVueUser.getDeviceId());
-                vueUser.setGooglePlusId(storedVueUser.getGooglePlusId());
-                vueUser.setId(storedVueUser.getId());
-                vueUser.setJoinTime(storedVueUser.getJoinTime());
-            }
+            vueUser = new VueUser(null, email, firstName, lastName,
+                    System.currentTimeMillis(), Utils.getDeviceId(),
+                    facebookId, VueUser.DEFAULT_GOOGLEPLUS_ID, null);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1375,25 +1403,12 @@ public class VueUserManager {
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
-                if (Utils.sIsLoged) {
-                    Log.i("UserUpdate REsponse", "UserUpdate REsponse"
-                            + responseMessage);
-                }
                 if (responseMessage != null && responseMessage.length() > 0) {
-                    if (Utils.sIsLoged) {
-                        Log.i("UserUpdate REsponse",
-                                "UserUpdate REsponse Success");
-                    }
                     responseArray = new String[2];
                     responseArray[0] = responseMessage;
                     responseArray[1] = response.getStatusLine().getStatusCode()
                             + "";
                     return responseArray;
-                }
-            } else {
-                if (Utils.sIsLoged) {
-                    Log.i("UserUpdate REsponse", "UserUpdate REsponse"
-                            + response.getStatusLine().getStatusCode());
                 }
             }
             try {

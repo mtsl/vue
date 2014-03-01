@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -597,9 +596,6 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
-                            if(Utils.sIsLoged){
-                            Log.i("bookemarkAislesCount", "bookemarkAislesCount By User1: "+bookmarkedAisles.size());
-                            }
                             bookmarkedList.clear();
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
@@ -611,9 +607,6 @@ public class NetworkHandler {
                                     bookmarkedList.add(String.valueOf(aB
                                             .getAisleId()));
                                 }
-                            }
-                            if(Utils.sIsLoged){
-                            Log.i("bookemarkAislesCount", "bookemarkAislesCount By User2: "+bookmarkedAisles.size());
                             }
                             VueTrendingAislesDataModel.getInstance(
                                     VueApplication.getInstance())
@@ -868,10 +861,9 @@ public class NetworkHandler {
             }
             Utils.sUserPoints = 0;
             int count = 0;
-            if (mPointsLoaded) {
-                return;
-            }
-            mPointsLoaded = true;
+            /*
+             * if (mPointsLoaded) { return; } mPointsLoaded = true;
+             */
             ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
             if (windowList != null) {
                 // for each aisle add 10 points

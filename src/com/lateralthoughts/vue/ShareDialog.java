@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,10 +15,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -519,7 +523,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -586,7 +590,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -630,10 +634,11 @@ public class ShareDialog {
                     + mImagePathArray.get(0).getAisleOwnerName()
                     + ". Get Vue to create your own aisles! " + APPLINK;
         }
+        mSendIntent.setAction(Intent.ACTION_SEND);
         mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
         String activityname = null;
         if (mAppNames.get(position).equals(VueConstants.TWITTER_APP_NAME)) {
-            activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+            activityname = VueApplication.getInstance().twitterActivityName;
         } else if (mAppNames.get(position).equals(VueConstants.GMAIL_APP_NAME)) {
             activityname = VueConstants.GMAIL_ACTIVITY_NAME;
         } else if (mAppNames.get(position).equals(

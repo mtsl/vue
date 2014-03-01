@@ -77,7 +77,6 @@ public class VueConstants {
     public static final String GMAIL_PACKAGE_NAME = "com.google.android.gm";
     public static final String GOOGLEPLUS_PACKAGE_NAME = "com.google.android.apps.plus";
     public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
-    public static final String TWITTER_ACTIVITY_NAME = "com.twitter.android.PostActivity";
     public static final String INSTAGRAM_ACTIVITY_NAME = "com.instagram.android.activity.MainTabActivity";
     public static final String VUE_ACTIVITY_NAME = "com.lateralthoughts.vue.VueLandingPageActivity";
     public static final String GMAIL_ACTIVITY_NAME = "com.google.android.gm.ComposeActivityGmail";
@@ -223,7 +222,7 @@ public class VueConstants {
             + AUTHORITY + "/" + RATED_IMAGES);
     public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + BOOKMARKER_AISLES);
-    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://"
+    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://" 
             + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
