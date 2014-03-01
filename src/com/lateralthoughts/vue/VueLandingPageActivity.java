@@ -1064,12 +1064,13 @@ public class VueLandingPageActivity extends Activity implements
         DataBaseManager.getInstance(VueLandingPageActivity.this)
                 .resetDbParams();
         ArrayList<AisleWindowContent> windowContentTemp = DataBaseManager
-                .getInstance(VueLandingPageActivity.this).getAislesFromDB(
-                        null, true);
-        if(Utils.sIsLoged){
-        Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "+windowContentTemp.size());
+                .getInstance(VueLandingPageActivity.this).getAislesFromDB(null,
+                        true);
+        if (Utils.sIsLoged) {
+            Log.i("bookemarkAislesCount", "bookemarkAislesCount1: "
+                    + windowContentTemp.size());
         }
- 
+        
         for (AisleWindowContent w : windowContentTemp) {
             // TODO: THERE THE LIST SHOULD NOT BE NULL BUT WE GOT NULL SOME
             // TIMES
@@ -2315,13 +2316,6 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance().setmUserName(
                                 storedVueUser.getFirstName() + " "
                                         + storedVueUser.getLastName());
-                    } else {
-                        Toast.makeText(
-                                VueLandingPageActivity.this,
-                                VueLandingPageActivity.this.getResources()
-                                        .getString(
-                                                R.string.vue_server_login_mesg),
-                                Toast.LENGTH_LONG).show();
                     }
                 } else {
                     showLogInDialog(false);

@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,13 +14,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -321,7 +317,24 @@ public class ShareDialog {
                             + APPLINK;
                     
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
@@ -503,7 +516,24 @@ public class ShareDialog {
                             + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
                             + APPLINK;
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
@@ -628,7 +658,23 @@ public class ShareDialog {
                     + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
                     + APPLINK;
         } else {
-            shareText = VueApplication.getInstance().getmUserName()
+            String userName = null;
+            if (VueApplication.getInstance().getmUserName() != null) {
+                userName = VueApplication.getInstance().getmUserName();
+            } else {
+                VueUserProfile storedUserProfile = null;
+                try {
+                    storedUserProfile = Utils.readUserProfileObjectFromFile(
+                            mContext,
+                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (storedUserProfile != null) {
+                    userName = storedUserProfile.getUserName();
+                }
+            }
+            shareText = userName
                     + " would like you to check this aisle out on Vue - "
                     + mImagePathArray.get(0).getLookingFor() + " by "
                     + mImagePathArray.get(0).getAisleOwnerName()
