@@ -846,6 +846,7 @@ public class DataBaseManager {
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
         ContentValues values = new ContentValues();
+        values.put(VueConstants.ID, bookmarkId);
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         Cursor cursor = mContext.getContentResolver().query(
@@ -1595,6 +1596,26 @@ public class DataBaseManager {
                 VueConstants.BOOKMARKER_AISLES_URI, null,
                 VueConstants.IS_LIKED_OR_BOOKMARKED + "=?",
                 new String[] { "1" }, null);
+        if (cursor.moveToFirst()) {
+            do {
+                aisleBookmark = new AisleBookmark();
+                aisleBookmark.setAisleId(Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID))));
+                aisleBookmark.setId(cursor.getLong(cursor
+                        .getColumnIndex(VueConstants.ID)));
+                bookmarkAisles.add(aisleBookmark);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return bookmarkAisles;
+    }
+    
+    
+    public ArrayList<AisleBookmark> getAllBookmarkAisleIdsList() {
+        AisleBookmark aisleBookmark;
+        ArrayList<AisleBookmark> bookmarkAisles = new ArrayList<AisleBookmark>();
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 aisleBookmark = new AisleBookmark();

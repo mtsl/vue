@@ -901,7 +901,7 @@ public class AisleContentBrowser extends ViewFlipper {
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
                 .getInstance(VueApplication.getInstance())
-                .getBookmarkAisleIdsList();
+                .getAllBookmarkAisleIdsList();
         
         for (AisleBookmark b : aisleBookmarkList) {
             if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {

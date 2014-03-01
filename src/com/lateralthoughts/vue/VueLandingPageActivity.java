@@ -135,9 +135,6 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile Landing oncreate started");
-        }
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
@@ -791,9 +788,6 @@ public class VueLandingPageActivity extends Activity implements
     public void onResume() {
         super.onResume();
         mLandingScreenActive = true;
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile Landing onresume started");
-        }
         mSlidListFrag.setEditTextVisible(false);
         // ShareViaVue...
         if (VueApplication.getInstance().mShareViaVueClickedFlag) {
@@ -885,9 +879,6 @@ public class VueLandingPageActivity extends Activity implements
                 }
             }, 500);
             
-        }
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile Landing Onresume ended");
         }
     }
     
@@ -2145,9 +2136,6 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     private void openHelpTask() {
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "help code started");
-        }
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         mIsFromOncreate = false;
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
@@ -2346,9 +2334,6 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "help code ended");
-        }
         
     }
 }

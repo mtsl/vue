@@ -91,9 +91,6 @@ public class VueContentGateway {
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
-                    if(Utils.sIsLoged){
-                        Logging.i("profile", "profile aislesinitial successfull response");
-                    }
                     if (null != jsonArray) {
                         if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
                             mNomoreTrendingAilse = true;
@@ -116,9 +113,6 @@ public class VueContentGateway {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if(Utils.sIsLoged){
-                        Logging.i("profile", "profile aisles fail response");
-                    }
                     Bundle responseBundle = new Bundle();
                     responseBundle.putString("result", "error");
                     receiver.send(1, responseBundle);
@@ -134,9 +128,6 @@ public class VueContentGateway {
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            if(Utils.sIsLoged){
-                Logging.i("profile", "profile aislesinitial request started");
-            }
             VueApplication.getInstance().getRequestQueue().add(vueRequest);
         }
         return status;
