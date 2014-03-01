@@ -410,7 +410,7 @@ public class DataBaseManager {
                 }
             }
         }
-        // copydbToSdcard();
+        copydbToSdcard();
     }
     
     /**
