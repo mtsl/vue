@@ -2298,13 +2298,6 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance().setmUserName(
                                 storedVueUser.getFirstName() + " "
                                         + storedVueUser.getLastName());
-                    } else {
-                        Toast.makeText(
-                                VueLandingPageActivity.this,
-                                VueLandingPageActivity.this.getResources()
-                                        .getString(
-                                                R.string.vue_server_login_mesg),
-                                Toast.LENGTH_LONG).show();
                     }
                 } else {
                     showLogInDialog(false);
