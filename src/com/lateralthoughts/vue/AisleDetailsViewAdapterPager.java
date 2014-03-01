@@ -1493,7 +1493,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         VueUser storedVueUser = null;
         try {
-            Log.i("BookmarkIssue", "BookmarkIssue: "+aisleBookmark.getAisleId());
             storedVueUser = Utils.readUserObjectFromFile(mContext,
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
             AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,

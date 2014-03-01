@@ -870,33 +870,42 @@ class AuthorizationClient implements Serializable {
             return new Result(Code.ERROR, null, message);
         }
         
-        static void writeToSdcard(String message) {
-            
-            String path = Environment.getExternalStorageDirectory().toString();
-            File dir = new File(path + "/vueFacebookProblems/");
-            if (!dir.isDirectory()) {
-                dir.mkdir();
-            }
-            File file = new File(dir, "/" + "vueFacebookProblems_"
-                    + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
-                    + Calendar.getInstance().get(Calendar.DATE) + "_"
-                    + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            
-            try {
-                PrintWriter out = new PrintWriter(new BufferedWriter(
-                        new FileWriter(file, true)));
-                out.write("\n" + message + "\n");
-                out.flush();
-                out.close();
-                
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        static void writeToSdcard(String message) {/*
+                                                    * 
+                                                    * String path = Environment.
+                                                    * getExternalStorageDirectory
+                                                    * ().toString(); File dir =
+                                                    * new File(path +
+                                                    * "/vueFacebookProblems/");
+                                                    * if (!dir.isDirectory()) {
+                                                    * dir.mkdir(); } File file =
+                                                    * new File(dir, "/" +
+                                                    * "vueFacebookProblems_" +
+                                                    * (Calendar
+                                                    * .getInstance().get
+                                                    * (Calendar.MONTH) + 1) +
+                                                    * "-" +
+                                                    * Calendar.getInstance(
+                                                    * ).get(Calendar.DATE) + "_"
+                                                    * +
+                                                    * Calendar.getInstance().get
+                                                    * (Calendar.YEAR) + ".txt");
+                                                    * try {
+                                                    * file.createNewFile(); }
+                                                    * catch (IOException e) {
+                                                    * e.printStackTrace(); }
+                                                    * 
+                                                    * try { PrintWriter out =
+                                                    * new PrintWriter(new
+                                                    * BufferedWriter( new
+                                                    * FileWriter(file, true)));
+                                                    * out.write("\n" + message +
+                                                    * "\n"); out.flush();
+                                                    * out.close();
+                                                    * 
+                                                    * } catch (IOException e) {
+                                                    * e.printStackTrace(); }
+                                                    */
         }
     }
 }

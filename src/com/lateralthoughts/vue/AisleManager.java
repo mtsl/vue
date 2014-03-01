@@ -320,7 +320,6 @@ public class AisleManager {
             if (responseMessage.length() > 0) {
                 createdAisleBookmark = (new ObjectMapper()).readValue(
                         responseMessage, AisleBookmark.class);
-                Log.i("BookmarkIssue", "BookmarkIssue creating: "+createdAisleBookmark.getAisleId());
                 onSuccesfulBookmarkResponse(createdAisleBookmark);
                 
             } else {
@@ -357,7 +356,6 @@ public class AisleManager {
             if (responseMessage.length() > 0) {
                 updatedAisleBookmark = (new ObjectMapper()).readValue(
                         responseMessage, AisleBookmark.class);
-                Log.i("BookmarkIssue", "BookmarkIssue update: "+updatedAisleBookmark.getAisleId());
                 onSuccesfulBookmarkResponse(updatedAisleBookmark);
             } else {
                 onFailureBookmarkResponse(bookmark);
