@@ -55,6 +55,7 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.pendingaisles.PendingAisles;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.GetOtherSourceImagesTask;

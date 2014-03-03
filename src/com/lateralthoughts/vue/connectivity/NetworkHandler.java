@@ -50,7 +50,6 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
@@ -62,7 +61,7 @@ import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
-import com.lateralthoughts.vue.utils.Logging;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 

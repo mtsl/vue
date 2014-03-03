@@ -1,28 +1,11 @@
 package com.lateralthoughts.vue.connectivity;
 
-import java.util.ArrayList;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.VolleyError;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lateralthoughts.vue.AisleManager;
-import com.lateralthoughts.vue.AisleWindowContent;
-import com.lateralthoughts.vue.BookmarkPutRequest;
-import com.lateralthoughts.vue.ImageRating;
-import com.lateralthoughts.vue.VueApplication;
-import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.ImageComment;
-import com.lateralthoughts.vue.domain.ImageCommentRequest;
-import com.lateralthoughts.vue.utils.UrlConstants;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
     

@@ -51,8 +51,8 @@ import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.VueUserProfile;
+import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.user.VueUserProfile;
 
 public class Utils {
     private static final String CURRENT_FONT_SIZE = "currentFontSize";

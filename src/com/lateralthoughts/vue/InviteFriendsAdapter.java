@@ -14,11 +14,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.Utils;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -69,7 +70,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
                     .findViewById(R.id.invite_friends_imageView);
             holder.friendName = (TextView) convertView
                     .findViewById(R.id.invite_friends_name);
-            holder.inviteFriendInviteButton = (Button) convertView
+            holder.inviteFriendInviteButton = (RelativeLayout) convertView
                     .findViewById(R.id.invite_friends_addFriends);
             convertView.setTag(holder);
         } else {
@@ -90,7 +91,8 @@ public class InviteFriendsAdapter extends BaseAdapter {
                     public void onClick(View arg0) {
                         JSONObject inviteFrndsProps = new JSONObject();
                         try {
-                            inviteFrndsProps.put("Friend Name", mItems.get(index).getName());
+                            inviteFrndsProps.put("Friend Name",
+                                    mItems.get(index).getName());
                         } catch (JSONException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
@@ -98,7 +100,8 @@ public class InviteFriendsAdapter extends BaseAdapter {
                         // Google+ friends
                         if (mItems.get(index).getGoogleplusFriend() != null) {
                             try {
-                                inviteFrndsProps.put("Friend Network", "GooglePlus");
+                                inviteFrndsProps.put("Friend Network",
+                                        "GooglePlus");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -119,7 +122,8 @@ public class InviteFriendsAdapter extends BaseAdapter {
                         else {
                             if (mItems.get(index).getId() != null) {
                                 try {
-                                    inviteFrndsProps.put("Friend Network", "Facebook");
+                                    inviteFrndsProps.put("Friend Network",
+                                            "Facebook");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -153,7 +157,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
     private class InviteFriendHolder {
         NetworkImageView friendPrifilePicture;
         TextView friendName;
-        Button inviteFriendInviteButton;
+        RelativeLayout inviteFriendInviteButton;
     }
     
     @Override

@@ -32,9 +32,9 @@ import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.Utils;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
