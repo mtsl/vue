@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.xml.transform.ErrorListener;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPut;
@@ -16,7 +18,10 @@ import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
@@ -213,8 +218,8 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-        
-        if (VueConnectivityManager.isNetworkConnected(VueApplication
+        updateImageRatingVolley(   imageRating,   likeCount);
+        /*if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             
             ObjectMapper mapper = new ObjectMapper();
@@ -242,43 +247,98 @@ public class AisleManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
-            /*
-             * @SuppressWarnings("rawtypes") Response.Listener listener = new
-             * Response.Listener<String>() {
-             * 
-             * @Override public void onResponse(String jsonArray) { if
-             * (jsonArray != null) { try { ImageRating imgRating = (new
-             * ObjectMapper()) .readValue(jsonArray, ImageRating.class); Editor
-             * editor = mSharedPreferencesObj.edit();
-             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
-             * editor.commit(); AisleImageDetails aisleImageDetails =
-             * VueTrendingAislesDataModel
-             * .getInstance(VueApplication.getInstance())
-             * .getAisleImageForImageId( String.valueOf(imgRating.mImageId),
-             * String.valueOf(imgRating.mAisleId), false); if (aisleImageDetails
-             * != null) { if (imageRating.mId == null) {
-             * aisleImageDetails.mRatingsList .add(imgRating); } }
-             * updateImageRatingToDb(imgRating, likeCount, false); } catch
-             * (Exception e) { e.printStackTrace(); } } } };
-             * 
-             * Response.ErrorListener errorListener = new ErrorListener() {
-             * 
-             * @Override public void onErrorResponse(VolleyError error) {
-             * imageRating.mId = 0001L; updateImageRatingToDb(imageRating,
-             * likeCount, true); Editor editor = mSharedPreferencesObj.edit();
-             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-             * editor.commit(); }
-             * 
-             * }; Log.e("Aisle Manager", "rating request : " +
-             * imageRatingString);
-             * 
-             * @SuppressWarnings("unchecked") ImageRatingPutRequest request =
-             * new ImageRatingPutRequest( imageRatingString, listener,
-             * errorListener, url + storedVueUser.getId());
-             * VueApplication.getInstance().getRequestQueue().add(request);
-             */
-            
+        } else {
+            imageRating.mId = 0001L;
+            updateImageRatingToDb(imageRating, likeCount, true);
+            Editor editor = mSharedPreferencesObj.edit();
+            editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+            editor.commit();
+        }*/
+    }
+ //TODO: VOLLEY CODE NOT WORKING NEEDS TO BE TESTED.
+    public void updateImageRatingVolley(final ImageRating imageRating, final int likeCount)
+            throws ClientProtocolException, IOException {
+        String url;
+        if (imageRating.mId == null) {
+            url = UrlConstants.CREATE_RATING_RESTURL + "/";
+        } else {
+            url = UrlConstants.UPDATE_RATING_RESTURL + "/";
+        }
+
+        if (VueConnectivityManager.isNetworkConnected(VueApplication
+                .getInstance())) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
+            imageRatingRequestObject.setId(imageRating.getId());
+            imageRatingRequestObject.setAisleId(imageRating.getAisleId());
+            imageRatingRequestObject.setImageId(imageRating.getImageId());
+            imageRatingRequestObject.setLiked(imageRating.getLiked());
+            imageRatingRequestObject.setLastModifiedTimestamp(imageRating
+                    .getLastModifiedTimestamp());
+            String imageRatingString = mapper
+                    .writeValueAsString(imageRatingRequestObject);
+
+            @SuppressWarnings("rawtypes")
+            Response.Listener listener = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String jsonArray) {
+                    if (jsonArray != null) {
+                        try {
+                            ImageRating imgRating = (new ObjectMapper())
+                                    .readValue(jsonArray, ImageRating.class);
+                            Editor editor = mSharedPreferencesObj.edit();
+                            editor.putBoolean(VueConstants.IS_IMAGE_DIRTY,
+                                    false);
+                            editor.commit();
+                            AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleImageForImageId(
+                                            String.valueOf(imgRating.mImageId),
+                                            String.valueOf(imgRating.mAisleId),
+                                            false);
+                            if (aisleImageDetails != null) {
+                                if (imageRating.mId == null) {
+                                    aisleImageDetails.mRatingsList
+                                            .add(imgRating);
+                                }
+                            }
+                            Log.i("volley test image", "volley test image sucees: "+imgRating.getId());
+                            updateImageRatingToDb(imgRating, likeCount, false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("volley test image", "volley test image failure response: "+error.toString());
+                    imageRating.mId = 0001L;
+                    updateImageRatingToDb(imageRating, likeCount, true);
+                    Editor editor = mSharedPreferencesObj.edit();
+                    editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                    editor.commit();
+                }
+
+            };
+        
+            @SuppressWarnings("unchecked")
+            ImageRatingPutRequest request = new ImageRatingPutRequest(
+                    imageRatingString, listener, errorListener, url
+                            + storedVueUser.getId());
+            VueApplication.getInstance().getRequestQueue().add(request);
         } else {
             imageRating.mId = 0001L;
             updateImageRatingToDb(imageRating, likeCount, true);
@@ -286,8 +346,8 @@ public class AisleManager {
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
             editor.commit();
         }
-    }
-    
+    } 
+ 
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
@@ -429,6 +489,7 @@ public class AisleManager {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
                 if (responseMessage != null && responseMessage.length() > 0) {
+                    Log.i("volley test image", "volley test image success normal thread response: ");
                     try {
                         ImageRating imgRating = (new ObjectMapper()).readValue(
                                 responseMessage, ImageRating.class);
@@ -458,6 +519,12 @@ public class AisleManager {
                     editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
                     editor.commit();
                 }
+            } else {
+                imageRating.mId = 0001L;
+                updateImageRatingToDb(imageRating, likeCount, true);
+                Editor editor = mSharedPreferencesObj.edit();
+                editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                editor.commit();
             }
         } catch (Exception e) {
             e.printStackTrace();
