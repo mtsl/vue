@@ -29,6 +29,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1314,6 +1315,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     }
                 }
                 try {
+                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY  in adapter rating ID: "+mImgRating.mId);
                     AisleManager.getAisleManager().updateRating(mImgRating,
                             mLikeCount);
                 } catch (Exception e) {
