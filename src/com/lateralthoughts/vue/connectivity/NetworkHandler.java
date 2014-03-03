@@ -62,7 +62,6 @@ import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -768,10 +767,14 @@ public class NetworkHandler {
                                         ratedImageList.clear();
                                         for (int index = 0; index < retrievedImageRating
                                                 .size(); index++) {
-                                            ratedImageList.add(String
-                                                    .valueOf(retrievedImageRating
-                                                            .get(index)
-                                                            .getImageId()));
+                                            boolean currentRateStatus =  retrievedImageRating
+                                                    .get(index).mLiked;
+                                            if(currentRateStatus) {
+                                                ratedImageList.add(String
+                                                        .valueOf(retrievedImageRating
+                                                                .get(index)
+                                                                .getImageId()));
+                                            }
                                         }
                                     }
                                     // these likes are by the user add 2 points

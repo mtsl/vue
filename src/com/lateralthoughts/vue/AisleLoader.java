@@ -168,7 +168,7 @@ public class AisleLoader {
             itemDetails = imageDetailsArr.get(0);
             ImageView likeImage = (ImageView) socialCard
                     .findViewById(R.id.like_img);
-            if (itemDetails.mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+            if (itemDetails.mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS && itemDetails.mLikesCount != 0) {
                 likeImage.setImageResource(R.drawable.heart);
             } else {
                 likeImage.setImageResource(R.drawable.heart_dark);
