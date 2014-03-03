@@ -401,7 +401,6 @@ public class VueLoginActivity extends FragmentActivity {
                                                     VueLoginActivity.this,
                                                     VueConstants.VUE_APP_USEROBJECT__FILENAME,
                                                     vueUser);
-                                            loadRewardPoints();
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -416,6 +415,7 @@ public class VueLoginActivity extends FragmentActivity {
                                                         }
                                                         if (!mFromDetailsFbShare
                                                                 && loginSuccessFlag) {
+                                                            loadRewardPoints();
                                                             showAisleSwipeHelp();
                                                         } else {
                                                             try {
