@@ -1,4 +1,4 @@
-package com.lateralthoughts.vue;
+package com.lateralthoughts.vue.user;
 
 import java.io.Serializable;
 
