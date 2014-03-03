@@ -111,6 +111,7 @@ public class VueLoginActivity extends FragmentActivity {
     JSONObject loginSelectedProps, loginActivity;
     private String mGuestUserMessage = null;
     private boolean mShowAisleSwipeHelpLayoutFlag = false;
+    private ProgressDialog mDialog = null;
     
     private enum PendingAction {
         NONE, POST_PHOTO, POST_STATUS_UPDATE
@@ -384,13 +385,6 @@ public class VueLoginActivity extends FragmentActivity {
                             .getUserManager();
                     writeToSdcard("Before Server login for Facebook : "
                             + new Date());
-                    final ProgressDialog dialog = new ProgressDialog(
-                            VueLoginActivity.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setMessage("Authenticating...");
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.setCancelable(false);
-                    dialog.show();
                     userManager.facebookAuthenticationWithServer(
                             VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
                                     + user.getId()
@@ -417,6 +411,9 @@ public class VueLoginActivity extends FragmentActivity {
                                                 .runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        if (mDialog != null) {
+                                                            mDialog.dismiss();
+                                                        }
                                                         if (!mFromDetailsFbShare
                                                                 && loginSuccessFlag) {
                                                             showAisleSwipeHelp();
@@ -497,12 +494,12 @@ public class VueLoginActivity extends FragmentActivity {
                 }
             }
         }).executeAsync();
-        try {
-            mSocialIntegrationMainLayout.setVisibility(View.GONE);
-            mTrendingbg.setVisibility(View.GONE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mDialog = new ProgressDialog(VueLoginActivity.this);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setMessage("Authenticating...");
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.setCancelable(false);
+        mDialog.show();
     }
     
     private void saveFacebookProfileDetails(GraphUser user) {
@@ -868,6 +865,9 @@ public class VueLoginActivity extends FragmentActivity {
     }
     
     private void showAisleSwipeHelp() {
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
         if (mShowAisleSwipeHelpLayoutFlag) {
             finish();
             // Intent swipeHelpIntent = new Intent(this, HelpOnTrending.class);
