@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -34,13 +35,13 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void onReceive(Context context, Intent inetent) {/*
+    public void onReceive(Context context, Intent inetent) {
         if (VueConnectivityManager.isNetworkConnected(context)) {
             // TODO: if Database is dirty use shared preference here.
             mSharedPreferencesObj = context.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_AISLE_DIRTY,
-                    false)) {
+                    false)) {/*
                 VueUser storedVueUser = null;
                 try {
                     storedVueUser = Utils.readUserObjectFromFile(context,
@@ -100,24 +101,44 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 }
-            }
+            */}
             
             if ((mSharedPreferencesObj.getBoolean(VueConstants.IS_IMAGE_DIRTY,
                     false))) {
+                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY ");
                 ArrayList<ImageRating> imagsRating = DataBaseManager
                         .getInstance(context).getDirtyImages("1");
+                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imagsRating.size(): " + imagsRating.size());
                 for (ImageRating imgRating : imagsRating) {
                     try {
+                        Cursor c = context.getContentResolver().query(
+                                VueConstants.IMAGES_CONTENT_URI, null,
+                                VueConstants.IMAGE_ID + "=?",
+                                new String[] {String.valueOf(imgRating
+                                        .getImageId().longValue())}, null);
+                        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Cursor.getCount(): " + c.getCount());
+                        int likesCount = 0;
+                        if (c.moveToFirst()) {
+                            do {
+                                int imgId = c.getInt(c.getColumnIndex(VueConstants.IMAGE_ID));
+                               if(imgId == imgRating.getImageId().longValue()) {
+                                   likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
+                                   Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imgId Matched: " + imgId);
+                                   break;
+                               }
+                            } while (c.moveToNext());
+                        }
                         AisleManager.getAisleManager().updateRating(imgRating,
-                                0);
+                                likesCount);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                   
                 }
             }
             
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_COMMENT_DIRTY,
-                    false)) {
+                    false)) {/*
                 ArrayList<ImageComment> comments = DataBaseManager.getInstance(
                         context).getDirtyComments("1");
                 NetworkHandler networkHandler = new NetworkHandler(context);
@@ -134,8 +155,8 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 }
-            }
+            */}
         }
-    */}
+    }
     
 }

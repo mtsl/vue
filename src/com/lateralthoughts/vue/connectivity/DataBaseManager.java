@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -819,6 +820,7 @@ public class DataBaseManager {
                         + "=?",
                 new String[] { String.valueOf(imageRating.mAisleId),
                         String.valueOf(imageRating.mImageId) });
+        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce update success for image");
         updateRatedImages(imageRating, isUserRating, isDirty);
     }
     
@@ -1537,6 +1539,7 @@ public class DataBaseManager {
                             VueConstants.RATED_IMAGES_URI, values,
                             VueConstants.ID + "=? ",
                             new String[] { String.valueOf(imagerating.mId) });
+                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce update success for RATING");
                     isMatched = true;
                     break;
                 }
