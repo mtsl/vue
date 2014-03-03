@@ -429,58 +429,9 @@ public class VueLandingPageActivity extends Activity implements
     
     @Override
     protected void onStart() {
-        // TODO: 500 millis consumes this code
-        new Thread(new Runnable() {
-            
-            @Override
-            public void run() {
-                FlurryAgent.onStartSession(VueLandingPageActivity.this,
-                        Utils.FLURRY_APP_KEY);
-                FlurryAgent.logEvent(TRENDING_SCREEN_VISITORS);
-                VueUser vueUser = null;
-                try {
-                    vueUser = Utils.readUserObjectFromFile(
-                            VueLandingPageActivity.this,
-                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (vueUser != null) {
-                    Map<String, String> articleParams = new HashMap<String, String>();
-                    if (vueUser.getFacebookId().equals(
-                            VueUser.DEFAULT_FACEBOOK_ID)
-                            && vueUser.getGooglePlusId().equals(
-                                    VueUser.DEFAULT_GOOGLEPLUS_ID)) {
-                        articleParams.put("User_Status", "Un_Registered");
-                    } else {
-                        articleParams.put("User_Status", "Registered");
-                        if ((!vueUser.getFacebookId().equals(
-                                VueUser.DEFAULT_FACEBOOK_ID))
-                                && (!vueUser.getGooglePlusId().equals(
-                                        VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                            articleParams.put("Registered_Source",
-                                    "Registered with FB and GPLUS");
-                            
-                        } else if ((!vueUser.getGooglePlusId().equals(
-                                VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                            articleParams.put("Registered_Source",
-                                    "Registered with GPLUS");
-                        } else if ((!vueUser.getFacebookId().equals(
-                                VueUser.DEFAULT_FACEBOOK_ID))) {
-                            articleParams.put("Registered_Source",
-                                    "Registered with FB");
-                        }
-                    }
-                    FlurryAgent.logEvent("Rigestered_Users", articleParams);
-                    FlurryAgent
-                            .logEvent("Login_Time_Ends", articleParams, true);
-                }
-                FlurryAgent.onPageView();
-                
-            }
-        }).start();
-        
-        mixpanel.flush();
+        FlurryAgent.onStartSession(VueLandingPageActivity.this,
+                Utils.FLURRY_APP_KEY);
+        FlurryAgent.onPageView();
         super.onStart();
         
     }
@@ -489,40 +440,6 @@ public class VueLandingPageActivity extends Activity implements
     protected void onStop() {
         super.onStop();
         FlurryAgent.onEndSession(this);
-        VueUser vueUser = null;
-        try {
-            vueUser = Utils.readUserObjectFromFile(this,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (vueUser != null) {
-            Map<String, String> articleParams = new HashMap<String, String>();
-            if (vueUser.getFacebookId().equals(VueUser.DEFAULT_FACEBOOK_ID)
-                    && vueUser.getGooglePlusId().equals(
-                            VueUser.DEFAULT_GOOGLEPLUS_ID)) {
-                articleParams.put("User_Status", "Un_Registered");
-            } else {
-                articleParams.put("User_Status", "Registered");
-                if ((!vueUser.getFacebookId().equals(
-                        VueUser.DEFAULT_FACEBOOK_ID))
-                        && (!vueUser.getGooglePlusId().equals(
-                                VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                    articleParams.put("Registered_Source",
-                            "Registered with FB and GPLUS");
-                    
-                } else if ((!vueUser.getGooglePlusId().equals(
-                        VueUser.DEFAULT_GOOGLEPLUS_ID))) {
-                    articleParams.put("Registered_Source",
-                            "Registered with GPLUS");
-                } else if ((!vueUser.getFacebookId().equals(
-                        VueUser.DEFAULT_FACEBOOK_ID))) {
-                    articleParams
-                            .put("Registered_Source", "Registered with FB");
-                }
-            }
-            FlurryAgent.logEvent("Rigestered_Users", articleParams);
-        }
     }
     
     @Override
