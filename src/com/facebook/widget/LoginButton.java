@@ -61,7 +61,7 @@ import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.utils.Utils;
+import com.lateralthoughts.vue.logging.Logger;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
@@ -719,7 +719,9 @@ public class LoginButton extends Button {
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueLoginTimes/");
         if (!dir.isDirectory()) {

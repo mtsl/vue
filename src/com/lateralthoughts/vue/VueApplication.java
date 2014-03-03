@@ -165,9 +165,6 @@ public class VueApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile app oncreate started");
-        }
         sInstance = this;
         mVueApplicationContext = this;
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
@@ -210,9 +207,6 @@ public class VueApplication extends Application {
                         return mCache.get(url);
                     }
                 });
-        if (Utils.sIsLoged) {
-            Logging.i("profile", "profile app oncreate ended");
-        }
     }
     
     public static VueApplication getInstance() {

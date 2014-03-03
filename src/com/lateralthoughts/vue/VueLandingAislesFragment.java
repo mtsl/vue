@@ -6,44 +6,34 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.Logging;
@@ -167,14 +157,14 @@ public class VueLandingAislesFragment extends Fragment {
                     int lastVisiblePosition = firstVisibleItem
                             + visibleItemCount;
                     if ((totalItemCount - lastVisiblePosition) < 5) {
-                        if(!VueContentGateway.mNomoreTrendingAilse) {
-                        VueTrendingAislesDataModel
-                                .getInstance(mContext)
-                                .getNetworkHandler()
-                                .requestMoreAisle(
-                                        true,
-                                        getResources().getString(
-                                                R.string.trending));
+                        if (!VueContentGateway.mNomoreTrendingAilse) {
+                            VueTrendingAislesDataModel
+                                    .getInstance(mContext)
+                                    .getNetworkHandler()
+                                    .requestMoreAisle(
+                                            true,
+                                            getResources().getString(
+                                                    R.string.trending));
                         }
                     }
                 }
@@ -357,7 +347,9 @@ public class VueLandingAislesFragment extends Fragment {
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueImageDetails/");
         if (!dir.isDirectory()) {
@@ -384,14 +376,12 @@ public class VueLandingAislesFragment extends Fragment {
             e.printStackTrace();
         }
     }
+    
     private class MyPoints extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             VueLandingPageActivity.sMyPointsAvailable = false;
-            if (Utils.sIsLoged) {
-                Logging.i("myPointsDownLoad", "myPointsDownLoad started");
-            }
         }
         
         @Override
@@ -408,9 +398,6 @@ public class VueLandingAislesFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (Utils.sIsLoged) {
-                Logging.i("myPointsDownLoad", "myPointsDownLoad ended");
-            }
         }
     }
 }

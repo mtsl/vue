@@ -11,6 +11,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.os.Environment;
 
+import com.lateralthoughts.vue.logging.Logger;
 import com.mail.SendMail;
 
 public class ExceptionHandler implements
@@ -39,6 +40,9 @@ public class ExceptionHandler implements
     }
     
     private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueExceptions/");
         if (!dir.isDirectory()) {

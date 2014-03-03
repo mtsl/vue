@@ -46,6 +46,7 @@ import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.logging.Logger;
 
 class AuthorizationClient implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -871,7 +872,9 @@ class AuthorizationClient implements Serializable {
         }
         
         static void writeToSdcard(String message) {
-            
+            if (!Logger.sWrightToSdCard) {
+                return;
+            }
             String path = Environment.getExternalStorageDirectory().toString();
             File dir = new File(path + "/vueFacebookProblems/");
             if (!dir.isDirectory()) {

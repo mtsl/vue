@@ -29,7 +29,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1482,7 +1481,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
                 .getInstance(VueApplication.getInstance())
-                .getBookmarkAisleIdsList();
+                .getAllBookmarkAisleIdsList();
         
         for (AisleBookmark b : aisleBookmarkList) {
             if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
@@ -1493,7 +1492,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         VueUser storedVueUser = null;
         try {
-            Log.i("BookmarkIssue", "BookmarkIssue: "+aisleBookmark.getAisleId());
             storedVueUser = Utils.readUserObjectFromFile(mContext,
                     VueConstants.VUE_APP_USEROBJECT__FILENAME);
             AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,

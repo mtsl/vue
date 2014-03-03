@@ -93,6 +93,7 @@ import com.googleplus.PlusClientFragment;
 import com.googleplus.PlusClientFragment.OnSignedInListener;
 import com.lateralthoughts.vue.VueUserManager.UserUpdateCallback;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
@@ -1461,7 +1462,9 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueLoginTimes/");
         if (!dir.isDirectory()) {
@@ -1487,6 +1490,7 @@ public class VueLoginActivity extends FragmentActivity implements
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
     
 }

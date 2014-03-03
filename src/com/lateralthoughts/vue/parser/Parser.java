@@ -57,19 +57,8 @@ public class Parser {
         }
         try {
             isEmptyAilseCached = true;
-            if (Utils.sIsLoged) {
-                Logging.i("profile", "profile aisle parsing started: ");
-            }
             aisleWindowContentList = parseAisleInformation(contentArray,
                     isEmptyAilseCached);
-            if (Utils.sIsLoged) {
-                if (aisleWindowContentList != null)
-                    Logging.i("profile",
-                            "profile aislesinitial request started : "
-                                    + aisleWindowContentList.size());
-                
-            }
-            
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -79,11 +68,6 @@ public class Parser {
     private JSONArray handleResponse(String resultString, boolean loadMore) {
         JSONArray contentArray = null;
         try {
-            if (Utils.sIsLoged) {
-                Logging.i("profile", "profile aisle parsing string: "
-                        + resultString);
-                // writeToSdcard(resultString + "\n");
-            }
             contentArray = new JSONArray(resultString);
             if (!loadMore) {
                 VueTrendingAislesDataModel.getInstance(
@@ -338,7 +322,6 @@ public class Parser {
     }
     
     public AisleWindowContent getBookmarkedAisle(JSONObject josnObject) {
-        writeToSdcard("\n\n" + josnObject.toString());
         AisleContext aisleContext = parseAisleData(josnObject);
         ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();
         try {
@@ -535,18 +518,6 @@ public class Parser {
     
     private static ArrayList<ImageRating> removeDuplicateImageRating(
             ArrayList<ImageRating> imgRatingList) {
-        
-/*          int size = imgRatingList.size(); for (int i = 0; i < size; i++) {
-          ImageRating current; if (imgRatingList.size() > i) { current =
-          imgRatingList.get(i); } else { break; } for (int j = 0; j < i; ++j) {
-         ImageRating previous; if (imgRatingList.size() > j) { previous =
-          imgRatingList.get(j); } else { break; } final boolean relation =
-          previous.compareTo(current); if (relation) { int isGrater = previous
-          .compareTime(current.mLastModifiedTimestamp); if (isGrater ==
-          ImageRating.NEW_TIME_STAMP) { imgRatingList.remove(i); } else {
-          imgRatingList.remove(j); } } } }*/
-         
-        
         ArrayList<ImageRating> dummyList = new ArrayList<ImageRating>();
         ArrayList<ImageRating> tempList = new ArrayList<ImageRating>();
         ArrayList<ImageRating> finalList = new ArrayList<ImageRating>();
@@ -573,11 +544,13 @@ public class Parser {
                 finalList.add(finalItem);
             }
         }
+       
         return imgRatingList;
     }
     
     private static ArrayList<AisleBookmark> removeDuplicateBookmarkedAisles(
             ArrayList<AisleBookmark> bookmarkedAisles) {
+        
         int size = bookmarkedAisles.size();
         for (int i = 0; i < size; i++) {
             AisleBookmark current;
@@ -613,35 +586,5 @@ public class Parser {
             }
         }
         return bookmarkedAisles;
-    }
-    
-    private void writeToSdcard(String message) {
-        String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/AisleResponseBookmark/");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
-        File file = new File(dir, "/" + "AisleResponse"
-                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
-                + Calendar.getInstance().get(Calendar.DATE) + "_"
-                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
-        
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file, true)));
-            out.write("\n" + message + "\n");
-            out.flush();
-            out.close();
-            
-        } catch (IOException e) {
-            
-            e.printStackTrace();
-        }
     }
 }

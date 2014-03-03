@@ -1334,7 +1334,9 @@ public class VueUserManager {
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueLoginTimes/");
         if (!dir.isDirectory()) {
@@ -1360,6 +1362,7 @@ public class VueUserManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
     
     private void showServerMesgForMaxTries() {
