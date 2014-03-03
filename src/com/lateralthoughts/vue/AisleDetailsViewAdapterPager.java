@@ -1269,13 +1269,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } else {
                     likeCountValue = -2;
                 }
+                //add user point 2 for every like
                 Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS,
                         likeCountValue, mContext);
+                //update the like ids list
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .modifyImageRatedStatus(imageId, likeOrDislike);
                 mLikeCount = itemDetails.mLikesCount;
+                //get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
                 mImgRating = new ImageRating();
@@ -1296,6 +1299,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mImgRating.mImageRatingOwnerLastName = storedVueUser
                             .getLastName();
                 }
+                //if image have already an rate id get it from db.
                 for (ImageRating imgRat : imgRatingList) {
                     if (mImgRating.mImageId.longValue() == imgRat.mImageId
                             .longValue()) {

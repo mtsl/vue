@@ -110,7 +110,7 @@ public class AisleWindowContent {
                 if (status) {
                     mAisleImagesList.get(index).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
-            }
+            } 
         }
         if (mAisleImagesList != null) {
             udpateImageUrlsForDevice();
