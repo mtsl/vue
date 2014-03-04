@@ -28,7 +28,6 @@ import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -56,14 +55,18 @@ public class VueApplication extends Application {
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
     public boolean mInstalledAppsLoadStatus = false;
-    public String MIXPANEL_TOKEN = "178a869c17a98b1f044ae5548ad9f4c4";// "178a869c17a98b1f044ae5548ad9f4c4";
-                                                                      // //
-                                                                      // Vidya
-                                                                      // token
-                                                                      // new
-    /*
-     * "0b560991fe02d44932efedeff66e54f5" Vidya token old not working ;
-     *//* "d5ac13097eaf8acefc264d21457307a1" Surendra token working */
+    public String MIXPANEL_TOKEN = "1647c2878866ff31de08dc810f33fbf6"; // "Krishna
+                                                                       // Mixpanel
+                                                                       // token
+                                                                       // for
+                                                                       // Vue
+                                                                       // development
+                                                                       // testing
+    // "178a869c17a98b1f044ae5548ad9f4c4";
+    //
+    // Vidya
+    // token
+    // for Playstore version
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
