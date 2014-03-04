@@ -219,8 +219,8 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-        updateImageRatingVolley(   imageRating,   likeCount);
-        /*if (VueConnectivityManager.isNetworkConnected(VueApplication
+       // updateImageRatingVolley(   imageRating,   likeCount);
+        if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             
             ObjectMapper mapper = new ObjectMapper();
@@ -254,10 +254,10 @@ public class AisleManager {
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
             editor.commit();
-        }*/
+        }
     }
  //TODO: VOLLEY CODE NOT WORKING NEEDS TO BE TESTED.
-    public void updateImageRatingVolley(final ImageRating imageRating, final int likeCount)
+    private void updateImageRatingVolley(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
         String url;
         if (imageRating.mId == null) {

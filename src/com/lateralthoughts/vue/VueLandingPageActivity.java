@@ -36,6 +36,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -208,6 +209,9 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onCreate: ");
+        }
     }
     
     @Override
@@ -221,6 +225,9 @@ public class VueLandingPageActivity extends Activity implements
                         mLandingScreenTitleReceiver);
             }
         } catch (Exception e) {
+        }
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onDestroy: ");
         }
     }
     
@@ -432,6 +439,9 @@ public class VueLandingPageActivity extends Activity implements
         FlurryAgent.onStartSession(VueLandingPageActivity.this,
                 Utils.FLURRY_APP_KEY);
         FlurryAgent.onPageView();
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onStart: ");
+        }
         super.onStart();
         
     }
@@ -439,6 +449,11 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onStop() {
         super.onStop();
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onStop: ");
+        }
+        long time_in_mins = Utils.getMins(System.currentTimeMillis());
+        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         FlurryAgent.onEndSession(this);
     }
     
@@ -798,14 +813,18 @@ public class VueLandingPageActivity extends Activity implements
             }, 500);
             
         }
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onResume: ");
+        }
     }
     
     @Override
     public void onPause() {
-        mLandingScreenActive = false;
-        long time_in_mins = Utils.getMins(System.currentTimeMillis());
-        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
+        mLandingScreenActive = false;
+        if(Utils.sIsLoged) {
+        Log.i("emptyScreenissue", "emptyScreenissue onPause: ");
+        }
         
     }
     
