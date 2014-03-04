@@ -25,6 +25,7 @@ import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleUpdateBackgroundThread;

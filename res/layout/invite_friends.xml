@@ -24,20 +24,20 @@
         android:textSize="18sp" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/invite_friends_addFriends"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp" >
+        android:layout_marginRight="4dp" >
 
-        <Button
-            android:id="@+id/invite_friends_addFriends"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/red_bg_selector"
-            android:padding="8dip"
-            android:text="@string/invite"
-            android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/child_iconImageview"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/new_profile"
+            android:contentDescription="@string/image_contentDescription" />
     </RelativeLayout>
 
 </RelativeLayout>

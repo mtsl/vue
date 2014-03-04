@@ -66,6 +66,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.user.VueUserProfile;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.SortBasedOnName;
@@ -279,40 +281,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                         // TODO:
                                     }
                                 });
-                        
-                    } else if (s
-                            .equals(getString(R.string.sidemenu_option_Login))) {
-                        FlurryAgent.logEvent("Login_Without_Prompt");
-                        mSharedPreferencesObj = getActivity()
-                                .getSharedPreferences(
-                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        boolean fbloginfalg = mSharedPreferencesObj.getBoolean(
-                                VueConstants.FACEBOOK_LOGIN, false);
-                        boolean googleplusloginfalg = mSharedPreferencesObj
-                                .getBoolean(VueConstants.GOOGLEPLUS_LOGIN,
-                                        false);
-                        if (!googleplusloginfalg || !fbloginfalg) {
-                            
-                            Intent i = new Intent(getActivity(),
-                                    VueLoginActivity.class);
-                            Bundle b = new Bundle();
-                            b.putBoolean(
-                                    VueConstants.FBLOGIN_FROM_DETAILS_SHARE,
-                                    false);
-                            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
-                                    false);
-                            b.putString(VueConstants.FROM_INVITEFRIENDS, null);
-                            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN,
-                                    true);
-                            i.putExtras(b);
-                            startActivity(i);
-                        } else {
-                            Toast.makeText(
-                                    getActivity(),
-                                    getActivity().getResources().getString(
-                                            R.string.already_logged_in_msg),
-                                    Toast.LENGTH_LONG).show();
-                        }
+                        FlurryAgent.logEvent("InviteFriends_" + s);
+                        Utils.saveUserPoints(
+                                VueConstants.USER_INVITE_FRIEND_POINTS, 5,
+                                getActivity());
+                        getFriendsList(s);
                     } else if (s
                             .equals(getString(R.string.sidemenu_option_Help))) {
                         Intent i = new Intent(getActivity(), Help.class);
@@ -438,11 +411,13 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     return true;
                 } else if (s
                         .contains(getString(R.string.sidemenu_sub_option_My_Pointss))) {
-                    if(VueLandingPageActivity.sMyPointsAvailable){
-                    int pointsEarned = Utils.getUserPoints();
-                    showRewardsDialog("Silver", pointsEarned);
+                    if (VueLandingPageActivity.sMyPointsAvailable) {
+                        int pointsEarned = Utils.getUserPoints();
+                        showRewardsDialog("Silver", pointsEarned);
                     } else {
-                        Toast.makeText(VueApplication.getInstance(), "Wait your points are loading...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VueApplication.getInstance(),
+                                "Wait your points are loading...",
+                                Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
@@ -527,16 +502,13 @@ public class VueListFragment extends Fragment implements TextWatcher {
         groups.add(item);
         item = new ListOptionItem(
                 getString(R.string.sidemenu_option_Invite_Friends),
-                R.drawable.invite, getInviteFriendsChildren());
+                R.drawable.invite, null);
         groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_About),
                 R.drawable.about, null);
         groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_FeedBack),
                 R.drawable.feedback, null);
-        groups.add(item);
-        item = new ListOptionItem(getString(R.string.sidemenu_option_Login),
-                R.drawable.login, null);
         groups.add(item);
         item = new ListOptionItem(getString(R.string.sidemenu_option_Help),
                 R.drawable.help, null);
@@ -709,7 +681,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
                             .equals(getString(R.string.sidemenu_option_Invite_Friends)))
                     || groups.get(groupPosition).tag.equals("Settings")
                     || groupPosition == 1) {
-                return groups.get(groupPosition).children.size();
+                try {
+                    return groups.get(groupPosition).children.size();
+                } catch (Exception e) {
+                }
             }
             return 0;
         }
@@ -794,53 +769,21 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         boolean facebookloginflag = mSharedPreferencesObj.getBoolean(
                 VueConstants.FACEBOOK_LOGIN, false);
-        boolean googleplusloginflag = mSharedPreferencesObj.getBoolean(
-                VueConstants.GOOGLEPLUS_LOGIN, false);
-        if (s.equals(getResources().getString(
-                R.string.sidemenu_sub_option_Facebook))) {
-            
-            if (facebookloginflag) {
-                fbFriendsList();
-            } else {
-                if (mProgress.isShowing()) {
-                    mProgress.dismiss();
-                }
-                Intent i = new Intent(getActivity(), VueLoginActivity.class);
-                Bundle b = new Bundle();
-                b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-                b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-                b.putString(VueConstants.FROM_INVITEFRIENDS,
-                        VueConstants.FACEBOOK);
-                b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-                i.putExtras(b);
-                getActivity().startActivityForResult(i,
-                        VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
-            }
-            
-        } else if (s.equals(getResources().getString(
-                R.string.sidemenu_sub_option_Googleplus))) {
-            if (googleplusloginflag) {
-                getGPlusFriendsList();
-            } else {
-                if (mProgress.isShowing()) {
-                    mProgress.dismiss();
-                }
-                Intent i = new Intent(getActivity(), VueLoginActivity.class);
-                Bundle b = new Bundle();
-                b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
-                b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
-                b.putString(VueConstants.FROM_INVITEFRIENDS,
-                        VueConstants.GOOGLEPLUS);
-                b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
-                i.putExtras(b);
-                getActivity().startActivityForResult(i,
-                        VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
-            }
-            
+        if (facebookloginflag) {
+            fbFriendsList();
         } else {
             if (mProgress.isShowing()) {
                 mProgress.dismiss();
             }
+            Intent i = new Intent(getActivity(), VueLoginActivity.class);
+            Bundle b = new Bundle();
+            b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
+            b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
+            b.putString(VueConstants.FROM_INVITEFRIENDS, VueConstants.FACEBOOK);
+            b.putBoolean(VueConstants.FROM_BEZELMENU_LOGIN, false);
+            i.putExtras(b);
+            getActivity().startActivityForResult(i,
+                    VueConstants.INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE);
         }
     }
     

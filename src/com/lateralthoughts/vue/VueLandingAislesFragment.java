@@ -36,7 +36,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
-import com.lateralthoughts.vue.utils.Logging;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 

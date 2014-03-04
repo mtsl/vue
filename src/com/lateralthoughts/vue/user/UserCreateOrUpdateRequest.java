@@ -1,4 +1,4 @@
-package com.lateralthoughts.vue.utils;
+package com.lateralthoughts.vue.user;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,8 +9,6 @@ import java.util.Map;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -57,14 +55,12 @@ public class UserCreateOrUpdateRequest extends Request<String> {
         }
         return bos.toByteArray();
     }
-    
     @Override
     public Map<String, String> getHeaders() {
         HashMap<String, String> headersMap = new HashMap<String, String>();
-        headersMap.put("Content-Type", "application/json");
+        headersMap.put("Content-Type", "application/json;charset=UTF-8");
         return headersMap;
     }
-    
     @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;

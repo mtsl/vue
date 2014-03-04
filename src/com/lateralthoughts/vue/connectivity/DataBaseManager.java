@@ -39,11 +39,11 @@ import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.RecentlyViewedAisle;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.UsedKeywordsOnUpgrade;
@@ -848,7 +848,6 @@ public class DataBaseManager {
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
         ContentValues values = new ContentValues();
-        values.put(VueConstants.ID, bookmarkId);
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         Cursor cursor = mContext.getContentResolver().query(
@@ -859,8 +858,9 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.AISLE_ID));
                 if (bookmarkedAisleId.equals(aisleId)) {
                     mContext.getContentResolver().update(
-                            VueConstants.BOOKMARKER_AISLES_URI, values, null,
-                            null);
+                            VueConstants.BOOKMARKER_AISLES_URI, values,
+                            VueConstants.ID + "=?",
+                            new String[] {Long.toString(bookmarkId)});
                     isMatched = true;
                     break;
                 }
