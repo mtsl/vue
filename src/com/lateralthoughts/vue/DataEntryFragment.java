@@ -2195,7 +2195,6 @@ public class DataEntryFragment extends Fragment {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-        // TODO: Image source
         GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
                 sourceUrl, getActivity(), false);
         getImagesTask.execute();

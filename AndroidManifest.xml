@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lateralthoughts.vue"
     android:versionCode="10"
-    android:versionName="1.9_prerelease_test" >
+    android:versionName="1.9_pre-release-test" >
 
     <!--
 1.8_prerelease_curated
