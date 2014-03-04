@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.R.color;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -88,8 +85,6 @@ public class LoginButton extends Button {
     private Fragment parentFragment;
     private LoginButtonProperties properties = new LoginButtonProperties();
     private MixpanelAPI mixpanel;
-    private JSONObject loginprops;
-    private MixpanelAPI.People people;
     
     static class LoginButtonProperties {
         private SessionDefaultAudience defaultAudience = SessionDefaultAudience.FRIENDS;
@@ -235,7 +230,6 @@ public class LoginButton extends Button {
         super(context, attrs);
         mixpanel = MixpanelAPI.getInstance(context,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
         if (attrs.getStyleAttribute() == 0) {
             // apparently there's no method of setting a default style in xml,
             // so in case the users do not explicitly specify a style, we need
@@ -264,7 +258,6 @@ public class LoginButton extends Button {
         super(context, attrs, defStyle);
         mixpanel = MixpanelAPI.getInstance(context,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
         initializeActiveSessionWithCachedToken(context);
     }
     
@@ -625,13 +618,7 @@ public class LoginButton extends Button {
         public void onClick(View v) {
             writeToSdcard("Before fb login : " + new Date());
             if (VueConnectivityManager.isNetworkConnected(getContext())) {
-                loginprops = new JSONObject();
-                try {
-                    loginprops.put("login selected", "facebook");
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                mixpanel.track("Facebook Login Selected", null);
                 Context context = getContext();
                 final Session openSession = sessionTracker.getOpenSession();
                 if (openSession != null) {
