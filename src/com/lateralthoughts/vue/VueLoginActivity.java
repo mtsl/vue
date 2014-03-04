@@ -376,8 +376,18 @@ public class VueLoginActivity extends FragmentActivity {
             @Override
             public void onCompleted(final GraphUser user,
                     com.facebook.Response response) {
-                mixpanel.track("Facebook Login Selected", null);
                 if (user != null) {
+                    JSONObject loginprops = new JSONObject();
+                    try {
+                        loginprops.put(
+                                "Email",
+                                user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
+                                        + "");
+                        loginprops.put("Sucess with", "Facebook Library");
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                    mixpanel.track("Facebook Login Success", loginprops);
                     FlurryAgent.logEvent("Facebook_Logins");
                     FlurryAgent.endTimedEvent("Login_Time_Ends");
                     FlurryAgent.logEvent("Login Success");
@@ -394,6 +404,20 @@ public class VueLoginActivity extends FragmentActivity {
                                 public void onUserUpdated(VueUser vueUser,
                                         final boolean loginSuccessFlag) {
                                     if (vueUser != null) {
+                                        JSONObject loginprops = new JSONObject();
+                                        try {
+                                            loginprops.put(
+                                                    "Email",
+                                                    user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
+                                                            + "");
+                                            loginprops.put("Sucess with",
+                                                    "Vue server");
+                                        } catch (JSONException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                        mixpanel.track("Vue Login Success",
+                                                loginprops);
+                                        
                                         writeToSdcard("After server Succefull login for Facebook : "
                                                 + new Date());
                                         try {
@@ -591,6 +615,14 @@ public class VueLoginActivity extends FragmentActivity {
         } else {
             if (fromOnActivityResult) {
                 writeToSdcard("After Fb login failure: " + new Date());
+                JSONObject loginprops = new JSONObject();
+                try {
+                    loginprops.put("Failure Reason",
+                            "Unable to Login with Facebook library");
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+                mixpanel.track("Facebook Login Failed", loginprops);
             }
             if (mFromDetailsFbShare) {
                 if (fromOnActivityResult) {
