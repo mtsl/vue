@@ -24,7 +24,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
     public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
     public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 10;
     
     private String mCreateAislesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES + " (" + VueConstants.AISLE_Id

@@ -55,7 +55,9 @@ public class VueApplication extends Application {
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
     public boolean mInstalledAppsLoadStatus = false;
-    public String MIXPANEL_TOKEN = "1647c2878866ff31de08dc810f33fbf6"; // "Krishna
+    public String MIXPANEL_TOKEN = "72f1b89ae2fc217079ef18cd9a67150b";       //"72f1b89ae2fc217079ef18cd9a67150b"; // "Vue
+                                                                       // India
+                                                                       // Team
                                                                        // Mixpanel
                                                                        // token
                                                                        // for
