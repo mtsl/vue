@@ -255,6 +255,8 @@ public class AisleManager {
     
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
+        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY  updateImageRatingToDb(): imgRating.mId = "
+                        + imgRating.mId + ", imgRating.mAisleId = " + imgRating.mAisleId + ", isDirty = " + isDirty);
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
     }
