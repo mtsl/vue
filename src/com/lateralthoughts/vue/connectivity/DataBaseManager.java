@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -819,6 +820,7 @@ public class DataBaseManager {
                         + "=?",
                 new String[] { String.valueOf(imageRating.mAisleId),
                         String.valueOf(imageRating.mImageId) });
+        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce update success for image");
         updateRatedImages(imageRating, isUserRating, isDirty);
     }
     
@@ -842,11 +844,10 @@ public class DataBaseManager {
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void updateBookmarkAislesToBDb(Long bookmarkId,
+    private void updateBookmarkAislesToBDb(Long bookmarkId,
             String bookmarkedAisleId, boolean isBookmarked) {
         boolean isMatched = false;
         ContentValues values = new ContentValues();
-        values.put(VueConstants.ID, bookmarkId);
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
         values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
         Cursor cursor = mContext.getContentResolver().query(
@@ -857,8 +858,9 @@ public class DataBaseManager {
                         .getColumnIndex(VueConstants.AISLE_ID));
                 if (bookmarkedAisleId.equals(aisleId)) {
                     mContext.getContentResolver().update(
-                            VueConstants.BOOKMARKER_AISLES_URI, values, null,
-                            null);
+                            VueConstants.BOOKMARKER_AISLES_URI, values,
+                            VueConstants.ID + "=?",
+                            new String[] {Long.toString(bookmarkId)});
                     isMatched = true;
                     break;
                 }
@@ -1501,7 +1503,6 @@ public class DataBaseManager {
         if (imagerating == null || imagerating.mId == null) {
             return;
         }
-        
         boolean isMatched = false;
         ContentValues values = new ContentValues();
         values.put(VueConstants.ID, imagerating.mId.longValue());
@@ -1538,6 +1539,7 @@ public class DataBaseManager {
                             VueConstants.RATED_IMAGES_URI, values,
                             VueConstants.ID + "=? ",
                             new String[] { String.valueOf(imagerating.mId) });
+                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce update success for RATING");
                     isMatched = true;
                     break;
                 }

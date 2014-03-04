@@ -29,7 +29,7 @@
         android:layout_height="48dip"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp" >
+        android:layout_marginRight="4dp" >
 
         <ImageView
             android:id="@+id/child_iconImageview"

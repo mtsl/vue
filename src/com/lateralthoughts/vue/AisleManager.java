@@ -219,10 +219,12 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
+<<<<<<< HEAD
        // updateImageRatingVolley(   imageRating,   likeCount);
+=======
+>>>>>>> ecbaf1b6266154dd8e9a47cc84bcf5bc1371daed
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
-            
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
             imageRatingRequestObject.setId(imageRating.getId());
@@ -238,7 +240,7 @@ public class AisleManager {
                         VueApplication.getInstance(),
                         VueConstants.VUE_APP_USEROBJECT__FILENAME);
                 new Thread(new Runnable() {
-                    
+
                     @Override
                     public void run() {
                         imageRatingPutRequest(imageRating, imageRatingString,
@@ -249,7 +251,9 @@ public class AisleManager {
                 e.printStackTrace();
             }
         } else {
+            if(imageRating.getId() == null) {
             imageRating.mId = 0001L;
+            }
             updateImageRatingToDb(imageRating, likeCount, true);
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -489,6 +493,7 @@ public class AisleManager {
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
+                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce: " + responseMessage);
                 if (responseMessage != null && responseMessage.length() > 0) {
                     Log.i("volley test image", "volley test image success normal thread response: ");
                     try {
