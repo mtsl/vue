@@ -219,10 +219,7 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-<<<<<<< HEAD
        // updateImageRatingVolley(   imageRating,   likeCount);
-=======
->>>>>>> ecbaf1b6266154dd8e9a47cc84bcf5bc1371daed
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             ObjectMapper mapper = new ObjectMapper();
