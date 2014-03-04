@@ -1,8 +1,13 @@
 package com.lateralthoughts.vue.connectivity;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +28,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -56,6 +63,7 @@ import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -761,7 +769,7 @@ public class NetworkHandler {
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());
-                                    
+                                    String temp = "";
                                     if (retrievedImageRating != null
                                             && retrievedImageRating.size() > 0) {
                                         ratedImageList.clear();
@@ -769,7 +777,13 @@ public class NetworkHandler {
                                                 .size(); index++) {
                                             boolean currentRateStatus = retrievedImageRating
                                                     .get(index).mLiked;
-                                            if (currentRateStatus) {
+                                            temp = temp+" ImageId: "+ retrievedImageRating
+                                                    .get(index).getImageId()+"  RateId: "+retrievedImageRating
+                                                    .get(index).getId()+" RateStatus: "+retrievedImageRating
+                                                    .get(index).mLiked+"\n";
+                                            
+                                            if(currentRateStatus) {
+
                                                 ratedImageList.add(String
                                                         .valueOf(retrievedImageRating
                                                                 .get(index)
@@ -777,6 +791,7 @@ public class NetworkHandler {
                                             }
                                         }
                                     }
+                                    writeToSdcard(temp);
                                     // these likes are by the user add 2 points
                                     // per each like.
                                     int likesCount = 0;
@@ -1039,6 +1054,38 @@ public class NetworkHandler {
         public VueAislesRequest(String url, Listener<JSONArray> listener,
                 ErrorListener errorListener) {
             super(url, listener, errorListener);
+        }
+    }
+    private void writeToSdcard(String message) {
+      /*  if (!Logger.sWrightToSdCard) {
+            return;
+        }*/
+        Log.i("NetworkHandler", "Writing to sdcard");
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueImageRatingDetails");
+        if (!dir.isDirectory()) {
+            Log.i("NetworkHandler", "Writing to sdcard Create new dir");
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "vueImageRatingDetails"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            Log.i("NetworkHandler", "Writing to sdcard writing successfull"); 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
