@@ -2195,7 +2195,6 @@ public class DataEntryFragment extends Fragment {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-        // TODO: Image source
         GetOtherSourceImagesTask getImagesTask = new GetOtherSourceImagesTask(
                 sourceUrl, getActivity(), false);
         getImagesTask.execute();
@@ -2649,10 +2648,7 @@ public class DataEntryFragment extends Fragment {
                     VueApplication.getInstance()).getAisleAt(
                     VueApplication.getInstance().getClickedWindowID());
         }
-        if (mFindAtText.getText().toString().trim().length() == 0
-                && mFromDetailsScreenFlag
-                && !(aisleWindowContent.getAisleContext().mUserId
-                        .equals(userId))) {
+        if (mFindAtText.getText().toString().trim().length() == 0) {
             Toast.makeText(getActivity(),
                     "Please specify where to find this product",
                     Toast.LENGTH_LONG).show();

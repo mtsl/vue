@@ -35,11 +35,8 @@ import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VueUserManager {
-    
-    private MixpanelAPI mixpanel;
     
     public interface UserUpdateCallback {
         public void onUserUpdated(VueUser user, boolean loginSuccessFlag);
@@ -49,8 +46,6 @@ public class VueUserManager {
     private VueUser mCurrentUser;
     
     private VueUserManager() {
-        mixpanel = MixpanelAPI.getInstance(VueApplication.getInstance(),
-                VueApplication.getInstance().MIXPANEL_TOKEN);
         mCurrentUser = null;
     }
     
@@ -269,7 +264,6 @@ public class VueUserManager {
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }
-                mixpanel.track("Vue Server Login Failed", loginprops);
                 writeToSdcard("After server failure login for Facebook get user : "
                         + new Date());
                 callback.onUserUpdated(null, false);
@@ -418,7 +412,6 @@ public class VueUserManager {
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
-                        mixpanel.track("Vue Server Login Failed", loginprops);
                         callback.onUserUpdated(null, false);
                     }
                 } catch (Exception e) {
@@ -517,9 +510,6 @@ public class VueUserManager {
                                             } catch (JSONException e1) {
                                                 e1.printStackTrace();
                                             }
-                                            mixpanel.track(
-                                                    "Vue Server Login Failed",
-                                                    loginprops);
                                             callback.onUserUpdated(null, false);
                                         }
                                     }

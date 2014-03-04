@@ -150,6 +150,9 @@ public class GetOtherSourceImagesTask extends
         }
         
         try {
+            if (url.startsWith("www") || url.startsWith("WWW")) {
+                url = "http://" + url;
+            }
             URL rssURL = new URL(url);
             
             HttpURLConnection conn = (HttpURLConnection) rssURL

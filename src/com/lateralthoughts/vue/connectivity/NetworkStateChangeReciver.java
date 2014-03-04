@@ -103,12 +103,12 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                 VueConstants.IMAGES_CONTENT_URI, null,
                                 VueConstants.IMAGE_ID + "=?",
                                 new String[] {String.valueOf(imgRating
-                                        .getImageId().longValue())}, null);
+                                        .getImageId())}, null);
                         Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Cursor.getCount(): " + c.getCount());
                         int likesCount = 0;
                         if (c.moveToFirst()) {
                             do {
-                                int imgId = c.getInt(c.getColumnIndex(VueConstants.IMAGE_ID));
+                                long imgId = c.getLong(c.getColumnIndex(VueConstants.IMAGE_ID));
                                if(imgId == imgRating.getImageId().longValue()) {
                                    likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
                                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imgId Matched: " + imgId);
@@ -116,6 +116,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                }
                             } while (c.moveToNext());
                         }
+                        c.close();
                         AisleManager.getAisleManager().updateRating(imgRating,
                                 likesCount);
                     } catch (Exception e) {
