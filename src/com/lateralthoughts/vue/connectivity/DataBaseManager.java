@@ -1550,6 +1550,14 @@ public class DataBaseManager {
             mContext.getContentResolver().insert(VueConstants.RATED_IMAGES_URI,
                     values);
         }
+        Cursor cc = mContext.getContentResolver().query(VueConstants.RATED_IMAGES_URI,
+                null, VueConstants.ID + "=?",
+                new String[] {String.valueOf(imagerating.mId)}, null);
+        cc.moveToFirst();
+        do {
+        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Check value: " + cc.getString(cc.getColumnIndex(VueConstants.ID)) + ", DIRTY_FLAG: " + cc.getString(cc.getColumnIndex(VueConstants.DIRTY_FLAG)));
+        } while(cc.moveToNext());
+        cc.close();
     }
     
     public ArrayList<ImageRating> getRatedImagesList(String aisleId) {

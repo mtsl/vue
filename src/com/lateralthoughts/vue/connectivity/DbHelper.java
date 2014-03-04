@@ -28,7 +28,7 @@ public class DbHelper extends SQLiteOpenHelper {
     
     private String mCreateAislesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES + " (" + VueConstants.AISLE_Id
-            + " integer primary key, " + VueConstants.CATEGORY + " text, "
+            + " long primary key, " + VueConstants.CATEGORY + " text, "
             + VueConstants.FIRST_NAME + " text, " + VueConstants.LAST_NAME
             + " text, " + VueConstants.JOIN_TIME + " text, "
             + VueConstants.LOOKING_FOR + " text, " + VueConstants.OCCASION
@@ -42,7 +42,7 @@ public class DbHelper extends SQLiteOpenHelper {
     
     private String mCreateAisleImagesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES_IMAGES + " (" + VueConstants.IMAGE_ID
-            + " integer primary key, " + VueConstants.AISLE_Id + " text, "
+            + " long primary key, " + VueConstants.AISLE_Id + " text, "
             + VueConstants.TITLE + " text, " + VueConstants.IMAGE_URL
             + " text, " + VueConstants.DETAILS_URL + " text, "
             + VueConstants.STORE + " text, " + VueConstants.USER_ID + " text, "
@@ -107,7 +107,7 @@ public class DbHelper extends SQLiteOpenHelper {
             + DATABASE_TABLE_MY_BOOKMARKED_AISLES
             + " ("
             + VueConstants.AISLE_Id
-            + " integer primary key, "
+            + " long primary key, "
             + VueConstants.CATEGORY
             + " text, "
             + VueConstants.FIRST_NAME
@@ -136,6 +136,7 @@ public class DbHelper extends SQLiteOpenHelper {
             + " text, "
             + VueConstants.ID
             + " text);";
+    
     private String mDropAisleTable = "DROP TABLE " + DATABASE_TABLE_AISLES;
     private String mDropAisleImagesTable = "DROP TABLE "
             + DATABASE_TABLE_AISLES_IMAGES;
