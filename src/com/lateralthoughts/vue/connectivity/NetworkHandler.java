@@ -766,6 +766,7 @@ public class NetworkHandler {
                             ArrayList<ImageRating> retrievedImageRating = null;
                             if (response.length() > 0) {
                                 try {
+                                    Log.i("ratedImagesResponse", "ratedImagesResponse: "+response.toString());
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());

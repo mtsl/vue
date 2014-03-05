@@ -215,6 +215,8 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
+        
+        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY updateRating imagsRating.ID: " + imageRating.getImageId());
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             ObjectMapper mapper = new ObjectMapper();
