@@ -252,6 +252,8 @@ public class AisleManager {
             imageRating.mId = 0001L;
             }
             updateImageRatingToDb(imageRating, likeCount, true);
+            Log.i("offlineImageRating", "offlineImageRating likeCount: "+likeCount);
+            Log.i("offlineImageRating", "offlineImageRating mImageId: "+imageRating.mImageId);
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
             editor.commit();

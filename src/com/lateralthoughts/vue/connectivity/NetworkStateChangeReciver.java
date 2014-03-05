@@ -96,6 +96,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                 Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY ");
                 ArrayList<ImageRating> imagsRating = DataBaseManager
                         .getInstance(context).getDirtyImages("1");
+                if(imagsRating != null){
                 Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imagsRating.size(): " + imagsRating.size());
                 for (ImageRating imgRating : imagsRating) {
                     try {
@@ -106,23 +107,30 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                         .getImageId())}, null);
                         Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Cursor.getCount(): " + c.getCount());
                         int likesCount = 0;
+                        boolean isMathced = false;
                         if (c.moveToFirst()) {
                             do {
                                 long imgId = c.getLong(c.getColumnIndex(VueConstants.IMAGE_ID));
                                if(imgId == imgRating.getImageId().longValue()) {
                                    likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
+                                   isMathced = true;
                                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imgId Matched: " + imgId);
                                    break;
                                }
                             } while (c.moveToNext());
                         }
                         c.close();
+                        if(isMathced) {
+                        Log.i("offlineImageRating", "offlineImageRating receiver likeCount: "+likesCount);
+                        Log.i("offlineImageRating", "offlineImageRating receiver mImageId: "+imgRating.mImageId);
                         AisleManager.getAisleManager().updateRating(imgRating,
                                 likesCount);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                    
+                }
                 }
             }
             
