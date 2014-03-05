@@ -2,7 +2,9 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -134,6 +137,37 @@ public class VueLandingPageActivity extends Activity implements
     private int mTrendingRequstCount = 0;
     private boolean mLandingScreenActive = false;
     
+    /**
+     * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
+     * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
+     */
+    public void copydbToSdcard() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+            
+            if (sd.canWrite()) {
+                String currentDBPath = "//data//com.lateralthoughts.vue//databases//Vue.db";
+                String backupDBPath = "Vue.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+                
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB)
+                            .getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB)
+                            .getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -209,6 +243,7 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
+ 
         if(Utils.sIsLoged) {
         Log.i("emptyScreenissue", "emptyScreenissue onCreate: ");
         }

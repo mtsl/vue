@@ -196,6 +196,7 @@ public class VueConstants {
     public static final String COMMENTS_ON_IMAGES_TABLE = "commentsOnImages";
     public static final String RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
     public static final String RATED_IMAGES = "ratedImages";
+    public static final String ALL_RATED_IMAGES = "allRatedImages";
     public static final String BOOKMARKER_AISLES = "bookmarkedAisles";
     public static final String MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
     
@@ -224,6 +225,8 @@ public class VueConstants {
             + AUTHORITY + "/" + BOOKMARKER_AISLES);
     public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://" 
             + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
+    public static final Uri ALL_RATED_IMAGES_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + ALL_RATED_IMAGES);
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
     public static final String INVITATION_MESG = "Invitation from Vue application.";
@@ -276,7 +279,7 @@ public class VueConstants {
     public static final String AISLE_IMAGE_RATING_OWNER_FIRST_NAME = "ratingOwnerFirstName";
     public static final String AISLE_IMAGE_RATING_OWNER_LAST_NAME = "ratingOwnerLastName";
     public static final String AISLE_IMAGE_RATING_LASTMODIFIED_TIME = "lastModifiedTimestamp";
-    public static final String AISLE_IMAGE_USER_RATING = "userRating";
+    //public static final String AISLE_IMAGE_USER_RATING = "userRating";
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";
     public static final String USER_JOINTIME = "joinTime";

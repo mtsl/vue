@@ -93,19 +93,21 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
             
             if ((mSharedPreferencesObj.getBoolean(VueConstants.IS_IMAGE_DIRTY,
                     false))) {
-                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY ");
                 ArrayList<ImageRating> imagsRating = DataBaseManager
                         .getInstance(context).getDirtyImages("1");
+ 
                 if(imagsRating != null){
                 Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imagsRating.size(): " + imagsRating.size());
                 for (ImageRating imgRating : imagsRating) {
+                    if(imgRating.mId == 1L) {
+                        imgRating.mId = null;
+                    }
                     try {
                         Cursor c = context.getContentResolver().query(
                                 VueConstants.IMAGES_CONTENT_URI, null,
                                 VueConstants.IMAGE_ID + "=?",
                                 new String[] {String.valueOf(imgRating
                                         .getImageId())}, null);
-                        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Cursor.getCount(): " + c.getCount());
                         int likesCount = 0;
                         boolean isMathced = false;
                         if (c.moveToFirst()) {

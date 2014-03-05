@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -511,14 +513,16 @@ public class Parser {
         ArrayList<ImageRating> dummyList = new ArrayList<ImageRating>();
         ArrayList<ImageRating> tempList = new ArrayList<ImageRating>();
         ArrayList<ImageRating> finalList = new ArrayList<ImageRating>();
+        
         for (ImageRating item : imgRatingList) {
             dummyList.add(item);
         }
         for (ImageRating item : imgRatingList) {
             tempList.clear();
-            for (ImageRating item2 : imgRatingList) {
-                if (item.mAisleId == item2.mAisleId) {
+            for (ImageRating item2 : dummyList) {
+                if (item.mImageId.longValue() == item2.mImageId.longValue()) {
                     tempList.add(item2);
+                    
                 }
             }
             if (tempList.size() > 0) {
@@ -534,8 +538,7 @@ public class Parser {
                 finalList.add(finalItem);
             }
         }
-       
-        return imgRatingList;
+        return finalList;
     }
     
     private static ArrayList<AisleBookmark> removeDuplicateBookmarkedAisles(

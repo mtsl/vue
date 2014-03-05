@@ -562,6 +562,7 @@ public class VueLoginActivity extends FragmentActivity {
             people.set("Gender", vueUserProfile.getUserGender());
             people.set("$email", vueUserProfile.getUserEmail());
             people.set("Current location", vueUserProfile.getUserLocation());
+            people.setOnce("Joined On", new Date());
             people.set("loggedIn with", "Facebook");
             JSONObject nameTag = new JSONObject();
             try {

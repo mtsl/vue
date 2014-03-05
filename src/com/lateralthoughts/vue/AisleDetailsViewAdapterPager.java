@@ -1283,6 +1283,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 //get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
+                for(ImageRating obj : imgRatingList){
+                    Log.i("ImageRatedIds", "ImageRatedIds: "+obj.mImageId);
+                }
                 mImgRating = new ImageRating();
                 mImgRating.mAisleId = Long.parseLong(aisleId);
                 mImgRating.mImageId = Long.parseLong(imageId);
@@ -1527,7 +1530,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             for (ImageRating imgRating : imgRatingList) {
                 if (imgRating.mImageId == Long.parseLong(imgDetail.mId)
-                        && imgRating.mLiked && imgRating.mIsUserRating == 1) {
+                        && imgRating.mLiked) {
                     imgDetail.mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
             }

@@ -15,7 +15,6 @@ public class ImageRating {
     public Long mLastModifiedTimestamp;
     public String mImageRatingOwnerFirstName;
     public String mImageRatingOwnerLastName;
-    public int mIsUserRating;
     
     public ImageRating() {
         
