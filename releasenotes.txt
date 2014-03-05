@@ -4,6 +4,6 @@
 
 -> Change the version name from versionnumber_pre-release-test to versionnumber and increament the versionnumber and version code.
 
--> Make the Logger.sWrightToSdCard falg as 'false' to disable writing the logs into sdcard.
+-> Make the Logger.sWrightToSdCard flag as 'false' to disable writing the logs into sdcard.
 
 -> Change the mixpanel testing token to playstore token(token given by Vidya)
