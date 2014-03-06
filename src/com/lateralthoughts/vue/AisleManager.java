@@ -248,6 +248,7 @@ public class AisleManager {
             if(imageRating.getId() == null) {
             imageRating.mId = 0001L;
             }
+            
             updateImageRatingToDb(imageRating, likeCount, true);
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
@@ -261,6 +262,7 @@ public class AisleManager {
                         + imgRating.mId + ", imgRating.mAisleId = " + imgRating.mAisleId + ", isDirty = " + isDirty);
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
+        DataBaseManager.getInstance(VueApplication.getInstance()).updateAllRatingAisles(imgRating, isDirty);
     }
     
     public AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark,
