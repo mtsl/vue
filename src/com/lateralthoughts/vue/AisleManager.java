@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.xml.transform.ErrorListener;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPut;
@@ -219,8 +217,10 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
-       // updateImageRatingVolley(   imageRating,   likeCount);
-        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY updateRating imagsRating.ID: " + imageRating.getImageId());
+        // updateImageRatingVolley( imageRating, likeCount);
+        Log.e("NetworkStateChangeReciver",
+                "VueConstants.IS_IMAGE_DIRTY updateRating imagsRating.ID: "
+                        + imageRating.getImageId());
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             ObjectMapper mapper = new ObjectMapper();
@@ -238,7 +238,7 @@ public class AisleManager {
                         VueApplication.getInstance(),
                         VueConstants.VUE_APP_USEROBJECT__FILENAME);
                 new Thread(new Runnable() {
-
+                    
                     @Override
                     public void run() {
                         imageRatingPutRequest(imageRating, imageRatingString,
@@ -249,27 +249,26 @@ public class AisleManager {
                 e.printStackTrace();
             }
         } else {
-            if(imageRating.getId() == null) {
-            imageRating.mId = 0001L;
+            if (imageRating.getId() == null) {
+                imageRating.mId = 0001L;
             }
             updateImageRatingToDb(imageRating, likeCount, true);
-            Log.i("offlineImageRating", "offlineImageRating likeCount: "+likeCount);
-            Log.i("offlineImageRating", "offlineImageRating mImageId: "+imageRating.mImageId);
             Editor editor = mSharedPreferencesObj.edit();
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
             editor.commit();
         }
     }
- //TODO: VOLLEY CODE NOT WORKING NEEDS TO BE TESTED.
-    private void updateImageRatingVolley(final ImageRating imageRating, final int likeCount)
-            throws ClientProtocolException, IOException {
+    
+    // TODO: VOLLEY CODE NOT WORKING NEEDS TO BE TESTED.
+    private void updateImageRatingVolley(final ImageRating imageRating,
+            final int likeCount) throws ClientProtocolException, IOException {
         String url;
         if (imageRating.mId == null) {
             url = UrlConstants.CREATE_RATING_RESTURL + "/";
         } else {
             url = UrlConstants.UPDATE_RATING_RESTURL + "/";
         }
-
+        
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             VueUser storedVueUser = null;
@@ -290,10 +289,10 @@ public class AisleManager {
                     .getLastModifiedTimestamp());
             String imageRatingString = mapper
                     .writeValueAsString(imageRatingRequestObject);
-
+            
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<String>() {
-
+                
                 @Override
                 public void onResponse(String jsonArray) {
                     if (jsonArray != null) {
@@ -316,7 +315,6 @@ public class AisleManager {
                                             .add(imgRating);
                                 }
                             }
-                            Log.i("volley test image", "volley test image sucees: "+imgRating.getId());
                             updateImageRatingToDb(imgRating, likeCount, false);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -324,21 +322,20 @@ public class AisleManager {
                     }
                 }
             };
-
+            
             Response.ErrorListener errorListener = new Response.ErrorListener() {
-
+                
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.i("volley test image", "volley test image failure response: "+error.toString());
                     imageRating.mId = 0001L;
                     updateImageRatingToDb(imageRating, likeCount, true);
                     Editor editor = mSharedPreferencesObj.edit();
                     editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
                     editor.commit();
                 }
-
+                
             };
-        
+            
             @SuppressWarnings("unchecked")
             ImageRatingPutRequest request = new ImageRatingPutRequest(
                     imageRatingString, listener, errorListener, url
@@ -351,12 +348,10 @@ public class AisleManager {
             editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
             editor.commit();
         }
-    } 
- 
+    }
+    
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
-        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY  updateImageRatingToDb(): imgRating.mId = "
-                        + imgRating.mId + ", imgRating.mAisleId = " + imgRating.mAisleId + ", isDirty = " + isDirty);
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
     }
@@ -495,9 +490,7 @@ public class AisleManager {
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
-                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY succes Responce: " + responseMessage);
                 if (responseMessage != null && responseMessage.length() > 0) {
-                    Log.i("volley test image", "volley test image success normal thread response: ");
                     try {
                         ImageRating imgRating = (new ObjectMapper()).readValue(
                                 responseMessage, ImageRating.class);

@@ -65,7 +65,6 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.user.VueUserProfile;
 import com.lateralthoughts.vue.utils.FbGPlusDetails;
@@ -230,7 +229,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
                     String s = textView.getText().toString();
-                    FlurryAgent.logEvent(s);
                     if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
                         VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
                         if (getActivity() instanceof VueLandingPageActivity) {
@@ -281,7 +279,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
                                         // TODO:
                                     }
                                 });
-                        FlurryAgent.logEvent("InviteFriends_" + s);
                         Utils.saveUserPoints(
                                 VueConstants.USER_INVITE_FRIEND_POINTS, 5,
                                 getActivity());
@@ -423,12 +420,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 }
                 if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                     if (s.equals(getString(R.string.sidemenu_option_Profile))) {
-                        FlurryAgent.logEvent("Settings_" + s);
                         getUserInfo();
                     } else if (s
                             .equals(getString(R.string.sidemenu_sub_option_Facebook))
                             || s.equals(getString(R.string.sidemenu_sub_option_Googleplus))) {
-                        FlurryAgent.logEvent("InviteFriends_" + s);
                         Utils.saveUserPoints(
                                 VueConstants.USER_INVITE_FRIEND_POINTS, 5,
                                 getActivity());

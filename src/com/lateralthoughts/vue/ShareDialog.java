@@ -34,7 +34,6 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.user.VueUserProfile;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -150,7 +149,6 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
-                FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     if (createAisleSelectionActivity != null) {

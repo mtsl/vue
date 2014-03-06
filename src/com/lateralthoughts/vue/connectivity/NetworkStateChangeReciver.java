@@ -95,14 +95,15 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                     false))) {
                 ArrayList<ImageRating> imagsRating = DataBaseManager
                         .getInstance(context).getDirtyImages("1");
- 
                 if(imagsRating != null){
-                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imagsRating.size(): " + imagsRating.size());
                 for (ImageRating imgRating : imagsRating) {
+                     if(imgRating.mId == null){
+                         continue;
+                     }
                     if(imgRating.mId == 1L) {
                         imgRating.mId = null;
                     }
-                    try {
+                    try { 
                         Cursor c = context.getContentResolver().query(
                                 VueConstants.IMAGES_CONTENT_URI, null,
                                 VueConstants.IMAGE_ID + "=?",
@@ -116,22 +117,18 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                if(imgId == imgRating.getImageId().longValue()) {
                                    likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
                                    isMathced = true;
-                                   Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imgId Matched: " + imgId);
                                    break;
                                }
                             } while (c.moveToNext());
                         }
                         c.close();
                         if(isMathced) {
-                        Log.i("offlineImageRating", "offlineImageRating receiver likeCount: "+likesCount);
-                        Log.i("offlineImageRating", "offlineImageRating receiver mImageId: "+imgRating.mImageId);
                         AisleManager.getAisleManager().updateRating(imgRating,
                                 likesCount);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                   
                 }
                 }
             }

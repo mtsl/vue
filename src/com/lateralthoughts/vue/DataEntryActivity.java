@@ -30,7 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -592,16 +591,12 @@ public class DataEntryActivity extends Activity {
     @Override
     protected void onStart() {
         // mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
-        FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
         super.onStart();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
         mixpanel.flush();
         
     }

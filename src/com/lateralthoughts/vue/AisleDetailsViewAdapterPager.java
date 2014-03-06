@@ -55,7 +55,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -288,15 +287,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         e.printStackTrace();
                     }
                     mixpanel.track("Aisle Viewed", aisleViewedProps);
-                    Map<String, String> articleParams = new HashMap<String, String>();
-                    articleParams.put("Category",
-                            mCurrentAisle.getAisleContext().mCategory);
-                    articleParams.put("Lookingfor",
-                            mCurrentAisle.getAisleContext().mLookingForItem);
-                    articleParams.put("Occasion",
-                            mCurrentAisle.getAisleContext().mOccasion);
-                    FlurryAgent.logEvent("Visited_Categories", articleParams);
-                    
                 }
                 // wait time for flurry session starts
             }, mWaitTime);
@@ -798,7 +788,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             e.printStackTrace();
                         }
                         mixpanel.track("Bookmark Removed", aisleBookmarkProps);
-                        FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                         if (mBookmarksCount > 0) {
                             mBookmarksCount--;
                         }
@@ -844,7 +833,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             e.printStackTrace();
                         }
                         mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
-                        FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                         mBookmarksCount++;
                         mCurrentAisle
                                 .setWindowBookmarkIndicator(bookmarkStatus);
@@ -1283,9 +1271,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 //get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
-                for(ImageRating obj : imgRatingList){
-                    Log.i("ImageRatedIds", "ImageRatedIds: "+obj.mImageId);
-                }
+               
                 mImgRating = new ImageRating();
                 mImgRating.mAisleId = Long.parseLong(aisleId);
                 mImgRating.mImageId = Long.parseLong(imageId);
@@ -1382,32 +1368,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             e.printStackTrace();
         }
         mixpanel.track("Image Liked", aisleLikedProps);
-        Map<String, String> articleParams = new HashMap<String, String>();
-        articleParams
-                .put("Category", mCurrentAisle.getAisleContext().mCategory);
-        articleParams.put("Lookingfor",
-                mCurrentAisle.getAisleContext().mLookingForItem);
-        articleParams
-                .put("Occasion", mCurrentAisle.getAisleContext().mOccasion);
-        if (mStoredVueUser != null) {
-            articleParams.put("Unique_User_Like", "" + mStoredVueUser.getId());
-        } else {
-            articleParams.put("Unique_User_Like", "anonymous");
-        }
-        FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
-            
-            Map<String, String> articleParams1 = new HashMap<String, String>();
-            articleParams1.put("Unique_Aisle_Likes",
-                    "" + mCurrentAisle.getAisleId());
-            if (mStoredVueUser != null) {
-                articleParams1.put("Unique_User_Like",
-                        "" + mStoredVueUser.getId());
-            } else {
-                articleParams1.put("Unique_User_Like", "anonymous");
-            }
-            FlurryAgent.logEvent("Aisle_Likes", articleParams1);
         } else if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
             
             mCurrentAisle.getImageList().get(position).mLikesCount = mCurrentAisle
@@ -1464,7 +1426,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             e.printStackTrace();
         }
         mixpanel.track("Image Unliked", aisleUnLikedProps);
-        FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;

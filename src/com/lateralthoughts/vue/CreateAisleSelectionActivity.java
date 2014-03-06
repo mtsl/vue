@@ -26,8 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.flurry.android.FlurryAgent;
+ 
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -117,16 +116,12 @@ public class CreateAisleSelectionActivity extends Activity {
     @Override
     protected void onStart() {
         mixpanel.track(CREATE_AISLE_POPUP_SELECTION, null);
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
-        FlurryAgent.logEvent(CREATE_AISLE_POPUP);
         super.onStart();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
         mixpanel.flush();
         
     }
@@ -144,7 +139,6 @@ public class CreateAisleSelectionActivity extends Activity {
     
     private void galleryIntent() {
         mixpanel.track("Selected Gallery", null);
-        FlurryAgent.logEvent("ADD_IMAGE_GALLERY");
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(i, GALLERY_ALERT_MESSAGE),
@@ -153,7 +147,6 @@ public class CreateAisleSelectionActivity extends Activity {
     
     private void cameraIntent() {
         mixpanel.track("Selected Camera", null);
-        FlurryAgent.logEvent("ADD_IMAGE_CAMERA");
         mCameraImageName = Utils
                 .vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
         File cameraImageFile = new File(mCameraImageName);
@@ -175,7 +168,6 @@ public class CreateAisleSelectionActivity extends Activity {
     
     public void moreClickFunctionality() {
         mixpanel.track("Selected Other Source", null);
-        FlurryAgent.logEvent("ADD_IMAGE_MORE");
         if (mDataEntryShoppingApplicationsList != null
                 && mDataEntryShoppingApplicationsList.size() > 0) {
             if (mShareDialog == null) {
