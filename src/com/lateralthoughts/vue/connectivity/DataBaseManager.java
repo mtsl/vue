@@ -1411,7 +1411,7 @@ public class DataBaseManager {
     public ArrayList<ImageComment> getDirtyComments(String dirtyFlag) {
         ArrayList<ImageComment> comments = new ArrayList<ImageComment>();
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.CATEGORY_CONTENT_URI, null,
+                VueConstants.COMMENTS_ON_IMAGE_URI, null,
                 VueConstants.DIRTY_FLAG + "=?", new String[] { dirtyFlag },
                 null);
         if (cursor.moveToFirst()) {
