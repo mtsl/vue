@@ -31,6 +31,7 @@ public class VueConstants {
     public static final String AISLE_STAGE_THREE = "third_stage";
     public static final String SHAREDPREFERENCE_NAME = "VuePreferences";
     public static final String HELP_SCREEN_ACCES = "HelpScreenAccess";
+    public static final String DETAILS_HELP_SCREEN_ACCES = "DetailsHelpScreenAccess";
     public static final String AISLE_SWIPE = "AISLESWIPE";
     public static final String APP_FIRST_TIME_OPENED_TIME = "AppFirstTimeOpenedTime";
     public static final String SCREEN_REFRESH_TIME = "TrendingRefreshTimeInMinutes";

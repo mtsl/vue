@@ -11,8 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -93,7 +91,6 @@ public class Parser {
                 .getString(VueConstants.AISLE_IMAGE_OWNERUSER_ID);
         aisleImageDetails.mOwnerAisleId = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_OWNER_AISLE_ID);
-        
         // get the image rating list
         JSONArray ratingJsonArray = jsonObject
                 .getJSONArray(VueConstants.AISLE_IMAGE_RATINGS);
@@ -580,4 +577,22 @@ public class Parser {
         }
         return bookmarkedAisles;
     }
+    
+    /*
+     * private void writeToSdcard(String message) {
+     * 
+     * String path = Environment.getExternalStorageDirectory().toString(); File
+     * dir = new File(path + "/vueImageIds"); if (!dir.isDirectory()) {
+     * dir.mkdir(); } File file = new File(dir, "/" + "vueImageIds" +
+     * (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" +
+     * Calendar.getInstance().get(Calendar.DATE) + "_" +
+     * Calendar.getInstance().get(Calendar.YEAR) + ".txt"); try {
+     * file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+     * 
+     * try { PrintWriter out = new PrintWriter(new BufferedWriter( new
+     * FileWriter(file, true))); out.write("\n" + message + "\n"); out.flush();
+     * out.close();
+     * 
+     * } catch (IOException e) { e.printStackTrace(); } }
+     */
 }

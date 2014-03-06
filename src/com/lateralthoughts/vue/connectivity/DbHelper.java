@@ -99,13 +99,13 @@ public class DbHelper extends SQLiteOpenHelper {
             + VueConstants.ID + " long);";
     
     private String mCreateAllReatingImagesTable = "create table if not exists "
-            + DATABASE_TABLE_ALL_RATED_IMAGES + " (" + VueConstants.IMAGE_ID
-            + " long, " + VueConstants.LIKE_OR_DISLIKE
+            + DATABASE_TABLE_ALL_RATED_IMAGES + " (" + VueConstants.ID
+            + " long primary key, " + VueConstants.LIKE_OR_DISLIKE
             + " integer, " + VueConstants.AISLE_ID + " long, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " long, "
-            + VueConstants.ID + " long);";
+            + VueConstants.IMAGE_ID + " long);";
     
     private String mCreateBookmarkAislesTable = "create table if not exists "
             + DATABASE_TABLE_BOOKMARKS_AISLES + " (" + VueConstants.ID

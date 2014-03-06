@@ -75,7 +75,6 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.user.VueUserManager;
@@ -388,9 +387,6 @@ public class VueLoginActivity extends FragmentActivity {
                         e1.printStackTrace();
                     }
                     mixpanel.track("Login Success", loginprops);
-                    FlurryAgent.logEvent("Facebook_Logins");
-                    FlurryAgent.endTimedEvent("Login_Time_Ends");
-                    FlurryAgent.logEvent("Login Success");
                     VueUserManager userManager = VueUserManager
                             .getUserManager();
                     writeToSdcard("Before Server login for Facebook : "

@@ -184,15 +184,15 @@ public class VueApplication extends Application {
         mFileCache = new FileCache(this);
         ContentAdapterFactory.getInstance(this);
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
-        JSONObject crittercismConfig = new JSONObject();
-        try {
-            crittercismConfig.put("shouldCollectLogcat", true); // send logcat
+        //JSONObject crittercismConfig = new JSONObject();
+       /* try {
+          //  crittercismConfig.put("shouldCollectLogcat", true); // send logcat
                                                                 // data for
                                                                 // devices with
                                                                 // API Level 16
                                                                 // and higher
         } catch (JSONException je) {
-        }
+        }*/
         mEmptyImageView = new ScaleImageView(this);
         Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
         mEmptyImageView.setImageDrawable(d);
@@ -200,8 +200,8 @@ public class VueApplication extends Application {
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-                crittercismConfig);
+   /*     Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+                crittercismConfig);*/
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
