@@ -101,7 +101,6 @@ public class NetworkHandler {
     
     // while user scrolls down get next 10 aisles
     public void requestMoreAisle(boolean loadMore, String screenname) {
-        
         if (VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance())
                 .isMoreDataAvailable()) {

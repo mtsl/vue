@@ -354,6 +354,7 @@ public class AisleManager {
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
+        DataBaseManager.getInstance(VueApplication.getInstance()).updateAllRatingAisles(imgRating, isDirty);
     }
     
     public AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark,
