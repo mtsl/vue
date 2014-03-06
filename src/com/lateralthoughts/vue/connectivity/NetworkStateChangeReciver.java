@@ -9,10 +9,22 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleManager;
+import com.lateralthoughts.vue.AisleWindowContent;
+import com.lateralthoughts.vue.BookmarkPutRequest;
 import com.lateralthoughts.vue.ImageRating;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
+import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.utils.UrlConstants;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
     
@@ -29,7 +41,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
             mSharedPreferencesObj = context.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_AISLE_DIRTY,
-                    false)) {/*
+                    false)) {
                 VueUser storedVueUser = null;
                 try {
                     storedVueUser = Utils.readUserObjectFromFile(context,
@@ -69,12 +81,14 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                             }
                         };
                         
-                        Response.ErrorListener errorListener = new ErrorListener() {
+                        ErrorListener errorListener = new ErrorListener() {
                             
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 mIsDirty = true;
                             }
+
+                           
                         };
                         String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
                         if (mAisleBookmark.getId() != null) {
@@ -89,7 +103,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 }
-            */}
+            }
             
             if ((mSharedPreferencesObj.getBoolean(VueConstants.IS_IMAGE_DIRTY,
                     false))) {
@@ -127,7 +141,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
             }
             
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_COMMENT_DIRTY,
-                    false)) {/*
+                    false)) {
                 ArrayList<ImageComment> comments = DataBaseManager.getInstance(
                         context).getDirtyComments("1");
                 NetworkHandler networkHandler = new NetworkHandler(context);
@@ -144,7 +158,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 }
-            */}
+            }
         }
     }
     
