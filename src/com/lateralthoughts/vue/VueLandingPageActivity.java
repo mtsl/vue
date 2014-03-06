@@ -50,7 +50,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -1937,6 +1936,7 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
     }
+    
     private class HintAdapter extends BaseAdapter {
         ArrayList<String> mHintList;
         
@@ -2101,7 +2101,7 @@ public class VueLandingPageActivity extends Activity implements
                         i.putExtras(b);
                         startActivity(i);
                         /* } */
-                    }  
+                    }
                     VueApplication.getInstance().setmUserInitials(
                             storedVueUser.getFirstName());
                     VueApplication.getInstance().setmUserId(

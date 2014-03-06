@@ -111,9 +111,11 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                                         .getImageId())}, null);
                         int likesCount = 0;
                         boolean isMathced = false;
+                        Log.i("updateRating", "updateRating receiver00000000: "+imgRating.mId);
                         if (c.moveToFirst()) {
                             do {
                                 long imgId = c.getLong(c.getColumnIndex(VueConstants.IMAGE_ID));
+                                Log.i("updateRating", "updateRating receiver1111111: "+imgRating.mId);
                                if(imgId == imgRating.getImageId().longValue()) {
                                    likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
                                    isMathced = true;
@@ -123,6 +125,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         }
                         c.close();
                         if(isMathced) {
+                            Log.i("updateRating", "updateRating receiver: "+imgRating.mId);
                         AisleManager.getAisleManager().updateRating(imgRating,
                                 likesCount);
                         }

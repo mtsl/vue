@@ -218,9 +218,7 @@ public class AisleManager {
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
         // updateImageRatingVolley( imageRating, likeCount);
-        Log.e("NetworkStateChangeReciver",
-                "VueConstants.IS_IMAGE_DIRTY updateRating imagsRating.ID: "
-                        + imageRating.getImageId());
+        Log.i("updateRating", "updateRating aisleManger: "+imageRating.mId);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             ObjectMapper mapper = new ObjectMapper();
@@ -354,7 +352,8 @@ public class AisleManager {
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
                 .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
-        DataBaseManager.getInstance(VueApplication.getInstance()).updateAllRatingAisles(imgRating, isDirty);
+        DataBaseManager.getInstance(VueApplication.getInstance())
+                .updateAllRatingAisles(imgRating, isDirty);
     }
     
     public AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark,
@@ -493,8 +492,10 @@ public class AisleManager {
                         .getEntity());
                 if (responseMessage != null && responseMessage.length() > 0) {
                     try {
+                       
                         ImageRating imgRating = (new ObjectMapper()).readValue(
                                 responseMessage, ImageRating.class);
+                        Log.i("updateRating", "updateRating aisleManger response: "+imgRating.mId);
                         Editor editor = mSharedPreferencesObj.edit();
                         editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
                         editor.commit();

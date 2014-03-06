@@ -87,16 +87,16 @@ public class DbHelper extends SQLiteOpenHelper {
             + " integer primary key autoincrement, "
             + VueConstants.RECENTLY_VIEWED_AISLE_ID + " text, "
             + VueConstants.VIEW_TIME + " text);";
-
+    
     private String mCreateReatingImagesTable = "create table if not exists "
             + DATABASE_TABLE_RATED_IMAGES + " (" + VueConstants.IMAGE_ID
-            + " long, " + VueConstants.LIKE_OR_DISLIKE
-            + " integer, " + VueConstants.AISLE_ID + " long, "
+            + " long, " + VueConstants.LIKE_OR_DISLIKE + " integer, "
+            + VueConstants.AISLE_ID + " long, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " long, "
-            + VueConstants.DIRTY_FLAG + " integer, " 
-            + VueConstants.ID + " long);";
+            + VueConstants.DIRTY_FLAG + " integer, " + VueConstants.ID
+            + " long);";
     
     private String mCreateAllReatingImagesTable = "create table if not exists "
             + DATABASE_TABLE_ALL_RATED_IMAGES + " (" + VueConstants.ID

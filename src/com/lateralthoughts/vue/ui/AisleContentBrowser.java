@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.lateralthoughts.vue.AisleLoader;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.IAisleContentAdapter;
@@ -176,9 +176,12 @@ public class AisleContentBrowser extends ViewFlipper {
                         }
                         
                     }
-                    int count = mSpecialNeedsAdapter.getAisleItemsCount();
-                    if (count > 1) {
-                        moveToNextChild();
+                    if (!AisleLoader.trendingSwipeBlock) {
+                        int count = mSpecialNeedsAdapter.getAisleItemsCount();
+                        if (count > 1) {
+                            moveToNextChild();
+                        }
+                        
                     }
                 }
             });
@@ -986,14 +989,17 @@ public class AisleContentBrowser extends ViewFlipper {
         return false;
     }
     
-    private void moveToNextChild() {
+    public void moveToNextChild() {
         final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
         VueApplication.getInstance().isUserSwipeAisle = true;
+        AisleLoader.sTrendingSwipeCount++;
         // In this case, the user is moving the finger right to left
         // The current image needs to slide out left and the "next"
         // image
         // needs to fade in
-        mTouchMoved = true;
+        if (AisleLoader.sTrendingSwipeCount > 4) {
+            AisleLoader.trendingSwipeBlock = true;
+        }
         View nextView = null;
         final int currentIndex = aisleContentBrowser
                 .indexOfChild(aisleContentBrowser.getCurrentView());
@@ -1004,7 +1010,6 @@ public class AisleContentBrowser extends ViewFlipper {
             if (!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,
                     currentIndex, currentIndex + 1, true)) {
                 mAnimationInProgress = true;
-                Log.i("landingHelp", "landingHelp 3");
                 Animation cantWrapRight = AnimationUtils.loadAnimation(
                         mContext, R.anim.cant_wrap_right);
                 cantWrapRight

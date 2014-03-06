@@ -12,6 +12,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -108,7 +110,13 @@ public class VueLandingAislesFragment extends Fragment {
         mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         mStaggeredView.setItemMargin(margin); // set the GridView margin
-        
+        SharedPreferences sharedPreferencesObj = getActivity()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int trendingSwipeCountMaxReached = sharedPreferencesObj.getInt(
+                VueConstants.TRENDING_SWIPE_COUNT, 0);
+        if (trendingSwipeCountMaxReached > 3) {
+            AisleLoader.trendingSwipeBlock = true;
+        }
         mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on
                                                          // the sides as well
         mStaggeredView.setOnTouchListener(new OnTouchListener() {
@@ -134,6 +142,13 @@ public class VueLandingAislesFragment extends Fragment {
                     mStaggeredAdapter.setIsScrolling(false);
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
+                    AisleLoader.isScrolling = false;
+                    if (!AisleLoader.trendingSwipeBlock) {
+                        mStaggeredAdapter.swipeFromAdapterImage();
+                        if (AisleLoader.sTrendingSwipeCount > 3) {
+                            saveAisleSwip(4);
+                        }
+                    }
                     break;
                 }
             }
@@ -145,6 +160,7 @@ public class VueLandingAislesFragment extends Fragment {
                  * if (totalItemCount > 0 && mTrendingLoad.getVisibility() ==
                  * View.VISIBLE) { mTrendingLoad.setVisibility(View.GONE); }
                  */
+                AisleLoader.isScrolling = true;
                 if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
                         && VueLandingPageActivity.mLandingScreenName != null
                         && VueLandingPageActivity.mLandingScreenName
@@ -387,5 +403,14 @@ public class VueLandingAislesFragment extends Fragment {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+    }
+    
+    private void saveAisleSwip(int count) {
+        SharedPreferences sharedPreferencesObj = getActivity()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putInt(VueConstants.TRENDING_SWIPE_COUNT, count);
+        editor.commit();
+        AisleLoader.trendingSwipeBlock = true;
     }
 }

@@ -20,6 +20,10 @@ public class VueConstants {
     public static final String USER_INVITE_FRIEND_POINTS = "inviteFriends";
     public static final String DETAIALS_HELP_SHOWN = "DetailsHelp";
     public static final String DETAIALS_HELP_SHOWN_TIME = "DetailsHelpTime";
+    public static final String TRENDING_SWIPE_COUNT = "TrendingSwipeCount";
+    public static final String TRENDING_SWIPE_BLOCK = "TrendigSwipBlock";
+    
+    
     public static final String DETAIALS_HELP_BLOCK = "DetailsHelpBlock";
     public static final String NO_IMAGE_URL = "noimageurl";
     public static final int NO_IMAGE_WIDTH = 200;

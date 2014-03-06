@@ -85,18 +85,18 @@ public class AisleDetailsViewActivity extends Activity {
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
-       boolean hasToOpen = false;
+        boolean hasToOpen = false;
         if (VueApplication.getInstance().getClickedWindowCount() > 1) {
-            SharedPreferences sharedPreferencesObj = this
-                    .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-          hasToOpen =  sharedPreferencesObj.getBoolean(
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            hasToOpen = sharedPreferencesObj.getBoolean(
                     VueConstants.DETAILS_HELP_SCREEN_ACCES, false);
-          if(hasToOpen){
-            mHasToHelpShow = isDetailsHelpShown();
-          }
+            if (hasToOpen) {
+                mHasToHelpShow = isDetailsHelpShown();
+            }
         }
         initialize();
-        if (!mHasToHelpShow ) {
+        if (!mHasToHelpShow) {
             DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
                     VueApplication.getInstance().getPixel(320),
                     LinearLayout.LayoutParams.MATCH_PARENT, Gravity.END);
