@@ -20,6 +20,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,7 +40,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
 import com.lateralthoughts.vue.user.VueUser;
@@ -85,11 +85,18 @@ public class AisleDetailsViewActivity extends Activity {
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
+       boolean hasToOpen = false;
         if (VueApplication.getInstance().getClickedWindowCount() > 1) {
+            SharedPreferences sharedPreferencesObj = this
+                    .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+          hasToOpen =  sharedPreferencesObj.getBoolean(
+                    VueConstants.DETAILS_HELP_SCREEN_ACCES, false);
+          if(hasToOpen){
             mHasToHelpShow = isDetailsHelpShown();
+          }
         }
         initialize();
-        if (!mHasToHelpShow) {
+        if (!mHasToHelpShow ) {
             DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
                     VueApplication.getInstance().getPixel(320),
                     LinearLayout.LayoutParams.MATCH_PARENT, Gravity.END);
@@ -332,16 +339,12 @@ public class AisleDetailsViewActivity extends Activity {
     
     @Override
     protected void onStart() {
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
-        FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
         super.onStart();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
     }
     
     class ComparisionAdapter extends BaseAdapter {

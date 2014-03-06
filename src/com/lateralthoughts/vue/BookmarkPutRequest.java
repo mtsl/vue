@@ -57,7 +57,7 @@ public class BookmarkPutRequest extends Request<String> {
     @Override
     public Map<String, String> getHeaders() {
         HashMap<String, String> headersMap = new HashMap<String, String>();
-        headersMap.put("Content-Type", "application/json");
+        headersMap.put("Content-Type", "application/json;charset=UTF-8");
         return headersMap;
     }
     

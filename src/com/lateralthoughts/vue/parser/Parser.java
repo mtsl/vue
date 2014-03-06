@@ -1,13 +1,7 @@
 package com.lateralthoughts.vue.parser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,9 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Environment;
-import android.util.Log;
-
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -28,7 +19,6 @@ import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
@@ -588,32 +578,21 @@ public class Parser {
         return bookmarkedAisles;
     }
     
-/*    private void writeToSdcard(String message) {
-      
-        String path = Environment.getExternalStorageDirectory().toString();
-        File dir = new File(path + "/vueImageIds");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
-        File file = new File(dir, "/" + "vueImageIds"
-                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
-                + Calendar.getInstance().get(Calendar.DATE) + "_"
-                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file, true)));
-            out.write("\n" + message + "\n");
-            out.flush();
-            out.close();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
+    /*
+     * private void writeToSdcard(String message) {
+     * 
+     * String path = Environment.getExternalStorageDirectory().toString(); File
+     * dir = new File(path + "/vueImageIds"); if (!dir.isDirectory()) {
+     * dir.mkdir(); } File file = new File(dir, "/" + "vueImageIds" +
+     * (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" +
+     * Calendar.getInstance().get(Calendar.DATE) + "_" +
+     * Calendar.getInstance().get(Calendar.YEAR) + ".txt"); try {
+     * file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+     * 
+     * try { PrintWriter out = new PrintWriter(new BufferedWriter( new
+     * FileWriter(file, true))); out.write("\n" + message + "\n"); out.flush();
+     * out.close();
+     * 
+     * } catch (IOException e) { e.printStackTrace(); } }
+     */
 }

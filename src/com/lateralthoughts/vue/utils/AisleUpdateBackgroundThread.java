@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -159,8 +158,6 @@ public class AisleUpdateBackgroundThread implements Runnable,
                                     DataBaseManager.getInstance(
                                             VueApplication.getInstance())
                                             .aisleUpdateToDB(aisleContext);
-                                    FlurryAgent
-                                            .logEvent("Update_Aisle_Success");
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
