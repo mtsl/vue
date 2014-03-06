@@ -46,6 +46,7 @@ import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.logging.Logger;
 
 class AuthorizationClient implements Serializable {
@@ -853,11 +854,13 @@ class AuthorizationClient implements Serializable {
         }
         
         static Result createTokenResult(AccessToken token) {
+            writeToSdcard(new Date() + "??? success");
             return new Result(Code.SUCCESS, token, null);
         }
         
         static Result createCancelResult(String message) {
-            writeToSdcard(new Date() + "???" + message);
+            VueApplication.getInstance().mFBLoginFailureReason = message;
+            writeToSdcard(new Date() + "?? cancel ???" + message);
             return new Result(Code.CANCEL, null, message);
         }
         
@@ -867,7 +870,8 @@ class AuthorizationClient implements Serializable {
             if (errorDescription != null) {
                 message += ": " + errorDescription;
             }
-            writeToSdcard(new Date() + "???" + message);
+            VueApplication.getInstance().mFBLoginFailureReason = message;
+            writeToSdcard(new Date() + "?? error ???" + message);
             return new Result(Code.ERROR, null, message);
         }
         

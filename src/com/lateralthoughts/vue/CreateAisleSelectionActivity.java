@@ -55,7 +55,8 @@ public class CreateAisleSelectionActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isActivityShowing = true;
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_asilse_selection);
         Bundle b = getIntent().getExtras();
@@ -100,7 +101,7 @@ public class CreateAisleSelectionActivity extends Activity {
                                 .getInstance().mShoppingApplicationDetailsList
                                 .get(i).getPackageName(), VueApplication
                                 .getInstance().mShoppingApplicationDetailsList
-                                .get(i).getAppIcon());
+                                .get(i).getAppIconPath());
                 mDataEntryShoppingApplicationsList
                         .add(shoppingApplicationDetails);
                 
@@ -230,7 +231,8 @@ public class CreateAisleSelectionActivity extends Activity {
                 if (mFromDetailsScreenFlag) {
                     Intent intent = new Intent();
                     Bundle b = new Bundle();
-                    b.putString(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+                    b.putString(VueConstants.IMAGE_FROM,
+                            VueConstants.GALLERY_IMAGE);
                     b.putString(
                             VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                             selectedImagePath);
@@ -242,7 +244,8 @@ public class CreateAisleSelectionActivity extends Activity {
                 } else if (!mFromCreateAilseScreenFlag) {
                     Intent intent = new Intent(this, DataEntryActivity.class);
                     Bundle b = new Bundle();
-                    b.putString(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+                    b.putString(VueConstants.IMAGE_FROM,
+                            VueConstants.GALLERY_IMAGE);
                     b.putString(
                             VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                             selectedImagePath);
@@ -252,7 +255,8 @@ public class CreateAisleSelectionActivity extends Activity {
                 } else {
                     Intent intent = new Intent();
                     Bundle b = new Bundle();
-                    b.putString(VueConstants.IMAGE_FROM, VueConstants.GALLERY_IMAGE);
+                    b.putString(VueConstants.IMAGE_FROM,
+                            VueConstants.GALLERY_IMAGE);
                     b.putString(
                             VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                             selectedImagePath);
@@ -270,7 +274,8 @@ public class CreateAisleSelectionActivity extends Activity {
                     if (mFromDetailsScreenFlag) {
                         Intent intent = new Intent();
                         Bundle b = new Bundle();
-                        b.putString(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+                        b.putString(VueConstants.IMAGE_FROM,
+                                VueConstants.CAMERA_IMAGE);
                         b.putString(
                                 VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                                 mCameraImageName);
@@ -283,7 +288,8 @@ public class CreateAisleSelectionActivity extends Activity {
                         Intent intent = new Intent(this,
                                 DataEntryActivity.class);
                         Bundle b = new Bundle();
-                        b.putString(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+                        b.putString(VueConstants.IMAGE_FROM,
+                                VueConstants.CAMERA_IMAGE);
                         b.putString(
                                 VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                                 mCameraImageName);
@@ -293,7 +299,8 @@ public class CreateAisleSelectionActivity extends Activity {
                     } else {
                         Intent intent = new Intent();
                         Bundle b = new Bundle();
-                        b.putString(VueConstants.IMAGE_FROM, VueConstants.CAMERA_IMAGE);
+                        b.putString(VueConstants.IMAGE_FROM,
+                                VueConstants.CAMERA_IMAGE);
                         b.putString(
                                 VueConstants.CREATE_AISLE_CAMERA_GALLERY_IMAGE_PATH_BUNDLE_KEY,
                                 mCameraImageName);

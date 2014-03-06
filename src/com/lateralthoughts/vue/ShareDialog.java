@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.user.VueUserProfile;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -55,7 +55,7 @@ public class ShareDialog {
     private ArrayList<String> mAppNames = new ArrayList<String>();
     private ArrayList<String> mActivityNames = new ArrayList<String>();
     private ArrayList<String> mPackageNames = new ArrayList<String>();
-    private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
+    private ArrayList<String> mAppIconsPath = new ArrayList<String>();
     private Intent mSendIntent;
     private Context mContext;
     private Activity mActivity;
@@ -74,6 +74,7 @@ public class ShareDialog {
     private MixpanelAPI mixpanel;
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
+    private FileCache mFileCache = null;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -86,6 +87,7 @@ public class ShareDialog {
      */
     public ShareDialog(Context context, Activity activity,
             MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
+        mFileCache = new FileCache(context);
         this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
@@ -196,7 +198,7 @@ public class ShareDialog {
                 try {
                     mAppNames.clear();
                     mActivityNames.clear();
-                    mAppIcons.clear();
+                    mAppIconsPath.clear();
                     mPackageNames.clear();
                 } catch (Exception e) {
                 }
@@ -275,9 +277,11 @@ public class ShareDialog {
             } else {
                 holderView = (Holder) convertView.getTag();
             }
-            if (mAppIcons.get(position) != null) {
+            if (mAppIconsPath.get(position) != null) {
                 holderView.launcheicon
-                        .setImageDrawable(mAppIcons.get(position));
+                        .setImageURI(Uri.fromFile(mFileCache
+                                .getVueInstalledAppIconFile(mAppIconsPath
+                                        .get(position))));
             } else {
                 if (mAppNames.get(position).equals(
                         mContext.getResources().getString(R.string.more))) {
@@ -424,7 +428,7 @@ public class ShareDialog {
             mShareIntentObj.getInstalledPackages();
             mAppNames = mShareIntentObj.getAppNames();
             mPackageNames = mShareIntentObj.getpackageNames();
-            mAppIcons = mShareIntentObj.getDrawables();
+            mAppIconsPath = mShareIntentObj.getDrawables();
         }
     }
     
@@ -434,15 +438,15 @@ public class ShareDialog {
                 && dataEntryShoppingApplicationsList.size() > 0) {
             mAppNames.clear();
             mActivityNames.clear();
-            mAppIcons.clear();
+            mAppIconsPath.clear();
             mPackageNames.clear();
             for (int i = 0; i < dataEntryShoppingApplicationsList.size(); i++) {
                 mAppNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getAppName());
                 mPackageNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getPackageName());
-                mAppIcons.add(dataEntryShoppingApplicationsList.get(i)
-                        .getAppIcon());
+                mAppIconsPath.add(dataEntryShoppingApplicationsList.get(i)
+                        .getAppIconPath());
                 mActivityNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getActivityName());
             }

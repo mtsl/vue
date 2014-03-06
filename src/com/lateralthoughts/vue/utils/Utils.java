@@ -34,6 +34,8 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -770,6 +772,7 @@ public class Utils {
         }
         PackageManager pm = context.getPackageManager();
         final Object a[] = activities.toArray();
+        FileCache fileCache = new FileCache(context);
         for (int i = 0; i < activities.size(); i++) {
             boolean isSystemApp = false;
             try {
@@ -786,13 +789,31 @@ public class Utils {
                     && !(Arrays
                             .asList(VueApplication.SHOPPINGAPP_PACKAGES_ARRAY)
                             .contains(packageName))) {
+                String fileName = null;
+                Drawable appIcon = null;
+                try {
+                    File file = fileCache
+                            .getVueInstalledAppIconFile(packageName.replace(
+                                    ".", ""));
+                    fileName = null/* file.getPath() */;
+                    if (!file.exists()) {
+                        /*
+                         * appIcon = ((ResolveInfo)
+                         * a[i]).activityInfo.applicationInfo
+                         * .loadIcon(context.getPackageManager());
+                         * Utils.saveBitmap( ((BitmapDrawable)
+                         * appIcon).getBitmap(), file);
+                         */
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
                 ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
                         ((ResolveInfo) a[i]).activityInfo.applicationInfo
                                 .loadLabel(context.getPackageManager())
                                 .toString(),
                         ((ResolveInfo) a[i]).activityInfo.name, packageName,
-                        ((ResolveInfo) a[i]).activityInfo.applicationInfo
-                                .loadIcon(context.getPackageManager()));
+                        fileName);
                 if (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME)) {
                     VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a[i]).activityInfo.name;
                 }

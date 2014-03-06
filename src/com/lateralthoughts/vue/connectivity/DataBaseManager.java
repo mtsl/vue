@@ -1401,7 +1401,7 @@ public class DataBaseManager {
     public ArrayList<ImageComment> getDirtyComments(String dirtyFlag) {
         ArrayList<ImageComment> comments = new ArrayList<ImageComment>();
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.CATEGORY_CONTENT_URI, null,
+                VueConstants.COMMENTS_ON_IMAGE_URI, null,
                 VueConstants.DIRTY_FLAG + "=?", new String[] { dirtyFlag },
                 null);
         if (cursor.moveToFirst()) {
@@ -1865,7 +1865,6 @@ public class DataBaseManager {
             values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
                     imgRating.mLastModifiedTimestamp.longValue());
             }
-            values.put(VueConstants.DIRTY_FLAG, isDirty ? 1 : 0);
             if (cursor.moveToFirst()) {
                 do {
                     long id = cursor.getLong(cursor

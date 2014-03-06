@@ -828,14 +828,13 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayHomeAsUpEnabled(true);
         if (mIsFromOncreate) {
             openHelpTask();
-            new Handler().postDelayed(new Runnable() {
-                
-                @Override
-                public void run() {
-                    VueApplication.getInstance().getInstalledApplications(
-                            VueLandingPageActivity.this);
-                }
-            }, 500);
+            /*
+             * new Handler().postDelayed(new Runnable() {
+             * 
+             * @Override public void run() {
+             * VueApplication.getInstance().getInstalledApplications(
+             * VueLandingPageActivity.this); } }, 500);
+             */
             
         }
         if (Utils.sIsLoged) {
@@ -2063,6 +2062,27 @@ public class VueLandingPageActivity extends Activity implements
             }
             try {
                 if (storedVueUser != null) {
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            VueApplication.getInstance()
+                                    .getInstalledApplications(
+                                            VueLandingPageActivity.this);
+                        }
+                    }, 500);
+                    /*
+                     * sharedPreferencesObj = this.getSharedPreferences(
+                     * VueConstants.SHAREDPREFERENCE_NAME, 0);
+                     */
+                    /*
+                     * long preVersionCode = sharedPreferencesObj.getLong(
+                     * VueConstants.VERSION_CODE_CHANGE, 0); if (versionCode !=
+                     * preVersionCode) { Editor editor =
+                     * sharedPreferencesObj.edit();
+                     * editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                     * versionCode); editor.commit();
+                     */
                     if (storedVueUser != null
                             && storedVueUser.getGooglePlusId().equals(
                                     VueUser.DEFAULT_GOOGLEPLUS_ID)
