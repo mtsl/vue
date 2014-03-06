@@ -823,14 +823,14 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayHomeAsUpEnabled(true);
         if (mIsFromOncreate) {
             openHelpTask();
-            new Handler().postDelayed(new Runnable() {
+         /*   new Handler().postDelayed(new Runnable() {
                 
                 @Override
                 public void run() {
                     VueApplication.getInstance().getInstalledApplications(
                             VueLandingPageActivity.this);
                 }
-            }, 500);
+            }, 500);*/
             
         }
     }
@@ -2175,6 +2175,14 @@ public class VueLandingPageActivity extends Activity implements
                  * versionCode = packageInfo.versionCode;
                  */
                 if (storedVueUser != null) {
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            VueApplication.getInstance().getInstalledApplications(
+                                    VueLandingPageActivity.this);
+                        }
+                    }, 500);
                     /*
                      * sharedPreferencesObj = this.getSharedPreferences(
                      * VueConstants.SHAREDPREFERENCE_NAME, 0);

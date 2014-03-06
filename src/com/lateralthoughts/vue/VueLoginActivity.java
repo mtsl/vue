@@ -404,6 +404,18 @@ public class VueLoginActivity extends FragmentActivity {
                                 public void onUserUpdated(VueUser vueUser,
                                         final boolean loginSuccessFlag) {
                                     if (vueUser != null) {
+                                        new Handler().postDelayed(
+                                                new Runnable() {
+                                                    
+                                                    @Override
+                                                    public void run() {
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getInstalledApplications(
+                                                                        VueApplication
+                                                                                .getInstance());
+                                                    }
+                                                }, 500);
                                         writeToSdcard("After server Succefull login for Facebook : "
                                                 + new Date());
                                         try {
@@ -605,6 +617,8 @@ public class VueLoginActivity extends FragmentActivity {
                 JSONObject loginprops = new JSONObject();
                 try {
                     loginprops.put("Login with", "Facebook");
+                    loginprops.put("Failure Reason",
+                            VueApplication.getInstance().mFBLoginFailureReason);
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }

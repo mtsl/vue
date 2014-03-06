@@ -173,6 +173,7 @@ public class VueConstants {
     public static final String VUE_APP_HELP_FOLDER = "VueHelpPictures";
     public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
     public static final String VUE_APP_USER_PROFILE_PICTURES_FOLDER = "VueAppProfilePicture";
+    public static final String VUE_INSTALLED_APP_ICONS_FILENAME = "VueInstalledAppIcons";
     public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
     public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
     public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";
@@ -223,7 +224,7 @@ public class VueConstants {
             + AUTHORITY + "/" + RATED_IMAGES);
     public static final Uri BOOKMARKER_AISLES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + BOOKMARKER_AISLES);
-    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://" 
+    public static final Uri MY_BOOKMARKED_AISLES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
     public static final Uri ALL_RATED_IMAGES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + ALL_RATED_IMAGES);
@@ -279,7 +280,7 @@ public class VueConstants {
     public static final String AISLE_IMAGE_RATING_OWNER_FIRST_NAME = "ratingOwnerFirstName";
     public static final String AISLE_IMAGE_RATING_OWNER_LAST_NAME = "ratingOwnerLastName";
     public static final String AISLE_IMAGE_RATING_LASTMODIFIED_TIME = "lastModifiedTimestamp";
-    //public static final String AISLE_IMAGE_USER_RATING = "userRating";
+    // public static final String AISLE_IMAGE_USER_RATING = "userRating";
     // User response Keys
     public static final String USER_RESPONSE_ID = "id";
     public static final String USER_JOINTIME = "joinTime";
