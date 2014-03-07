@@ -320,8 +320,8 @@ public class VueLandingAislesFragment extends Fragment {
         @Override
         public void showProgressBar(int count) {
             if (mTrendingLoad.getVisibility() == View.GONE) {
-                if(VueLandingPageActivity.mLandingScreenActive) {
-                mTrendingLoad.setVisibility(View.VISIBLE);
+                if (VueLandingPageActivity.mLandingScreenActive) {
+                    mTrendingLoad.setVisibility(View.VISIBLE);
                 } else {
                     mTrendingLoad.setVisibility(View.GONE);
                 }

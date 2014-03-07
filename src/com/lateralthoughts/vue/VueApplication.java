@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
@@ -16,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
@@ -25,7 +22,6 @@ import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
@@ -350,7 +346,7 @@ public class VueApplication extends Application {
                             File file = fileCache
                                     .getVueInstalledAppIconFile(SHOPPINGAPP_PACKAGES_ARRAY[i]
                                             .replace(".", ""));
-                            fileName = null/*file.getPath()*/;
+                            fileName = null/* file.getPath() */;
                             if (!file.exists()) {
                                 /*
                                  * appIcon = context.getPackageManager()

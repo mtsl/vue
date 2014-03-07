@@ -16,7 +16,6 @@ import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -140,9 +139,8 @@ public class AisleManager {
      * @throws ClientProtocolException
      *             , IOException
      * */
-    public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-    
-    String userId) throws ClientProtocolException, IOException {
+    public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark)
+            throws ClientProtocolException, IOException {
         mIsDirty = true;
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
@@ -156,11 +154,11 @@ public class AisleManager {
                                 VueApplication.getInstance(),
                                 VueConstants.VUE_APP_USEROBJECT__FILENAME);
                         if (aisleBookmark.getId() == null) {
-                            testCreateAisleBookmark(aisleBookmark,
-                                    storedVueUser.getId());
+                            createAisleBookmark(aisleBookmark,
+                                    storedVueUser.getId(), mIsDirty);
                         } else {
                             
-                            testUpdateAisleBookmark(aisleBookmark,
+                            updateAisleBookmark(aisleBookmark,
                                     storedVueUser.getId());
                         }
                     } catch (Exception e) {
@@ -175,6 +173,7 @@ public class AisleManager {
             editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
             editor.commit();
             ArrayList<AisleWindowContent> windowList;
+            
             if (aisleBookmark.getBookmarked()) {
                 windowList = DataBaseManager.getInstance(
                         VueApplication.getInstance()).getAisleByAisleId(
@@ -218,7 +217,6 @@ public class AisleManager {
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
         // updateImageRatingVolley( imageRating, likeCount);
-        Log.i("updateRating", "updateRating aisleManger: "+imageRating.mId);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             ObjectMapper mapper = new ObjectMapper();
@@ -356,8 +354,8 @@ public class AisleManager {
                 .updateAllRatingAisles(imgRating, isDirty);
     }
     
-    public AisleBookmark testCreateAisleBookmark(AisleBookmark bookmark,
-            Long long1) throws Exception {
+    private AisleBookmark createAisleBookmark(AisleBookmark bookmark,
+            Long long1, boolean mIsDirty) throws Exception {
         AisleBookmark createdAisleBookmark = null;
         ObjectMapper mapper = new ObjectMapper();
         String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
@@ -393,8 +391,8 @@ public class AisleManager {
         return createdAisleBookmark;
     }
     
-    public AisleBookmark testUpdateAisleBookmark(AisleBookmark bookmark,
-            Long long1) throws Exception {
+    public AisleBookmark updateAisleBookmark(AisleBookmark bookmark, Long long1)
+            throws Exception {
         AisleBookmark updatedAisleBookmark = null;
         ObjectMapper mapper = new ObjectMapper();
         String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
@@ -492,10 +490,9 @@ public class AisleManager {
                         .getEntity());
                 if (responseMessage != null && responseMessage.length() > 0) {
                     try {
-                       
+                        
                         ImageRating imgRating = (new ObjectMapper()).readValue(
                                 responseMessage, ImageRating.class);
-                        Log.i("updateRating", "updateRating aisleManger response: "+imgRating.mId);
                         Editor editor = mSharedPreferencesObj.edit();
                         editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
                         editor.commit();

@@ -26,7 +26,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -200,9 +199,9 @@ public class DataBaseManager {
         Cursor commntsCursor = context.getContentResolver().query(
                 VueConstants.COMMENTS_ON_IMAGE_URI,
                 new String[] { VueConstants.ID }, null, null, null);
-        Cursor allRatedImages = mContext.getContentResolver()
-                .query(VueConstants.ALL_RATED_IMAGES_URI,
-                 new String[] {VueConstants.ID}, null, null, null);
+        Cursor allRatedImages = mContext.getContentResolver().query(
+                VueConstants.ALL_RATED_IMAGES_URI,
+                new String[] { VueConstants.ID }, null, null, null);
         
         ArrayList<String> aisleIds = new ArrayList<String>();
         ArrayList<String> imageIds = new ArrayList<String>();
@@ -385,28 +384,39 @@ public class DataBaseManager {
                             e.printStackTrace();
                         }
                     }
-                    if(imageDetails.mRatingsList != null) {
+                    if (imageDetails.mRatingsList != null) {
                         ContentValues imgRatedValues;
-                        for(ImageRating imgRating : imageDetails.mRatingsList) {
+                        for (ImageRating imgRating : imageDetails.mRatingsList) {
                             imgRatedValues = new ContentValues();
-                            imgRatedValues.put(VueConstants.IMAGE_ID, imgRating.mImageId.longValue());
-                            imgRatedValues.put(VueConstants.AISLE_ID, imgRating.mAisleId.longValue());
-                            imgRatedValues.put(VueConstants.LIKE_OR_DISLIKE, imgRating.mLiked ? 1 : 0);
-                            imgRatedValues.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
-                                    imgRating.mImageRatingOwnerFirstName);
-                            imgRatedValues.put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
-                                    imgRating.mImageRatingOwnerLastName);
-                            imgRatedValues.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
-                                    imgRating.mLastModifiedTimestamp.longValue());
-                            if(imgRatedIds.contains(imgRating.mId)) {
+                            imgRatedValues.put(VueConstants.IMAGE_ID,
+                                    imgRating.mImageId.longValue());
+                            imgRatedValues.put(VueConstants.AISLE_ID,
+                                    imgRating.mAisleId.longValue());
+                            imgRatedValues.put(VueConstants.LIKE_OR_DISLIKE,
+                                    imgRating.mLiked ? 1 : 0);
+                            imgRatedValues
+                                    .put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
+                                            imgRating.mImageRatingOwnerFirstName);
+                            imgRatedValues
+                                    .put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
+                                            imgRating.mImageRatingOwnerLastName);
+                            imgRatedValues
+                                    .put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
+                                            imgRating.mLastModifiedTimestamp
+                                                    .longValue());
+                            if (imgRatedIds.contains(imgRating.mId)) {
                                 mContext.getContentResolver().update(
                                         VueConstants.ALL_RATED_IMAGES_URI,
-                                        imgRatedValues, VueConstants.ID + "=?",
-                                        new String[] {String.valueOf(imgRating.mId)});    
+                                        imgRatedValues,
+                                        VueConstants.ID + "=?",
+                                        new String[] { String
+                                                .valueOf(imgRating.mId) });
                             } else {
-                               imgRatedValues.put(VueConstants.ID, imgRating.mId.longValue());
-                               mContext.getContentResolver().insert(
-                                    VueConstants.ALL_RATED_IMAGES_URI, imgRatedValues);
+                                imgRatedValues.put(VueConstants.ID,
+                                        imgRating.mId.longValue());
+                                mContext.getContentResolver().insert(
+                                        VueConstants.ALL_RATED_IMAGES_URI,
+                                        imgRatedValues);
                             }
                         }
                     }
@@ -633,8 +643,7 @@ public class DataBaseManager {
                 VueConstants.COMMENTS_ON_IMAGE_URI, null, null, null,
                 VueConstants.LAST_MODIFIED_TIME + " DESC");
         Cursor imageRatedCursor = mContext.getContentResolver().query(
-                VueConstants.ALL_RATED_IMAGES_URI,
-                null, null, null, null);
+                VueConstants.ALL_RATED_IMAGES_URI, null, null, null, null);
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
@@ -673,27 +682,39 @@ public class DataBaseManager {
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.USER_ID));
                         
-                        if(imageRatedCursor.moveToFirst()) {
+                        if (imageRatedCursor.moveToFirst()) {
                             ImageRating imgRating;
                             do {
                                 if (imageRatedCursor.getLong(imageRatedCursor
                                         .getColumnIndex(VueConstants.IMAGE_ID)) == Long
                                         .parseLong(imageItemDetails.mId)) {
                                     imgRating = new ImageRating();
-                                    imgRating.setId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.ID)));
-                                    imgRating.setImageId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.IMAGE_ID)));
-                                    imgRating.setAisleId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.AISLE_ID)));
-                                    imgRating.setLiked((imageRatedCursor.getInt(imageRatedCursor.getColumnIndex(
-                                            VueConstants.LIKE_OR_DISLIKE)) == 1) ? true : false);
-                                    imgRating.setRatingOwnerFirstName(imageRatedCursor.getString(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME)));
-                                    imgRating.setRatingOwnerLastName(imageRatedCursor.getString(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME)));
-                                    imgRating.setLastModifiedTimestamp(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME)));
-                                    imageItemDetails.mRatingsList.add(imgRating);
+                                    imgRating
+                                            .setId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.ID)));
+                                    imgRating
+                                            .setImageId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.IMAGE_ID)));
+                                    imgRating
+                                            .setAisleId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_ID)));
+                                    imgRating
+                                            .setLiked((imageRatedCursor.getInt(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
+                                                    : false);
+                                    imgRating
+                                            .setRatingOwnerFirstName(imageRatedCursor.getString(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME)));
+                                    imgRating
+                                            .setRatingOwnerLastName(imageRatedCursor.getString(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME)));
+                                    imgRating
+                                            .setLastModifiedTimestamp(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME)));
+                                    imageItemDetails.mRatingsList
+                                            .add(imgRating);
                                 }
-                            } while(imageRatedCursor.moveToNext());
+                            } while (imageRatedCursor.moveToNext());
                         }
                         
                         if (imgCommentCursor.moveToFirst()) {
@@ -817,13 +838,14 @@ public class DataBaseManager {
     }
     
     public void updateBookmarkAisles(final Long bookmarkId,
-            final String bookmarkedAisleId, final boolean isBookarked) {
+            final String bookmarkedAisleId, final boolean isBookarked,
+            final boolean isDirty) {
         runTask(new Runnable() {
             
             @Override
             public void run() {
                 updateBookmarkAislesToBDb(bookmarkId, bookmarkedAisleId,
-                        isBookarked);
+                        isBookarked, isDirty);
             }
         });
     }
@@ -886,11 +908,6 @@ public class DataBaseManager {
                 new String[] { String.valueOf(imageRating.getAisleId()),
                         String.valueOf(imageRating.getImageId()) });
         String imgId = String.valueOf(imageRating.getImageId());
-        Log.e("NetworkStateChangeReciver",
-                "VueConstants.IS_IMAGE_DIRTY succes Responce update success for imageID: "
-                        + imgId);
-        Log.e("NetworkStateChangeReciver",
-                "VueConstants.IS_IMAGE_DIRTY succes Responce update success for image");
         ArrayList<ImageRating> imageRateList = new ArrayList<ImageRating>();
         imageRateList.add(imageRating);
         insertRatedImagesToDB(imageRateList, isUserRating, isDirty);
@@ -912,38 +929,28 @@ public class DataBaseManager {
         values.put(VueConstants.DIRTY_FLAG, isDirty);
         mContext.getContentResolver().update(VueConstants.CONTENT_URI, values,
                 VueConstants.AISLE_Id + "=?", new String[] { aisleID });
-        updateBookmarkAislesToBDb(bookmarkId, aisleID, isBookmarked);
+        updateBookmarkAislesToBDb(bookmarkId, aisleID, isBookmarked, isDirty);
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void updateBookmarkAislesToBDb(Long bookmarkId,
-            String bookmarkedAisleId, boolean isBookmarked) {
-        boolean isMatched = false;
+            String bookmarkedAisleId, boolean isBookmarked, boolean isDirty) {
         ContentValues values = new ContentValues();
         values.put(VueConstants.IS_LIKED_OR_BOOKMARKED, isBookmarked);
-        values.put(VueConstants.AISLE_ID, bookmarkedAisleId);
-        Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.BOOKMARKER_AISLES_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                String aisleId = cursor.getString(cursor
-                        .getColumnIndex(VueConstants.AISLE_ID));
-                if (bookmarkedAisleId.equals(aisleId)) {
-                    mContext.getContentResolver().update(
-                            VueConstants.BOOKMARKER_AISLES_URI, values,
-                            VueConstants.ID + "=?",
-                            new String[] { Long.toString(bookmarkId) });
-                    isMatched = true;
-                    break;
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        if (!isMatched) {
-            values.put(VueConstants.ID, bookmarkId);
+        values.put(VueConstants.ID, bookmarkId);
+        values.put(VueConstants.IS_BOOKMARK_DIRTY, isDirty);
+        
+        int rows = mContext.getContentResolver().update(
+                VueConstants.BOOKMARKER_AISLES_URI, values,
+                VueConstants.AISLE_ID + "=?",
+                new String[] { bookmarkedAisleId });
+        
+        if (rows == 0) {
+            values.put(VueConstants.AISLE_ID, Long.parseLong(bookmarkedAisleId));
             mContext.getContentResolver().insert(
                     VueConstants.BOOKMARKER_AISLES_URI, values);
         }
+        
         if (isBookmarked) {
             String url = UrlConstants.GET_AISLE_RESTURL + bookmarkedAisleId;
             
@@ -1199,8 +1206,7 @@ public class DataBaseManager {
                 VueConstants.COMMENTS_ON_IMAGE_URI, null, null, null,
                 VueConstants.LAST_MODIFIED_TIME + " DESC");
         Cursor imageRatedCursor = mContext.getContentResolver().query(
-                VueConstants.ALL_RATED_IMAGES_URI,
-                null, null, null, null);
+                VueConstants.ALL_RATED_IMAGES_URI, null, null, null, null);
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
@@ -1240,28 +1246,39 @@ public class DataBaseManager {
                                 .getString(aisleImagesCursor
                                         .getColumnIndex(VueConstants.USER_ID));
                         
-                        
-                        if(imageRatedCursor.moveToFirst()) {
+                        if (imageRatedCursor.moveToFirst()) {
                             ImageRating imgRating;
                             do {
                                 if (imageRatedCursor.getLong(imageRatedCursor
                                         .getColumnIndex(VueConstants.IMAGE_ID)) == Long
                                         .parseLong(imageItemDetails.mId)) {
                                     imgRating = new ImageRating();
-                                    imgRating.setId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.ID)));
-                                    imgRating.setImageId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.IMAGE_ID)));
-                                    imgRating.setAisleId(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(VueConstants.AISLE_ID)));
-                                    imgRating.setLiked((imageRatedCursor.getInt(imageRatedCursor.getColumnIndex(
-                                            VueConstants.LIKE_OR_DISLIKE)) == 1) ? true : false);
-                                    imgRating.setRatingOwnerFirstName(imageRatedCursor.getString(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME)));
-                                    imgRating.setRatingOwnerLastName(imageRatedCursor.getString(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME)));
-                                    imgRating.setLastModifiedTimestamp(imageRatedCursor.getLong(imageRatedCursor.getColumnIndex(
-                                            VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME)));
-                                    imageItemDetails.mRatingsList.add(imgRating);
+                                    imgRating
+                                            .setId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.ID)));
+                                    imgRating
+                                            .setImageId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.IMAGE_ID)));
+                                    imgRating
+                                            .setAisleId(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_ID)));
+                                    imgRating
+                                            .setLiked((imageRatedCursor.getInt(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.LIKE_OR_DISLIKE)) == 1) ? true
+                                                    : false);
+                                    imgRating
+                                            .setRatingOwnerFirstName(imageRatedCursor.getString(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME)));
+                                    imgRating
+                                            .setRatingOwnerLastName(imageRatedCursor.getString(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME)));
+                                    imgRating
+                                            .setLastModifiedTimestamp(imageRatedCursor.getLong(imageRatedCursor
+                                                    .getColumnIndex(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME)));
+                                    imageItemDetails.mRatingsList
+                                            .add(imgRating);
                                 }
-                            } while(imageRatedCursor.moveToNext());
+                            } while (imageRatedCursor.moveToNext());
                         }
                         
                         if (imgCommentCursor.moveToFirst()) {
@@ -1636,8 +1653,8 @@ public class DataBaseManager {
         if (cursor.moveToFirst()) {
             do {
                 aisleBookmark = new AisleBookmark();
-                aisleBookmark.setAisleId(Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.AISLE_ID))));
+                aisleBookmark.setAisleId(cursor.getLong(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID)));
                 aisleBookmark.setId(cursor.getLong(cursor
                         .getColumnIndex(VueConstants.ID)));
                 bookmarkAisles.add(aisleBookmark);
@@ -1655,10 +1672,35 @@ public class DataBaseManager {
         if (cursor.moveToFirst()) {
             do {
                 aisleBookmark = new AisleBookmark();
-                aisleBookmark.setAisleId(Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(VueConstants.AISLE_ID))));
+                aisleBookmark.setAisleId(cursor.getLong(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID)));
                 aisleBookmark.setId(cursor.getLong(cursor
                         .getColumnIndex(VueConstants.ID)));
+                bookmarkAisles.add(aisleBookmark);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return bookmarkAisles;
+    }
+    
+    public ArrayList<AisleBookmark> getDirtyBookmarkedAisles() {
+        AisleBookmark aisleBookmark;
+        ArrayList<AisleBookmark> bookmarkAisles = new ArrayList<AisleBookmark>();
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.BOOKMARKER_AISLES_URI, null,
+                VueConstants.IS_BOOKMARK_DIRTY + "=?", new String[] { "1" },
+                null);
+        if (cursor.moveToFirst()) {
+            do {
+                aisleBookmark = new AisleBookmark();
+                aisleBookmark.setAisleId(cursor.getLong(cursor
+                        .getColumnIndex(VueConstants.AISLE_ID)));
+                aisleBookmark.setId(cursor.getLong(cursor
+                        .getColumnIndex(VueConstants.ID)));
+                aisleBookmark
+                        .setBookmarked((cursor.getInt(cursor
+                                .getColumnIndex(VueConstants.IS_BOOKMARK_DIRTY)) == 1) ? true
+                                : false);
                 bookmarkAisles.add(aisleBookmark);
             } while (cursor.moveToNext());
         }
@@ -1848,49 +1890,46 @@ public class DataBaseManager {
         boolean isMatched = false;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.ALL_RATED_IMAGES_URI, null, null, null, null);
-            isMatched = false;
-            ContentValues values = new ContentValues();
-            values.put(VueConstants.AISLE_ID, imgRating.getAisleId().longValue());
-            values.put(VueConstants.IMAGE_ID, imgRating.getImageId().longValue());
-            values.put(VueConstants.LIKE_OR_DISLIKE, imgRating.mLiked ? 1 : 0);
-            if(imgRating.mImageRatingOwnerFirstName != null){
+        isMatched = false;
+        ContentValues values = new ContentValues();
+        values.put(VueConstants.AISLE_ID, imgRating.getAisleId().longValue());
+        values.put(VueConstants.IMAGE_ID, imgRating.getImageId().longValue());
+        values.put(VueConstants.LIKE_OR_DISLIKE, imgRating.mLiked ? 1 : 0);
+        if (imgRating.mImageRatingOwnerFirstName != null) {
             values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME,
                     imgRating.mImageRatingOwnerFirstName);
-            }
-            if(imgRating.mImageRatingOwnerLastName != null) {
+        }
+        if (imgRating.mImageRatingOwnerLastName != null) {
             values.put(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME,
                     imgRating.mImageRatingOwnerLastName);
-            }
-            if(imgRating.mLastModifiedTimestamp != null){
+        }
+        if (imgRating.mLastModifiedTimestamp != null) {
             values.put(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME,
                     imgRating.mLastModifiedTimestamp.longValue());
-            }
-            if (cursor.moveToFirst()) {
-                do {
-                    long id = cursor.getLong(cursor
-                            .getColumnIndex(VueConstants.ID));
-                    if (id == imgRating.mId.longValue()) {
-                        mContext.getContentResolver()
-                                .update(VueConstants.ALL_RATED_IMAGES_URI,
-                                        values,
-                                        VueConstants.ID + "=? ",
-                                        new String[] { Long
-                                                .toString(imgRating.mId) });
-                        isMatched = true;
-                        break;
-                    }
-                    
-                } while (cursor.moveToNext());
-            }
-            if (!isMatched) {
-                values.put(VueConstants.ID, imgRating.getId().longValue());
-                mContext.getContentResolver().insert(
-                        VueConstants.ALL_RATED_IMAGES_URI, values);
-            }
+        }
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor
+                        .getLong(cursor.getColumnIndex(VueConstants.ID));
+                if (id == imgRating.mId.longValue()) {
+                    mContext.getContentResolver().update(
+                            VueConstants.ALL_RATED_IMAGES_URI, values,
+                            VueConstants.ID + "=? ",
+                            new String[] { Long.toString(imgRating.mId) });
+                    isMatched = true;
+                    break;
+                }
+                
+            } while (cursor.moveToNext());
+        }
+        if (!isMatched) {
+            values.put(VueConstants.ID, imgRating.getId().longValue());
+            mContext.getContentResolver().insert(
+                    VueConstants.ALL_RATED_IMAGES_URI, values);
+        }
         
         cursor.close();
     }
-    
     
     /**
      * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS

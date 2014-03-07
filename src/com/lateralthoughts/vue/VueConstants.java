@@ -308,6 +308,7 @@ public class VueConstants {
     public static final String IS_AISLE_DIRTY = "isAisleDirty";
     public static final String IS_IMAGE_DIRTY = "isImageDirty";
     public static final String IS_COMMENT_DIRTY = "isCommentDirty";
+    public static final String IS_BOOKMARK_DIRTY = "isBookmarkDirty";
     
     public static final String LIKE_COUNT = "likeCount";
     public static final String LAST_MODIFIED_TIME = "lastModifiedTimestamp";
