@@ -131,7 +131,7 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mShowSwipeHelp = false;
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
-    private boolean mLandingScreenActive = false;
+    public static boolean mLandingScreenActive = false;
     
     /**
      * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
@@ -2071,18 +2071,6 @@ public class VueLandingPageActivity extends Activity implements
                                             VueLandingPageActivity.this);
                         }
                     }, 500);
-                    /*
-                     * sharedPreferencesObj = this.getSharedPreferences(
-                     * VueConstants.SHAREDPREFERENCE_NAME, 0);
-                     */
-                    /*
-                     * long preVersionCode = sharedPreferencesObj.getLong(
-                     * VueConstants.VERSION_CODE_CHANGE, 0); if (versionCode !=
-                     * preVersionCode) { Editor editor =
-                     * sharedPreferencesObj.edit();
-                     * editor.putLong(VueConstants.VERSION_CODE_CHANGE,
-                     * versionCode); editor.commit();
-                     */
                     if (storedVueUser != null
                             && storedVueUser.getGooglePlusId().equals(
                                     VueUser.DEFAULT_GOOGLEPLUS_ID)

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -674,14 +675,6 @@ public class AisleContentBrowser extends ViewFlipper {
                                         mSwipeListener.onAllowListResponse();
                                     }
                                     mCurrentIndex = currentIndex - 1;
-                                    if (mSwipeListener != null) {
-                                        /*
-                                         * mSwipeListener .onAisleSwipe(
-                                         * VueAisleDetailsViewFragment
-                                         * .SWIPE_RIGHT_TO_LEFT, currentIndex -
-                                         * 1);
-                                         */
-                                    }
                                     if (detailImgClickListenr != null) {
                                         detailImgClickListenr
                                                 .onImageSwipe(currentIndex - 1);
@@ -992,14 +985,11 @@ public class AisleContentBrowser extends ViewFlipper {
     public void moveToNextChild() {
         final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
         VueApplication.getInstance().isUserSwipeAisle = true;
-        AisleLoader.sTrendingSwipeCount++;
+    
         // In this case, the user is moving the finger right to left
         // The current image needs to slide out left and the "next"
         // image
         // needs to fade in
-        if (AisleLoader.sTrendingSwipeCount > 4) {
-            AisleLoader.trendingSwipeBlock = true;
-        }
         View nextView = null;
         final int currentIndex = aisleContentBrowser
                 .indexOfChild(aisleContentBrowser.getCurrentView());
@@ -1009,36 +999,12 @@ public class AisleContentBrowser extends ViewFlipper {
             
             if (!mSpecialNeedsAdapter.setAisleContent(AisleContentBrowser.this,
                     currentIndex, currentIndex + 1, true)) {
-                mAnimationInProgress = true;
-                Animation cantWrapRight = AnimationUtils.loadAnimation(
-                        mContext, R.anim.cant_wrap_right);
-                cantWrapRight
-                        .setAnimationListener(new Animation.AnimationListener() {
-                            public void onAnimationEnd(Animation animation) {
-                                Animation cantWrapRightPart2 = AnimationUtils
-                                        .loadAnimation(mContext,
-                                                R.anim.cant_wrap_right2);
-                                aisleContentBrowser.getCurrentView()
-                                        .startAnimation(cantWrapRightPart2);
-                                if (mSwipeListener != null) {
-                                    
-                                    mSwipeListener.onAllowListResponse();
-                                }
-                                
-                            }
-                            
-                            public void onAnimationStart(Animation animation) {
-                                
-                            }
-                            
-                            public void onAnimationRepeat(Animation animation) {
-                                
-                            }
-                        });
-                aisleContentBrowser.getCurrentView().startAnimation(
-                        cantWrapRight);
                 return;
             }
+        }
+        AisleLoader.sTrendingSwipeCount++;
+        if (AisleLoader.sTrendingSwipeCount > 4) {
+            AisleLoader.trendingSwipeBlock = true;
         }
         Animation currentGoLeft = AnimationUtils.loadAnimation(mContext,
                 R.anim.right_out);
@@ -1050,16 +1016,9 @@ public class AisleContentBrowser extends ViewFlipper {
         currentGoLeft.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation animation) {
                 if (mSwipeListener != null) {
-                    
                     mSwipeListener.onAllowListResponse();
                 }
-                if (mSwipeListener != null) {
-                    /*
-                     * mSwipeListener .onAisleSwipe( VueAisleDetailsViewFragment
-                     * .SWIPE_LEFT_TO_RIGHT, currentIndex + 1);
-                     */
-                    
-                }
+               
                 mCurrentIndex = currentIndex + 1;
                 if (detailImgClickListenr != null) {
                     detailImgClickListenr.onImageSwipe(currentIndex + 1);
@@ -1103,7 +1062,98 @@ public class AisleContentBrowser extends ViewFlipper {
             }
         });
         aisleContentBrowser.setDisplayedChild(currentIndex + 1);
+        new Handler().postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                returnViewBack();
+                
+            }
+        }, 500);
         // aisleContentBrowser.invalidate();
         
+    }
+    private void returnViewBack(){
+        final AisleContentBrowser aisleContentBrowser = (AisleContentBrowser) this;
+        final int currentIndex = aisleContentBrowser
+                .indexOfChild(aisleContentBrowser.getCurrentView());
+        View nextView = null;
+        nextView = (ScaleImageView) aisleContentBrowser
+                .getChildAt(currentIndex - 1);
+        Animation currentGoRight = AnimationUtils.loadAnimation(
+                mContext, R.anim.left_in);
+        final Animation nextFadeIn = AnimationUtils.loadAnimation(
+                mContext, R.anim.fade_in);
+        aisleContentBrowser.setInAnimation(nextFadeIn);
+        aisleContentBrowser.setOutAnimation(currentGoRight);
+        
+        if (null != mSpecialNeedsAdapter && null == nextView) {
+            
+            if (!mSpecialNeedsAdapter.setAisleContent(
+                    AisleContentBrowser.this, currentIndex,
+                    currentIndex - 1, true)) {
+  
+                 return;
+            }
+        }
+        currentGoRight
+                .setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationEnd(Animation animation) {
+                        if (mSwipeListener != null) {
+                            
+                            mSwipeListener.onAllowListResponse();
+                        }
+                        mCurrentIndex = currentIndex - 1;
+                        if (detailImgClickListenr != null) {
+                            detailImgClickListenr
+                                    .onImageSwipe(currentIndex - 1);
+                        }
+                        
+                        if (null != mSpecialNeedsAdapter) {
+                            String imgLikesCount = mSpecialNeedsAdapter
+                                    .getImageLikesCount(currentIndex - 1);
+                            if (mLikesCountView != null) {
+                                mLikesCountView
+                                        .setText(imgLikesCount);
+                            }
+                            boolean likeStatus = mSpecialNeedsAdapter
+                                    .getImageLikeStatus(currentIndex - 1);
+                            if (likeStatus) {
+                                likesImage
+                                        .setImageResource(R.drawable.heart);
+                            } else {
+                                likesImage
+                                        .setImageResource(R.drawable.heart_dark);
+                            }
+                            if (mSpecialNeedsAdapter
+                                    .hasMostLikes(currentIndex - 1)) {
+                                if (mSpecialNeedsAdapter
+                                        .hasSameLikes(currentIndex - 1)) {
+                                    mStarIcon
+                                            .setImageResource(R.drawable.vue_star_light);
+                                } else {
+                                    mStarIcon
+                                            .setImageResource(R.drawable.vue_star_theme);
+                                }
+                                mStarIcon
+                                        .setVisibility(View.VISIBLE);
+                            } else {
+                                mStarIcon.setVisibility(View.GONE);
+                            }
+                        }
+                        // aisleContentBrowser.setDisplayedChild(currentIndex-1);
+                        
+                    }
+                    
+                    public void onAnimationStart(Animation animation) {
+                        
+                    }
+                    
+                    public void onAnimationRepeat(
+                            Animation animation) {
+                        
+                    }
+                });
+        aisleContentBrowser.setDisplayedChild(currentIndex - 1);
     }
 }
