@@ -29,7 +29,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -55,7 +54,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -288,15 +286,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         e.printStackTrace();
                     }
                     mixpanel.track("Aisle Viewed", aisleViewedProps);
-                    Map<String, String> articleParams = new HashMap<String, String>();
-                    articleParams.put("Category",
-                            mCurrentAisle.getAisleContext().mCategory);
-                    articleParams.put("Lookingfor",
-                            mCurrentAisle.getAisleContext().mLookingForItem);
-                    articleParams.put("Occasion",
-                            mCurrentAisle.getAisleContext().mOccasion);
-                    FlurryAgent.logEvent("Visited_Categories", articleParams);
-                    
                 }
                 // wait time for flurry session starts
             }, mWaitTime);
@@ -798,7 +787,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             e.printStackTrace();
                         }
                         mixpanel.track("Bookmark Removed", aisleBookmarkProps);
-                        FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
                         if (mBookmarksCount > 0) {
                             mBookmarksCount--;
                         }
@@ -844,7 +832,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             e.printStackTrace();
                         }
                         mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
-                        FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
                         mBookmarksCount++;
                         mCurrentAisle
                                 .setWindowBookmarkIndicator(bookmarkStatus);
@@ -1271,18 +1258,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } else {
                     likeCountValue = -2;
                 }
-                //add user point 2 for every like
+                // add user point 2 for every like
                 Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS,
                         likeCountValue, mContext);
-                //update the like ids list
+                // update the like ids list
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .modifyImageRatedStatus(imageId, likeOrDislike);
                 mLikeCount = itemDetails.mLikesCount;
-                //get all liked images list form db.
+                // get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
+                
                 mImgRating = new ImageRating();
                 mImgRating.mAisleId = Long.parseLong(aisleId);
                 mImgRating.mImageId = Long.parseLong(imageId);
@@ -1301,7 +1289,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mImgRating.mImageRatingOwnerLastName = storedVueUser
                             .getLastName();
                 }
-                //if image have already an rate id get it from db.
+                // if image have already an rate id get it from db.
                 for (ImageRating imgRat : imgRatingList) {
                     if (mImgRating.mImageId.longValue() == imgRat.mImageId
                             .longValue()) {
@@ -1316,7 +1304,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     }
                 }
                 try {
-                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY  in adapter rating ID: "+mImgRating.mId);
                     AisleManager.getAisleManager().updateRating(mImgRating,
                             mLikeCount);
                 } catch (Exception e) {
@@ -1379,32 +1366,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             e.printStackTrace();
         }
         mixpanel.track("Image Liked", aisleLikedProps);
-        Map<String, String> articleParams = new HashMap<String, String>();
-        articleParams
-                .put("Category", mCurrentAisle.getAisleContext().mCategory);
-        articleParams.put("Lookingfor",
-                mCurrentAisle.getAisleContext().mLookingForItem);
-        articleParams
-                .put("Occasion", mCurrentAisle.getAisleContext().mOccasion);
-        if (mStoredVueUser != null) {
-            articleParams.put("Unique_User_Like", "" + mStoredVueUser.getId());
-        } else {
-            articleParams.put("Unique_User_Like", "anonymous");
-        }
-        FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
-            
-            Map<String, String> articleParams1 = new HashMap<String, String>();
-            articleParams1.put("Unique_Aisle_Likes",
-                    "" + mCurrentAisle.getAisleId());
-            if (mStoredVueUser != null) {
-                articleParams1.put("Unique_User_Like",
-                        "" + mStoredVueUser.getId());
-            } else {
-                articleParams1.put("Unique_User_Like", "anonymous");
-            }
-            FlurryAgent.logEvent("Aisle_Likes", articleParams1);
         } else if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
             
             mCurrentAisle.getImageList().get(position).mLikesCount = mCurrentAisle
@@ -1461,7 +1424,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             e.printStackTrace();
         }
         mixpanel.track("Image Unliked", aisleUnLikedProps);
-        FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
@@ -1493,16 +1455,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         for (AisleBookmark b : aisleBookmarkList) {
             if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
                 aisleBookmark.setId(b.getId());
-                
                 break;
             }
         }
-        VueUser storedVueUser = null;
+        if (aisleBookmark.getId() != null && aisleBookmark.getId() == 0) {
+            aisleBookmark.setId(null);
+        }
         try {
-            storedVueUser = Utils.readUserObjectFromFile(mContext,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-                    Long.valueOf(storedVueUser.getId()).toString());
+            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1527,7 +1487,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             for (ImageRating imgRating : imgRatingList) {
                 if (imgRating.mImageId == Long.parseLong(imgDetail.mId)
-                        && imgRating.mLiked && imgRating.mIsUserRating == 1) {
+                        && imgRating.mLiked) {
                     imgDetail.mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
             }

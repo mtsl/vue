@@ -35,6 +35,8 @@ public class VueContentProvider extends ContentProvider {
     private static final int BOOKMARKED_AISLE_MATCH = 18;
     private static final int MY_BOOKMARKED_AISLES_MATCH = 19;
     private static final int MY_BOOKMARKED_AISLE_MATCH = 20;
+    private static final int ALL_RATED_IMAGES_TABLE_MATCH = 21;
+    private static final int ALL_RATED_IMAGES_ROW_MATCH = 22;
     private DbHelper mDbHelper;
     private static final UriMatcher URIMATCHER;
     
@@ -82,11 +84,14 @@ public class VueContentProvider extends ContentProvider {
         URIMATCHER.addURI(VueConstants.AUTHORITY,
                 VueConstants.BOOKMARKER_AISLES + "/#", BOOKMARKED_AISLE_MATCH);
         URIMATCHER.addURI(VueConstants.AUTHORITY,
-                VueConstants.MY_BOOKMARKED_AISLES, +MY_BOOKMARKED_AISLES_MATCH);
+                VueConstants.MY_BOOKMARKED_AISLES, + MY_BOOKMARKED_AISLES_MATCH);
         URIMATCHER.addURI(VueConstants.AUTHORITY,
                 VueConstants.MY_BOOKMARKED_AISLES + "/#",
                 MY_BOOKMARKED_AISLE_MATCH);
-        
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES,
+                ALL_RATED_IMAGES_TABLE_MATCH);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES + "/#",
+                ALL_RATED_IMAGES_ROW_MATCH);
     }
     
     @Override
@@ -228,6 +233,22 @@ public class VueContentProvider extends ContentProvider {
                             + (!TextUtils.isEmpty(selection) ? " AND ("
                                     + selection + ')' : ""), selectionArgs);
             break;
+        case ALL_RATED_IMAGES_TABLE_MATCH:
+            rowsDeleted = aislesDB.delete(VueConstants.ALL_RATED_IMAGES,
+                    selection, selectionArgs);
+            break;
+        case ALL_RATED_IMAGES_ROW_MATCH:
+            id = uri.getLastPathSegment();
+            rowsDeleted = aislesDB.delete(
+                    VueConstants.ALL_RATED_IMAGES,
+                    VueConstants.ID
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            rowsDeleted = aislesDB.delete(VueConstants.ALL_RATED_IMAGES,
+                    selection, selectionArgs);
+            break;
         default:
             throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -338,6 +359,26 @@ public class VueContentProvider extends ContentProvider {
             if (rowId > 0) {
                 rowUri = ContentUris.appendId(
                         VueConstants.MY_BOOKMARKED_AISLES_URI.buildUpon(),
+                        rowId).build();
+                return rowUri;
+            }
+            break;
+        case ALL_RATED_IMAGES_TABLE_MATCH:
+            rowId = aislesDB.insert(VueConstants.ALL_RATED_IMAGES, null,
+                    values);
+            if (rowId > 0) {
+                rowUri = ContentUris.appendId(
+                        VueConstants.ALL_RATED_IMAGES_URI.buildUpon(), rowId)
+                        .build();
+                return rowUri;
+            }
+            break;
+        case ALL_RATED_IMAGES_ROW_MATCH:
+            rowId = aislesDB.insert(VueConstants.ALL_RATED_IMAGES, null,
+                    values);
+            if (rowId > 0) {
+                rowUri = ContentUris.appendId(
+                        VueConstants.ALL_RATED_IMAGES_URI.buildUpon(),
                         rowId).build();
                 return rowUri;
             }
@@ -511,7 +552,20 @@ public class VueContentProvider extends ContentProvider {
                     + (!TextUtils.isEmpty(selection) ? " AND (" + selection
                             + ')' : ""), selectionArgs, null, null, null);
             break;
-        
+        case ALL_RATED_IMAGES_TABLE_MATCH:
+            qb.setTables(VueConstants.ALL_RATED_IMAGES);
+            cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+                    null, null, sortOrder);
+            break;
+        case ALL_RATED_IMAGES_ROW_MATCH:
+            qb.setTables(VueConstants.ALL_RATED_IMAGES);
+            id = uri.getLastPathSegment();
+            cursor = qb.query(aislesDB, projection, VueConstants.ID
+                    + "="
+                    + id
+                    + (!TextUtils.isEmpty(selection) ? " AND (" + selection
+                            + ')' : ""), selectionArgs, null, null, null);
+            break;
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
@@ -675,6 +729,22 @@ public class VueContentProvider extends ContentProvider {
                             + id
                             + (!TextUtils.isEmpty(selection) ? " AND ("
                                     + selection + ')' : ""), selectionArgs);
+            break;
+        case ALL_RATED_IMAGES_TABLE_MATCH:
+            rowsUpdated = aislesDB.update(VueConstants.ALL_RATED_IMAGES,
+                    values, selection, selectionArgs);
+            break;
+        case ALL_RATED_IMAGES_ROW_MATCH:
+            id = uri.getLastPathSegment();
+            rowsUpdated = aislesDB.update(
+                    VueConstants.ALL_RATED_IMAGES,
+                    values,
+                    VueConstants.ID
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            
             break;
         }
         return rowsUpdated;

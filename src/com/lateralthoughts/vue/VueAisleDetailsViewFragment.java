@@ -50,7 +50,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.user.VueUser;
@@ -481,7 +480,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mixpanel.track("Added Comment", null);
-                FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
                 String etText = edtCommentView.getText().toString();
                 
                 if (etText != null && etText.length() >= 1) {
@@ -512,6 +510,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                         showInviteFriendsDialog();
                     }
                 }
+                
             } else {
                 Editor edit = sharedPreferencesObj.edit();
                 edit.putBoolean(VueConstants.IS_ALREADY_VIEWED_DETAILS_SCREEN,
@@ -651,7 +650,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
                 new Handler().postDelayed(new Runnable() {
@@ -680,7 +678,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mixpanel.track("Find At", null);
-                FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
                 String url = mFindAtUrl;
                 if (url != null && url.startsWith("http")) {
                     closeKeyboard();
@@ -716,7 +713,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                             "Please try again... Installed apps are loading.",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
                     closeKeyboard();
                     // to smoothen the touch response
                     int addAilseDelay = 200;
@@ -1231,6 +1227,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
         edit.putInt(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, count);
         edit.putLong(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME,
                 System.currentTimeMillis());
+        edit.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
         edit.commit();
         final Dialog dialog = new Dialog(getActivity(),
                 R.style.Theme_Dialog_Translucent);
@@ -1250,6 +1247,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
         hint_array_list.add("2. Invite them to join Vue");
         hint_array_list.add("3. Earn $$ rewards");
         dialog.show();
+        
+        Editor edit2 = sharedPreferencesObj.edit();
+        edit2.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
+        edit2.commit();
         proceed.setText("Invite Friends");
         dontshow.setText("Skip for now");
         dialog.setOnDismissListener(new OnDismissListener() {

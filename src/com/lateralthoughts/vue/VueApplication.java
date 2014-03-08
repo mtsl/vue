@@ -2,18 +2,16 @@ package com.lateralthoughts.vue;
 
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -24,7 +22,6 @@ import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
@@ -55,13 +52,18 @@ public class VueApplication extends Application {
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
     public boolean mInstalledAppsLoadStatus = false;
-    public String MIXPANEL_TOKEN = "1647c2878866ff31de08dc810f33fbf6"; // "Krishna
-                                                                       // Mixpanel
-                                                                       // token
-                                                                       // for
-                                                                       // Vue
-                                                                       // development
-                                                                       // testing
+    public String mFBLoginFailureReason = null;
+    public String MIXPANEL_TOKEN = "72f1b89ae2fc217079ef18cd9a67150b"; // "72f1b89ae2fc217079ef18cd9a67150b";
+                                                                       // //
+                                                                       // "Vue
+    // India
+    // Team
+    // Mixpanel
+    // token
+    // for
+    // Vue
+    // development
+    // testing
     // "178a869c17a98b1f044ae5548ad9f4c4";
     //
     // Vidya
@@ -178,25 +180,23 @@ public class VueApplication extends Application {
         mFileCache = new FileCache(this);
         ContentAdapterFactory.getInstance(this);
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
-        JSONObject crittercismConfig = new JSONObject();
-        try {
-            crittercismConfig.put("shouldCollectLogcat", true); // send logcat
-                                                                // data for
-                                                                // devices with
-                                                                // API Level 16
-                                                                // and higher
-        } catch (JSONException je) {
-        }
+        // JSONObject crittercismConfig = new JSONObject();
+        /*
+         * try { // crittercismConfig.put("shouldCollectLogcat", true); // send
+         * logcat // data for // devices with // API Level 16 // and higher }
+         * catch (JSONException je) { }
+         */
         mEmptyImageView = new ScaleImageView(this);
         Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
         mEmptyImageView.setImageDrawable(d);
-        
         DisplayMetrics dm = getResources().getDisplayMetrics();
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-                crittercismConfig);
+        /*
+         * Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+         * crittercismConfig);
+         */
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
@@ -336,20 +336,33 @@ public class VueApplication extends Application {
             public void run() {
                 mInstalledAppsLoadStatus = false;
                 mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
+                FileCache fileCache = new FileCache(context);
                 for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
                     if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i],
                             context)) {
+                        String fileName = null;
                         Drawable appIcon = null;
                         try {
-                            appIcon = context.getPackageManager()
-                                    .getApplicationIcon(
-                                            SHOPPINGAPP_PACKAGES_ARRAY[i]);
-                        } catch (NameNotFoundException e) {
+                            File file = fileCache
+                                    .getVueInstalledAppIconFile(SHOPPINGAPP_PACKAGES_ARRAY[i]
+                                            .replace(".", ""));
+                            fileName = null/* file.getPath() */;
+                            if (!file.exists()) {
+                                /*
+                                 * appIcon = context.getPackageManager()
+                                 * .getApplicationIcon(
+                                 * SHOPPINGAPP_PACKAGES_ARRAY[i]);
+                                 * Utils.saveBitmap( ((BitmapDrawable)
+                                 * appIcon).getBitmap(), file);
+                                 */
+                            }
+                        } catch (Throwable e) {
+                            e.printStackTrace();
                         }
                         ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
                                 SHOPPINGAPP_NAMES_ARRAY[i],
                                 SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-                                SHOPPINGAPP_PACKAGES_ARRAY[i], appIcon);
+                                SHOPPINGAPP_PACKAGES_ARRAY[i], fileName);
                         mShoppingApplicationDetailsList
                                 .add(shoppingApplicationDetails);
                     }
@@ -362,23 +375,4 @@ public class VueApplication extends Application {
         }).start();
         
     }
-    /*
-     * public void registerUser(MixpanelAPI mixpanel) { VueUser storedVueUser =
-     * null; try { storedVueUser = Utils.readUserObjectFromFile(
-     * VueApplication.getInstance(), VueConstants.VUE_APP_USEROBJECT__FILENAME);
-     * } catch (Exception e2) { e2.printStackTrace(); } if (storedVueUser !=
-     * null) ; JSONObject nameTag = new JSONObject(); try { // Set an
-     * "mp_name_tag" super property // for Streams if you find it useful.
-     * nameTag.put("mp_name_tag", storedVueUser.getFirstName() + " " +
-     * storedVueUser.getLastName()); mixpanel.registerSuperProperties(nameTag);
-     * } catch (JSONException e) { e.printStackTrace(); } }
-     * 
-     * public void unregisterUser(MixpanelAPI mixpanel) { VueUser storedVueUser
-     * = null; try { storedVueUser = Utils.readUserObjectFromFile(
-     * VueApplication.getInstance(), VueConstants.VUE_APP_USEROBJECT__FILENAME);
-     * mixpanel.unregisterSuperProperty(storedVueUser.getFirstName() + " " +
-     * storedVueUser.getLastName()); //mixpanel.clearSuperProperties(); } catch
-     * (Exception e2) { e2.printStackTrace(); } }
-     */
-    
 }

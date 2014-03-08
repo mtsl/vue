@@ -7,12 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.domain.ImageCommentRequest;
 
 public class NetworkStateChangeReciver extends BroadcastReceiver {
     
@@ -29,104 +30,77 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
             mSharedPreferencesObj = context.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_AISLE_DIRTY,
-                    false)) {/*
-                VueUser storedVueUser = null;
-                try {
-                    storedVueUser = Utils.readUserObjectFromFile(context,
-                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                final ArrayList<AisleWindowContent> aisles = DataBaseManager
-                        .getInstance(context).getDirtyAisles("1");
-                for (AisleWindowContent content : aisles) {
-                    mAisleBookmark = new AisleBookmark(null, true,
-                            Long.parseLong(content.getAisleId()));
+                    false)) {
+                
+                ArrayList<AisleBookmark> bookmarkedAisles = DataBaseManager
+                        .getInstance(context).getDirtyBookmarkedAisles();
+                
+                for (AisleBookmark ab : bookmarkedAisles) {
                     try {
-                        storedVueUser = Utils.readUserObjectFromFile(
-                                VueApplication.getInstance(),
-                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                        
-                        ObjectMapper mapper = new ObjectMapper();
-                        String bookmarkAisleAsString = mapper
-                                .writeValueAsString(mAisleBookmark);
-                        Response.Listener listener = new Response.Listener<String>() {
-                            
-                            @Override
-                            public void onResponse(String jsonArray) {
-                                if (jsonArray != null) {
-                                    try {
-                                        mCreatedAisleBookmark = (new ObjectMapper())
-                                                .readValue(jsonArray,
-                                                        AisleBookmark.class);
-                                        AisleManager.getAisleManager()
-                                                .updateBookmartToDb(aisles,
-                                                        mAisleBookmark, false);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        };
-                        
-                        Response.ErrorListener errorListener = new ErrorListener() {
-                            
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                mIsDirty = true;
-                            }
-                        };
-                        String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
-                        if (mAisleBookmark.getId() != null) {
-                            bookmarkUrl = UrlConstants.UPDATE_BOOKMARK_RESTURL;
+                        //in db bookmark id object set to zero if no network so change it to null while syncing  to server.
+                        if (ab.getId() != null && ab.getId().longValue() == 0) {
+                            ab.setId(null);
                         }
-                        BookmarkPutRequest request = new BookmarkPutRequest(
-                                bookmarkAisleAsString, listener, errorListener,
-                                bookmarkUrl + "/" + storedVueUser.getId());
-                        VueApplication.getInstance().getRequestQueue()
-                                .add(request);
+                        AisleManager.getAisleManager().aisleBookmarkUpdate(ab);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            */}
-            
+                
+            }
             if ((mSharedPreferencesObj.getBoolean(VueConstants.IS_IMAGE_DIRTY,
                     false))) {
-                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY ");
                 ArrayList<ImageRating> imagsRating = DataBaseManager
                         .getInstance(context).getDirtyImages("1");
-                Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imagsRating.size(): " + imagsRating.size());
-                for (ImageRating imgRating : imagsRating) {
-                    try {
-                        Cursor c = context.getContentResolver().query(
-                                VueConstants.IMAGES_CONTENT_URI, null,
-                                VueConstants.IMAGE_ID + "=?",
-                                new String[] {String.valueOf(imgRating
-                                        .getImageId().longValue())}, null);
-                        Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY Cursor.getCount(): " + c.getCount());
-                        int likesCount = 0;
-                        if (c.moveToFirst()) {
-                            do {
-                                int imgId = c.getInt(c.getColumnIndex(VueConstants.IMAGE_ID));
-                               if(imgId == imgRating.getImageId().longValue()) {
-                                   likesCount = c.getInt(c.getColumnIndex(VueConstants.LIKES_COUNT));
-                                   Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY imgId Matched: " + imgId);
-                                   break;
-                               }
-                            } while (c.moveToNext());
+                if (imagsRating != null) {
+                    for (ImageRating imgRating : imagsRating) {
+                        if (imgRating.mId == null) {
+                            continue;
                         }
-                        AisleManager.getAisleManager().updateRating(imgRating,
-                                likesCount);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        if (imgRating.mId == 1L) {
+                            imgRating.mId = null;
+                        }
+                        try {
+                            Cursor c = context.getContentResolver().query(
+                                    VueConstants.IMAGES_CONTENT_URI,
+                                    null,
+                                    VueConstants.IMAGE_ID + "=?",
+                                    new String[] { String.valueOf(imgRating
+                                            .getImageId()) }, null);
+                            int likesCount = 0;
+                            boolean isMathced = false;
+                            
+                            if (c.moveToFirst()) {
+                                do {
+                                    long imgId = c
+                                            .getLong(c
+                                                    .getColumnIndex(VueConstants.IMAGE_ID));
+                                    
+                                    if (imgId == imgRating.getImageId()
+                                            .longValue()) {
+                                        likesCount = c
+                                                .getInt(c
+                                                        .getColumnIndex(VueConstants.LIKES_COUNT));
+                                        isMathced = true;
+                                        break;
+                                    }
+                                } while (c.moveToNext());
+                            }
+                            c.close();
+                            if (isMathced) {
+                                
+                                AisleManager.getAisleManager().updateRating(
+                                        imgRating, likesCount);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                   
                 }
             }
             
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_COMMENT_DIRTY,
-                    false)) {/*
+                    false)) {
                 ArrayList<ImageComment> comments = DataBaseManager.getInstance(
                         context).getDirtyComments("1");
                 NetworkHandler networkHandler = new NetworkHandler(context);
@@ -143,7 +117,7 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 }
-            */}
+            }
         }
     }
     

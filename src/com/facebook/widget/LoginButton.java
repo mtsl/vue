@@ -616,6 +616,7 @@ public class LoginButton extends Button {
         
         @Override
         public void onClick(View v) {
+            VueApplication.getInstance().mFBLoginFailureReason = null;
             writeToSdcard("Before fb login : " + new Date());
             if (VueConnectivityManager.isNetworkConnected(getContext())) {
                 mixpanel.track("Facebook Login Selected", null);

@@ -42,7 +42,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
+ 
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
@@ -2587,7 +2587,6 @@ public class DataEntryFragment extends Fragment {
                 e.printStackTrace();
             }
             mixpanel.track("New Aisle Created", this.createAisleProps);
-            FlurryAgent.logEvent("New_Aisle_Creation");
         }
         
     }
@@ -2648,10 +2647,7 @@ public class DataEntryFragment extends Fragment {
                     VueApplication.getInstance()).getAisleAt(
                     VueApplication.getInstance().getClickedWindowID());
         }
-        if (mFindAtText.getText().toString().trim().length() == 0
-                && mFromDetailsScreenFlag
-                && !(aisleWindowContent.getAisleContext().mUserId
-                        .equals(userId))) {
+        if (mFindAtText.getText().toString().trim().length() == 0) {
             Toast.makeText(getActivity(),
                     "Please specify where to find this product",
                     Toast.LENGTH_LONG).show();

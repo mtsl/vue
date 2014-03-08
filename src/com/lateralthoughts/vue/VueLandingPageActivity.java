@@ -2,11 +2,11 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,10 +32,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +50,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -57,7 +58,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;
 import com.lateralthoughts.vue.AisleManager.ImageUploadCallback;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
@@ -131,7 +131,37 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mShowSwipeHelp = false;
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
-    private boolean mLandingScreenActive = false;
+    public static boolean mLandingScreenActive = false;
+    
+    /**
+     * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
+     * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
+     */
+    public void copydbToSdcard() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+            
+            if (sd.canWrite()) {
+                String currentDBPath = "//data//com.lateralthoughts.vue//databases//Vue.db";
+                String backupDBPath = "Vue.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+                
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB)
+                            .getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB)
+                            .getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -208,6 +238,10 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
+        
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onCreate: ");
+        }
     }
     
     @Override
@@ -221,6 +255,9 @@ public class VueLandingPageActivity extends Activity implements
                         mLandingScreenTitleReceiver);
             }
         } catch (Exception e) {
+        }
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onDestroy: ");
         }
     }
     
@@ -295,7 +332,6 @@ public class VueLandingPageActivity extends Activity implements
             }
             if (mOtherSourceImagePath == null) {
                 mixpanel.track("Create Aisle Selected", null);
-                FlurryAgent.logEvent("Create_Aisle_Button_Click");
                 Intent intent = new Intent(VueLandingPageActivity.this,
                         CreateAisleSelectionActivity.class);
                 Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
@@ -429,9 +465,9 @@ public class VueLandingPageActivity extends Activity implements
     
     @Override
     protected void onStart() {
-        FlurryAgent.onStartSession(VueLandingPageActivity.this,
-                Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onStart: ");
+        }
         super.onStart();
         
     }
@@ -439,7 +475,11 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onStop: ");
+        }
+        long time_in_mins = Utils.getMins(System.currentTimeMillis());
+        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
     }
     
     @Override
@@ -788,24 +828,27 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayHomeAsUpEnabled(true);
         if (mIsFromOncreate) {
             openHelpTask();
-            new Handler().postDelayed(new Runnable() {
-                
-                @Override
-                public void run() {
-                    VueApplication.getInstance().getInstalledApplications(
-                            VueLandingPageActivity.this);
-                }
-            }, 500);
+            /*
+             * new Handler().postDelayed(new Runnable() {
+             * 
+             * @Override public void run() {
+             * VueApplication.getInstance().getInstalledApplications(
+             * VueLandingPageActivity.this); } }, 500);
+             */
             
+        }
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onResume: ");
         }
     }
     
     @Override
     public void onPause() {
-        mLandingScreenActive = false;
-        long time_in_mins = Utils.getMins(System.currentTimeMillis());
-        VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
         super.onPause();
+        mLandingScreenActive = false;
+        if (Utils.sIsLoged) {
+            Log.i("emptyScreenissue", "emptyScreenissue onPause: ");
+        }
         
     }
     
@@ -953,7 +996,6 @@ public class VueLandingPageActivity extends Activity implements
             e.printStackTrace();
         }
         mixpanel.track("Bezel Category Selected", categorySelectedProps);
-        FlurryAgent.logEvent(catName);
     }
     
     private void getBookmarkedAisles(String screenName) {
@@ -1673,43 +1715,6 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
                     invalidateOptionsMenu();
-                    if (mLandingScreenName.equalsIgnoreCase("Trending")) {
-                        mTrendingRequstCount++;
-                        if (mTrendingRequstCount > 2 && mLandingScreenActive) {
-                            if (!mHelpDialogShown) {
-                                try {
-                                    mHelpDialogShown = true;
-                                    SharedPreferences sharedPreferencesObj = getSharedPreferences(
-                                            VueConstants.SHAREDPREFERENCE_NAME,
-                                            0);
-                                    boolean isHelpShown = sharedPreferencesObj
-                                            .getBoolean(
-                                                    VueConstants.HELP_SCREEN_ACCES,
-                                                    false);
-                                    if (isHelpShown) {
-                                        int count = sharedPreferencesObj
-                                                .getInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT,
-                                                        0);
-                                        final int SHOW_LIMIT = 3;
-                                        if (count < SHOW_LIMIT) {
-                                            long showedTime = sharedPreferencesObj
-                                                    .getLong(
-                                                            VueConstants.USER_FINDFRIENDS_OPEN_TIME,
-                                                            0);
-                                            int hours = (int) Utils
-                                                    .dateDifference(showedTime);
-                                            final int DAY_LATER = 24;
-                                            if (hours > DAY_LATER) {
-                                                showInviteFriendsDialog();
-                                            }
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -1773,7 +1778,6 @@ public class VueLandingPageActivity extends Activity implements
                                                                                     .getInstance())
                                                                     .getNetworkHandler().offset,
                                                             DataBaseManager.AISLE_CREATED);
-                                            Map<String, String> articleParams = new HashMap<String, String>();
                                             VueUser storedVueUser = null;
                                             try {
                                                 storedVueUser = Utils
@@ -1783,17 +1787,6 @@ public class VueLandingPageActivity extends Activity implements
                                             } catch (Exception e2) {
                                                 e2.printStackTrace();
                                             }
-                                            if (storedVueUser != null) {
-                                                articleParams
-                                                        .put("User_Id",
-                                                                Long.valueOf(
-                                                                        storedVueUser
-                                                                                .getId())
-                                                                        .toString());
-                                            } else {
-                                                articleParams.put("User_Id",
-                                                        "anonymous");
-                                            }
                                             
                                             DataBaseManager
                                                     .getInstance(
@@ -1801,10 +1794,6 @@ public class VueLandingPageActivity extends Activity implements
                                                     .updateOrAddRecentlyViewedAisles(
                                                             aisleWindowContent
                                                                     .getAisleId());
-                                            
-                                            FlurryAgent.logEvent(
-                                                    "User_Select_Aisle",
-                                                    articleParams);
                                             Intent intent = new Intent();
                                             intent.setClass(
                                                     VueLandingPageActivity.this,
@@ -1947,55 +1936,6 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-    private void showInviteFriendsDialog() {
-        SharedPreferences sharedPreferencesObj = getSharedPreferences(
-                VueConstants.SHAREDPREFERENCE_NAME, 0);
-        int count = sharedPreferencesObj.getInt(
-                VueConstants.USER_FINDFRIENDS_OPEN_COUNT, 0);
-        count = count + 1;
-        Editor edit = sharedPreferencesObj.edit();
-        edit.putInt(VueConstants.USER_FINDFRIENDS_OPEN_COUNT, count);
-        edit.putLong(VueConstants.USER_FINDFRIENDS_OPEN_TIME,
-                System.currentTimeMillis());
-        edit.commit();
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.hintdialog);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        View hintPopupVerticalline = dialog
-                .findViewById(R.id.hint_popup_verticalline);
-        hintPopupVerticalline.setVisibility(View.GONE);
-        TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
-        ListView listview = (ListView) dialog.findViewById(R.id.networklist);
-        listview.setDivider(getResources().getDrawable(
-                R.drawable.share_dialog_divider));
-        TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
-        TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
-        ArrayList<String> hint_array_list = new ArrayList<String>();
-        dialogtitle.setText("Make vue your own");
-        hint_array_list.add("1. Use vue for your shopping decisions");
-        hint_array_list.add("2. Get your friends to join the fun");
-        hint_array_list.add("3. Earn $$ rewards");
-        dialog.show();
-        dontshow.setVisibility(View.GONE);
-        proceed.setText("OK");
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-            }
-        });
-        proceed.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        listview.setAdapter(new HintAdapter(hint_array_list));
-    }
-    
     private class HintAdapter extends BaseAdapter {
         ArrayList<String> mHintList;
         
@@ -2070,18 +2010,6 @@ public class VueLandingPageActivity extends Activity implements
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
         } else {
-            /*
-             * sharedPreferencesObj = this.getSharedPreferences(
-             * VueConstants.SHAREDPREFERENCE_NAME, 0); boolean aisleSwipe =
-             * sharedPreferencesObj.getBoolean( VueConstants.AISLE_SWIPE,
-             * false); if (!aisleSwipe) { long hours =
-             * Utils.dateDifference(sharedPreferencesObj.getLong(
-             * VueConstants.APP_FIRST_TIME_OPENED_TIME, 0)); if (hours != -1 &&
-             * hours >= 48) { // mShowSwipeHelp = true; mShowSwipeHelp = false;
-             * Editor editor = sharedPreferencesObj.edit();
-             * editor.putBoolean(VueConstants.AISLE_SWIPE, true);
-             * editor.commit(); } }
-             */
             VueUser storedVueUser = null;
             try {
                 storedVueUser = Utils.readUserObjectFromFile(this,
@@ -2132,26 +2060,17 @@ public class VueLandingPageActivity extends Activity implements
                     e.printStackTrace();
                 }
             }
-            // PackageInfo packageInfo;
             try {
-                /*
-                 * packageInfo = this.getPackageManager().getPackageInfo(
-                 * VueLandingPageActivity.this.getPackageName(), 0); int
-                 * versionCode = packageInfo.versionCode;
-                 */
                 if (storedVueUser != null) {
-                    /*
-                     * sharedPreferencesObj = this.getSharedPreferences(
-                     * VueConstants.SHAREDPREFERENCE_NAME, 0);
-                     */
-                    /*
-                     * long preVersionCode = sharedPreferencesObj.getLong(
-                     * VueConstants.VERSION_CODE_CHANGE, 0); if (versionCode !=
-                     * preVersionCode) { Editor editor =
-                     * sharedPreferencesObj.edit();
-                     * editor.putLong(VueConstants.VERSION_CODE_CHANGE,
-                     * versionCode); editor.commit();
-                     */
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            VueApplication.getInstance()
+                                    .getInstalledApplications(
+                                            VueLandingPageActivity.this);
+                        }
+                    }, 500);
                     if (storedVueUser != null
                             && storedVueUser.getGooglePlusId().equals(
                                     VueUser.DEFAULT_GOOGLEPLUS_ID)
@@ -2190,15 +2109,6 @@ public class VueLandingPageActivity extends Activity implements
                         i.putExtras(b);
                         startActivity(i);
                         /* } */
-                    } else {
-                        if (mShowSwipeHelp) {
-                            
-                            /*
-                             * Intent swipeHelpIntent = new Intent(this,
-                             * SwipeHelp.class); startActivity(swipeHelpIntent);
-                             */
-                            
-                        }
                     }
                     VueApplication.getInstance().setmUserInitials(
                             storedVueUser.getFirstName());
