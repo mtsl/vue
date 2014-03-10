@@ -596,11 +596,12 @@ public class NetworkHandler {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
                             bookmarkedList.clear();
+                            boolean isDirty = false;
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
-                                                aB.getBookmarked());
+                                                aB.getBookmarked(), isDirty);
                                 
                                 if (aB.getBookmarked()) {
                                     bookmarkedList.add(String.valueOf(aB

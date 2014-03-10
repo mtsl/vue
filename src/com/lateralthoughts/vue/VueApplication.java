@@ -13,8 +13,6 @@ import java.util.Date;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
@@ -22,7 +20,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -32,8 +29,6 @@ import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.crittercism.app.Crittercism;
-import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
@@ -212,7 +207,7 @@ public class VueApplication extends Application {
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
-                            MAX_BITMAP_COUNT);
+                            20 * 1024 * 1024);
                     
                     public void putBitmap(String url, Bitmap bitmap) {
                         mCache.put(url, bitmap);

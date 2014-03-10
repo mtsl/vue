@@ -202,13 +202,15 @@ public class VueTrendingAislesDataModel {
         }
         return null;
     }
+    
     public boolean isAisleExists(AisleWindowContent aisleItem) {
         boolean exist = false;
-         if(mAisleContentList.contains(aisleItem)){
-             exist = true; 
-         }
-         return exist;
+        if (mAisleContentList.contains(aisleItem)) {
+            exist = true;
+        }
+        return exist;
     }
+    
     public int getAilsePosition(AisleWindowContent aisleItem) {
         return mAisleContentList.indexOf(aisleItem);
     }

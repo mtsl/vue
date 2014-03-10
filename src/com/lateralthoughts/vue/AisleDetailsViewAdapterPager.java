@@ -29,7 +29,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1305,9 +1304,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     }
                 }
                 try {
-                    Log.e("NetworkStateChangeReciver",
-                            "VueConstants.IS_IMAGE_DIRTY  in adapter rating ID: "
-                                    + mImgRating.mId);
                     AisleManager.getAisleManager().updateRating(mImgRating,
                             mLikeCount);
                 } catch (Exception e) {
@@ -1459,16 +1455,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         for (AisleBookmark b : aisleBookmarkList) {
             if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
                 aisleBookmark.setId(b.getId());
-                
                 break;
             }
         }
-        VueUser storedVueUser = null;
+        if (aisleBookmark.getId() != null && aisleBookmark.getId() == 0) {
+            aisleBookmark.setId(null);
+        }
         try {
-            storedVueUser = Utils.readUserObjectFromFile(mContext,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-                    Long.valueOf(storedVueUser.getId()).toString());
+            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark);
         } catch (Exception e) {
             e.printStackTrace();
         }

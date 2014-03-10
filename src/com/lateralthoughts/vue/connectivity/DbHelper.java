@@ -90,8 +90,8 @@ public class DbHelper extends SQLiteOpenHelper {
     
     private String mCreateReatingImagesTable = "create table if not exists "
             + DATABASE_TABLE_RATED_IMAGES + " (" + VueConstants.IMAGE_ID
-            + " long, " + VueConstants.LIKE_OR_DISLIKE + " integer, "
-            + VueConstants.AISLE_ID + " long, "
+            + " long primary key, " + VueConstants.LIKE_OR_DISLIKE
+            + " integer, " + VueConstants.AISLE_ID + " long, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " long, "
@@ -108,9 +108,10 @@ public class DbHelper extends SQLiteOpenHelper {
             + VueConstants.IMAGE_ID + " long);";
     
     private String mCreateBookmarkAislesTable = "create table if not exists "
-            + DATABASE_TABLE_BOOKMARKS_AISLES + " (" + VueConstants.ID
+            + DATABASE_TABLE_BOOKMARKS_AISLES + " (" + VueConstants.AISLE_ID
             + " long primary key, " + VueConstants.IS_LIKED_OR_BOOKMARKED
-            + " integer, " + VueConstants.AISLE_ID + " text not null);";
+            + " integer, " + VueConstants.IS_BOOKMARK_DIRTY + " integer, "
+            + VueConstants.ID + " long);";
     
     private String mCreateMyBookmarkedAislesTable = "create table if not exists "
             + DATABASE_TABLE_MY_BOOKMARKED_AISLES
