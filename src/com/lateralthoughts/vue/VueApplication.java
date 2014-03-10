@@ -2,7 +2,6 @@ package com.lateralthoughts.vue;
 
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
@@ -200,7 +199,7 @@ public class VueApplication extends Application {
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
-                            20*1024*1024);
+                            20 * 1024 * 1024);
                     
                     public void putBitmap(String url, Bitmap bitmap) {
                         mCache.put(url, bitmap);
@@ -336,33 +335,13 @@ public class VueApplication extends Application {
             public void run() {
                 mInstalledAppsLoadStatus = false;
                 mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
-                FileCache fileCache = new FileCache(context);
                 for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
                     if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i],
                             context)) {
-                        String fileName = null;
-                        Drawable appIcon = null;
-                        try {
-                            File file = fileCache
-                                    .getVueInstalledAppIconFile(SHOPPINGAPP_PACKAGES_ARRAY[i]
-                                            .replace(".", ""));
-                            fileName = null/* file.getPath() */;
-                            if (!file.exists()) {
-                                /*
-                                 * appIcon = context.getPackageManager()
-                                 * .getApplicationIcon(
-                                 * SHOPPINGAPP_PACKAGES_ARRAY[i]);
-                                 * Utils.saveBitmap( ((BitmapDrawable)
-                                 * appIcon).getBitmap(), file);
-                                 */
-                            }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
                         ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
                                 SHOPPINGAPP_NAMES_ARRAY[i],
                                 SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-                                SHOPPINGAPP_PACKAGES_ARRAY[i], fileName);
+                                SHOPPINGAPP_PACKAGES_ARRAY[i], null);
                         mShoppingApplicationDetailsList
                                 .add(shoppingApplicationDetails);
                     }
@@ -370,7 +349,6 @@ public class VueApplication extends Application {
                 mMoreInstalledApplicationDetailsList = Utils
                         .getInstalledApplicationsList(getApplicationContext());
                 mInstalledAppsLoadStatus = true;
-                
             }
         }).start();
         

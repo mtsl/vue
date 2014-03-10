@@ -25,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_TABLE_ALL_RATED_IMAGES = "allRatedImages";
     public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
     public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 11;
     
     private String mCreateAislesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES + " (" + VueConstants.AISLE_Id
@@ -54,8 +54,8 @@ public class DbHelper extends SQLiteOpenHelper {
             + VueConstants.WIDTH + " text);";
     
     private String mCreateImageCommentsTable = "create table if not exists "
-            + DATABASE_TABLE_COMMENTS_ON_IMAGES + " (" + VueConstants.ID
-            + " long primary key, " + VueConstants.IMAGE_ID + " long, "
+            + DATABASE_TABLE_COMMENTS_ON_IMAGES + " (" + VueConstants.ID + " long primary key, "
+            + VueConstants.IMAGE_ID + " long, "
             + VueConstants.AISLE_Id + " long," + VueConstants.DIRTY_FLAG
             + " integer, " + VueConstants.DELETE_FLAG + " integer, "
             + VueConstants.LAST_MODIFIED_TIME + " long, "

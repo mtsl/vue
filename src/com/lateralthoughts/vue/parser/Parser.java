@@ -19,6 +19,7 @@ import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
@@ -578,21 +579,43 @@ public class Parser {
         return bookmarkedAisles;
     }
     
-    /*
-     * private void writeToSdcard(String message) {
-     * 
-     * String path = Environment.getExternalStorageDirectory().toString(); File
-     * dir = new File(path + "/vueImageIds"); if (!dir.isDirectory()) {
-     * dir.mkdir(); } File file = new File(dir, "/" + "vueImageIds" +
-     * (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" +
-     * Calendar.getInstance().get(Calendar.DATE) + "_" +
-     * Calendar.getInstance().get(Calendar.YEAR) + ".txt"); try {
-     * file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
-     * 
-     * try { PrintWriter out = new PrintWriter(new BufferedWriter( new
-     * FileWriter(file, true))); out.write("\n" + message + "\n"); out.flush();
-     * out.close();
-     * 
-     * } catch (IOException e) { e.printStackTrace(); } }
-     */
+    public ImageComment parseCommentResponse(String response) {
+        try {
+            if (response != null) {
+                JSONObject commnetObj = new JSONObject(response);
+                ImageComment imgComments = new ImageComment();
+                imgComments.setId(commnetObj
+                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID));
+                if (commnetObj.getString(
+                        VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
+                        .equals("null")) {
+                    imgComments
+                            .setCreatedTimestamp(commnetObj
+                                    .getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME));
+                } else {
+                    imgComments
+                            .setLastModifiedTimestamp(commnetObj
+                                    .getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME));
+                }
+                imgComments
+                        .setCommenterLastName(commnetObj
+                                .getString(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME));
+                imgComments.setImageCommentOwnerImageURL(commnetObj
+                        .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL));
+                imgComments.setOwnerImageId(commnetObj
+                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID));
+                imgComments
+                        .setCommenterFirstName(commnetObj
+                                .getString(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME));
+                imgComments.setOwnerUserId(Long.valueOf(commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTS_USERID)));
+                imgComments.setComment(commnetObj
+                        .getString(VueConstants.COMMENT));
+                return imgComments;
+            }
+            return null;
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }

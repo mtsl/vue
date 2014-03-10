@@ -465,31 +465,31 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
             mViewHolder.decisionLay.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    VueUser storedVueUser = null;
-                    boolean isUserAisleFlag = false;
-                    try {
-                        storedVueUser = Utils.readUserObjectFromFile(mContext,
-                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                        if (mCurrentAisle.getAisleContext().mUserId
-                                .equals(String.valueOf(storedVueUser.getId()))) {
-                            isUserAisleFlag = true;
-                        }
-                    } catch (Exception e2) {
-                        e2.printStackTrace();
-                    }
-                    if (isUserAisleFlag) {
-                        Intent intent = new Intent(mContext,
-                                DecisionScreen.class);
-                        
-                        mContext.startActivity(intent);
-                    } else {
-                        Toast.makeText(
-                                mContext,
-                                "Sorry, You can't make decision on another person aisle.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    
+                public void onClick(View v) {/*
+                                              * VueUser storedVueUser = null;
+                                              * boolean isUserAisleFlag = false;
+                                              * try { storedVueUser =
+                                              * Utils.readUserObjectFromFile
+                                              * (mContext, VueConstants.
+                                              * VUE_APP_USEROBJECT__FILENAME);
+                                              * if
+                                              * (mCurrentAisle.getAisleContext
+                                              * ().mUserId
+                                              * .equals(String.valueOf
+                                              * (storedVueUser.getId()))) {
+                                              * isUserAisleFlag = true; } }
+                                              * catch (Exception e2) {
+                                              * e2.printStackTrace(); } if
+                                              * (isUserAisleFlag) { Intent
+                                              * intent = new Intent(mContext,
+                                              * DecisionScreen.class);
+                                              * 
+                                              * mContext.startActivity(intent);
+                                              * } else { Toast.makeText(
+                                              * mContext,
+                                              * "Sorry, You can't make decision on another person aisle."
+                                              * , Toast.LENGTH_LONG).show(); }
+                                              */
                 }
             });
             String descisionText = " ";
@@ -1563,7 +1563,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 try {
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
-                            .getNetworkHandler().createImageComment(imgComment);
+                            .getNetworkHandler().createImageComment(imgComment,0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

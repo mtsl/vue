@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -157,6 +158,15 @@ public class DataBaseManager {
             public void run() {
                 addAislesToDB(context, contentList, offsetValue, whichScreen,
                         true);
+            }
+        });
+    }
+    public void updateAllRatingAisles(final ImageRating imgRating, final boolean isDirty){
+  runTask(new Runnable() {
+            
+            @Override
+            public void run() {
+                updateAllRatingAislesToDb(imgRating, isDirty);
             }
         });
     }
@@ -1429,12 +1439,16 @@ public class DataBaseManager {
                 comment.setComment(cursor.getString(cursor
                         .getColumnIndex(VueConstants.COMMENTS)));
                 comment.setOwnerUserId(Long.parseLong(getUserId()));
-                comment.setCommenterFirstName("");
-                comment.setCommenterLastName("");
+                comment.setCommenterFirstName(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME)));
+                comment.setCommenterLastName(cursor.getString(cursor
+                        .getColumnIndex(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME)));
+                comment.setId((cursor.getLong(cursor.getColumnIndex(VueConstants.ID))));
+                comment.setImageCommentOwnerImageURL(((cursor.getString(cursor.getColumnIndex(VueConstants.COMMENTER_URL)))));
                 comments.add(comment);
             } while (cursor.moveToNext());
         }
-        
+        cursor.close();
         return comments;
     }
     
@@ -1886,7 +1900,7 @@ public class DataBaseManager {
         return aisleContentArray;
     }
     
-    public void updateAllRatingAisles(ImageRating imgRating, boolean isDirty) {
+    private void updateAllRatingAislesToDb(ImageRating imgRating, boolean isDirty) {
         boolean isMatched = false;
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.ALL_RATED_IMAGES_URI, null, null, null, null);
