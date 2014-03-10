@@ -117,6 +117,7 @@ public class VueConstants {
     public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
     public static final String AISLE_ORDER = "aisleOrder";
     // Column names for aisles table.
+    public static final String SERIAL_NO = "serialNo";
     public static final String ID = "_id";
     public static final String CATEGORY = "category";
     public static final String FIRST_NAME = "firstName";
