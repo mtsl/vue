@@ -167,24 +167,22 @@ public class AisleManager {
                     
                 }
             }).start();
-        } else {
-            mIsDirty = true;
-            Editor editor = mSharedPreferencesObj.edit();
-            editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-            editor.commit();
-            ArrayList<AisleWindowContent> windowList;
-            
-            if (aisleBookmark.getBookmarked()) {
-                windowList = DataBaseManager.getInstance(
-                        VueApplication.getInstance()).getAisleByAisleId(
-                        Long.toString(aisleBookmark.getAisleId()));
-            } else {
-                windowList = DataBaseManager.getInstance(
-                        VueApplication.getInstance())
-                        .getAisleByAisleIdFromBookmarks(
-                                Long.toString(aisleBookmark.getAisleId()));
-            }
-            updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
+        } else {/*
+                 * mIsDirty = true; Editor editor =
+                 * mSharedPreferencesObj.edit();
+                 * editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+                 * editor.commit(); ArrayList<AisleWindowContent> windowList;
+                 * 
+                 * if (aisleBookmark.getBookmarked()) { windowList =
+                 * DataBaseManager.getInstance(
+                 * VueApplication.getInstance()).getAisleByAisleId(
+                 * Long.toString(aisleBookmark.getAisleId())); } else {
+                 * windowList = DataBaseManager.getInstance(
+                 * VueApplication.getInstance())
+                 * .getAisleByAisleIdFromBookmarks(
+                 * Long.toString(aisleBookmark.getAisleId())); }
+                 * updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
+                 */
         }
     }
     
@@ -244,14 +242,13 @@ public class AisleManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-            if (imageRating.getId() == null) {
-                imageRating.mId = 0001L;
-            }
-            updateImageRatingToDb(imageRating, likeCount, true);
-            Editor editor = mSharedPreferencesObj.edit();
-            editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-            editor.commit();
+        } else {/*
+                 * if (imageRating.getId() == null) { imageRating.mId = 0001L; }
+                 * updateImageRatingToDb(imageRating, likeCount, true); Editor
+                 * editor = mSharedPreferencesObj.edit();
+                 * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                 * editor.commit();
+                 */
         }
     }
     

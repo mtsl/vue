@@ -166,7 +166,6 @@ public class DataBaseManager {
             
             @Override
             public void run() {
-                Log.i("imageRating", "imageRating &&&&&&&");
                 updateAllRatingAislesToDb(imgRating, isDirty);
             }
         });
