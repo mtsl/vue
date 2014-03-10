@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -677,8 +678,7 @@ public class NetworkHandler {
         }
         return userId;
     }
-    
-    public ImageComment createImageComment(ImageCommentRequest comment)
+    public ImageComment createImageComment(ImageCommentRequest comment,long diryTime)
             throws Exception {
         ImageComment createdImageComment = null;
         ObjectMapper mapper = new ObjectMapper();

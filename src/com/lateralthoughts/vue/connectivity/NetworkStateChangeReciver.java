@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.ImageRating;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
@@ -101,24 +104,46 @@ public class NetworkStateChangeReciver extends BroadcastReceiver {
             
             if (mSharedPreferencesObj.getBoolean(VueConstants.IS_COMMENT_DIRTY,
                     false)) {
-                ArrayList<ImageComment> comments = DataBaseManager.getInstance(
-                        context).getDirtyComments("1");
-                NetworkHandler networkHandler = new NetworkHandler(context);
-                for (ImageComment comment : comments) {
-                    try {
-                        ImageCommentRequest imageRequest = new ImageCommentRequest();
-                        imageRequest.setComment(comment.getComment());
-                        imageRequest.setLastModifiedTimestamp(comment
-                                .getLastModifiedTimestamp());
-                        imageRequest.setOwnerImageId(comment.getOwnerImageId());
-                        imageRequest.setOwnerUserId(comment.getOwnerUserId());
-                        networkHandler.createImageComment(imageRequest);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        ArrayList<ImageComment> comments = DataBaseManager.getInstance(
+                                VueApplication.getInstance()).getDirtyComments("1");
+                        NetworkHandler networkHandler = VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler();
+                       
+                        for (ImageComment comment : comments) {
+                            try {
+                                long id = comment.getId();
+                                ImageCommentRequest imageRequest = new ImageCommentRequest();
+                                imageRequest.setComment(comment.getComment());
+                                imageRequest.setLastModifiedTimestamp(comment
+                                        .getLastModifiedTimestamp());
+                                imageRequest.setOwnerUserId(comment.getOwnerUserId());
+                                imageRequest.setOwnerImageId(comment.getOwnerImageId());
+                                ///////////////
+                                    syncComment(VueApplication.getInstance(),imageRequest, id);
+                               
+                                
+                            } catch (Exception e) {
+                              
+                                e.printStackTrace();
+                            }
+                        }  
+                        
                     }
-                }
+                }).start();
+       
             }
         }
     }
-    
+    private synchronized void syncComment(Context context, ImageCommentRequest imageRequest, long dirtyTime){
+        NetworkHandler networkHandler = VueTrendingAislesDataModel.getInstance(context).getNetworkHandler();
+        try {
+            Log.i("commentIssue", "commentIssue: receiver syncying: "+dirtyTime);
+           // networkHandler.createImageComment(imageRequest, dirtyTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }   
+    }
 }

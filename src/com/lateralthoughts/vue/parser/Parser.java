@@ -577,7 +577,6 @@ public class Parser {
         }
         return bookmarkedAisles;
     }
-    
     /*
      * private void writeToSdcard(String message) {
      * 
