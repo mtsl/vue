@@ -27,6 +27,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
@@ -35,6 +36,7 @@ public class VueContentGateway {
     private final String TAG = "VueContentGateway";
     private static VueContentGateway sInstance;
     private Context mContext; // application context;
+    public static boolean mNomoreTrendingAilse = false;
     
     private ArrayList<ParcelableNameValuePair> mHeaders;
     private ArrayList<ParcelableNameValuePair> mParams;
@@ -90,6 +92,9 @@ public class VueContentGateway {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
                     if (null != jsonArray) {
+                        if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
+                            mNomoreTrendingAilse = true;
+                        }
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
@@ -144,7 +149,7 @@ public class VueContentGateway {
         mParams.add(new ParcelableNameValuePair(name, value));
     }
     
-    private class VueAislesRequest extends JsonArrayRequest {
+    private  class VueAislesRequest extends JsonArrayRequest {
         
         /**
          * Creates a new request.

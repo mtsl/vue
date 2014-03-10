@@ -21,10 +21,13 @@ public class AisleLoader {
     Handler handler = new Handler();
     private Context mContext;
     private ContentAdapterFactory mContentAdapterFactory;
-    
+    public static boolean isScrolling = false;
+    public static boolean trendingSwipeBlock = false;
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     AisleContentClickListener mListener;
+    AisleContentBrowser aisleContentBrowserHelp;
+    public static int  sTrendingSwipeCount = 0;
     
     // private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
     // ViewHolder>();
@@ -168,7 +171,7 @@ public class AisleLoader {
             itemDetails = imageDetailsArr.get(0);
             ImageView likeImage = (ImageView) socialCard
                     .findViewById(R.id.like_img);
-            if (itemDetails.mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+            if (itemDetails.mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS && itemDetails.mLikesCount != 0) {
                 likeImage.setImageResource(R.drawable.heart);
             } else {
                 likeImage.setImageResource(R.drawable.heart_dark);
@@ -195,6 +198,13 @@ public class AisleLoader {
             contentBrowser.setLayoutParams(mShowpieceParams2);
             String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
             contentBrowser.addView(imageView);
+            if(!AisleLoader.trendingSwipeBlock) {
+            if(imageDetailsArr.size() > 1){
+                aisleContentBrowserHelp = holder.aisleContentBrowser;
+            }
+            } else {
+                aisleContentBrowserHelp = null;
+            }
             if (itemDetails.mImageUrl
                     .equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
                 imageView.setImageResource(R.drawable.about);
@@ -225,4 +235,16 @@ public class AisleLoader {
         }
         
     }
+   public void swipeImage(){
+       new Handler().postDelayed(new Runnable() {
+        
+        @Override
+        public void run() {
+            if(!AisleLoader.isScrolling && aisleContentBrowserHelp != null) {
+            aisleContentBrowserHelp.moveToNextChild();
+            }
+        }
+    }, 500);
+       
+   }
 }

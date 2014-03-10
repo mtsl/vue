@@ -10,6 +10,8 @@
     <string name="discard_comment">Would you like to discard the comment?</string>
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
+    <string name="vue_fb_gplus_login_mesg">Please login with Facebook or Google+</string>
+    <string name="vue_server_login_mesg">Please wait while uploading user details to server</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
     <string name="dataentry_mandtory_field_mesg">Please enter Lookingfor.</string>
     <string name="dataentry_mandtory_field_add_aisleimage_mesg">Please Add Aisle Image.</string>
@@ -80,12 +82,13 @@
     <string name="pendingActionBundleKey">com.example.learnfb:PendingAction</string>
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
-    <string name="ok">Ok</string> 
-    <string name="continue_earning">Continue earning</string> 
+    <string name="ok">Ok</string>
+    <string name="continue_earning">Continue earning</string>
     <string name="redeem_it_now">Redeem it now</string>
     <string name="cache_dirname">GoogleImgApp_Cache</string>
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>
+    <string name="rfresh_aisle">Refresh Aisles</string>
     <string name="pending_aisle">Pending Aisles</string>
     <string name="edit_aisle">Edit Aisle</string>
     <string name="add_image">Add Image</string>
@@ -121,7 +124,7 @@
     <string name="sidemenu_sub_option_Interactions">Interactions</string>
     <string name="sidemenu_sub_option_Bookmarks">Bookmarks</string>
     <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed</string>
-    <string name="sidemenu_sub_option_My_Pointss">My Points</string> 
+    <string name="sidemenu_sub_option_My_Pointss">My Points</string>
     <string name="done">Done</string>
     <string name="more">More</string>
     <string name="browser">Browser</string>

@@ -16,11 +16,15 @@
 
 package com.facebook.widget;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.R.color;
 import android.app.Activity;
@@ -30,6 +34,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -53,6 +58,7 @@ import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
@@ -79,8 +85,7 @@ public class LoginButton extends Button {
     private Fragment parentFragment;
     private LoginButtonProperties properties = new LoginButtonProperties();
     private MixpanelAPI mixpanel;
-    private JSONObject loginprops;
-    private MixpanelAPI.People people;
+    
     static class LoginButtonProperties {
         private SessionDefaultAudience defaultAudience = SessionDefaultAudience.FRIENDS;
         private List<String> permissions = Collections.<String> emptyList();
@@ -223,8 +228,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         if (attrs.getStyleAttribute() == 0) {
             // apparently there's no method of setting a default style in xml,
             // so in case the users do not explicitly specify a style, we need
@@ -251,8 +256,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         initializeActiveSessionWithCachedToken(context);
     }
     
@@ -611,14 +616,10 @@ public class LoginButton extends Button {
         
         @Override
         public void onClick(View v) {
+            VueApplication.getInstance().mFBLoginFailureReason = null;
+            writeToSdcard("Before fb login : " + new Date());
             if (VueConnectivityManager.isNetworkConnected(getContext())) {
-                loginprops = new JSONObject();
-                try {
-                    loginprops.put("login selected", "facebook");
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                mixpanel.track("Facebook Login Selected", null);
                 Context context = getContext();
                 final Session openSession = sessionTracker.getOpenSession();
                 if (openSession != null) {
@@ -703,6 +704,37 @@ public class LoginButton extends Button {
             }
         }
         // }
+    }
+    
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     void showAlertToChangeLocalSettings(final String message) {

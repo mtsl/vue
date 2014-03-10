@@ -22,13 +22,14 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_TABLE_COMMENTS_ON_IMAGES = "commentsOnImages";
     public static final String DATABASE_TABLE_RECENTLY_VIEWED_AISLES = "recentlyViewAisles";
     public static final String DATABASE_TABLE_RATED_IMAGES = "ratedImages";
+    public static final String DATABASE_TABLE_ALL_RATED_IMAGES = "allRatedImages";
     public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
     public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 10;
     
     private String mCreateAislesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES + " (" + VueConstants.AISLE_Id
-            + " integer primary key, " + VueConstants.CATEGORY + " text, "
+            + " long primary key, " + VueConstants.CATEGORY + " text, "
             + VueConstants.FIRST_NAME + " text, " + VueConstants.LAST_NAME
             + " text, " + VueConstants.JOIN_TIME + " text, "
             + VueConstants.LOOKING_FOR + " text, " + VueConstants.OCCASION
@@ -42,7 +43,7 @@ public class DbHelper extends SQLiteOpenHelper {
     
     private String mCreateAisleImagesTable = "create table if not exists "
             + DATABASE_TABLE_AISLES_IMAGES + " (" + VueConstants.IMAGE_ID
-            + " integer primary key, " + VueConstants.AISLE_Id + " text, "
+            + " long primary key, " + VueConstants.AISLE_Id + " text, "
             + VueConstants.TITLE + " text, " + VueConstants.IMAGE_URL
             + " text, " + VueConstants.DETAILS_URL + " text, "
             + VueConstants.STORE + " text, " + VueConstants.USER_ID + " text, "
@@ -88,25 +89,35 @@ public class DbHelper extends SQLiteOpenHelper {
             + VueConstants.VIEW_TIME + " text);";
     
     private String mCreateReatingImagesTable = "create table if not exists "
-            + DATABASE_TABLE_RATED_IMAGES + " (" + VueConstants.ID
-            + " long primary key, " + VueConstants.IS_LIKED_OR_BOOKMARKED
-            + " integer, " + VueConstants.AISLE_ID + " text, "
+            + DATABASE_TABLE_RATED_IMAGES + " (" + VueConstants.IMAGE_ID
+            + " long primary key, " + VueConstants.LIKE_OR_DISLIKE
+            + " integer, " + VueConstants.AISLE_ID + " long, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME + " text, "
             + VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME + " text, "
-            + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " text, "
-            + VueConstants.AISLE_IMAGE_USER_RATING + " integer, "
-            + VueConstants.IMAGE_ID + " text);";
+            + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " long, "
+            + VueConstants.DIRTY_FLAG + " integer, " + VueConstants.ID
+            + " long);";
+    
+    private String mCreateAllReatingImagesTable = "create table if not exists "
+            + DATABASE_TABLE_ALL_RATED_IMAGES + " (" + VueConstants.ID
+            + " long primary key, " + VueConstants.LIKE_OR_DISLIKE
+            + " integer, " + VueConstants.AISLE_ID + " long, "
+            + VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME + " text, "
+            + VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME + " text, "
+            + VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME + " long, "
+            + VueConstants.IMAGE_ID + " long);";
     
     private String mCreateBookmarkAislesTable = "create table if not exists "
-            + DATABASE_TABLE_BOOKMARKS_AISLES + " (" + VueConstants.ID
+            + DATABASE_TABLE_BOOKMARKS_AISLES + " (" + VueConstants.AISLE_ID
             + " long primary key, " + VueConstants.IS_LIKED_OR_BOOKMARKED
-            + " integer, " + VueConstants.AISLE_ID + " text not null);";
+            + " integer, " + VueConstants.IS_BOOKMARK_DIRTY + " integer, "
+            + VueConstants.ID + " long);";
     
     private String mCreateMyBookmarkedAislesTable = "create table if not exists "
             + DATABASE_TABLE_MY_BOOKMARKED_AISLES
             + " ("
             + VueConstants.AISLE_Id
-            + " integer primary key, "
+            + " long primary key, "
             + VueConstants.CATEGORY
             + " text, "
             + VueConstants.FIRST_NAME
@@ -135,6 +146,7 @@ public class DbHelper extends SQLiteOpenHelper {
             + " text, "
             + VueConstants.ID
             + " text);";
+    
     private String mDropAisleTable = "DROP TABLE " + DATABASE_TABLE_AISLES;
     private String mDropAisleImagesTable = "DROP TABLE "
             + DATABASE_TABLE_AISLES_IMAGES;
@@ -148,6 +160,8 @@ public class DbHelper extends SQLiteOpenHelper {
             + DATABASE_TABLE_RECENTLY_VIEWED_AISLES;
     private String mDropRatingImagesTable = "DROP TABLE "
             + DATABASE_TABLE_RATED_IMAGES;
+    private String mDropAllRatingImagesTable = "DROP TABLE "
+            + DATABASE_TABLE_ALL_RATED_IMAGES;
     private String mDropBookmarkAislesTable = "DROP TABLE "
             + DATABASE_TABLE_BOOKMARKS_AISLES;
     private String mDropMyBookmarkedAislesTable = "DROP TABLE "
@@ -169,6 +183,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(mCreateReatingImagesTable);
         db.execSQL(mCreateBookmarkAislesTable);
         db.execSQL(mCreateMyBookmarkedAislesTable);
+        db.execSQL(mCreateAllReatingImagesTable);
     }
     
     @Override
@@ -195,6 +210,7 @@ public class DbHelper extends SQLiteOpenHelper {
             db.execSQL(mDropCategoryTable);
             db.execSQL(mDropRecentlyViewTable);
             db.execSQL(mDropRatingImagesTable);
+            db.execSQL(mDropAllRatingImagesTable);
             db.execSQL(mDropBookmarkAislesTable);
             db.execSQL(mDropMyBookmarkedAislesTable);
             // Creating Tables...
@@ -208,6 +224,7 @@ public class DbHelper extends SQLiteOpenHelper {
             db.execSQL(mCreateReatingImagesTable);
             db.execSQL(mCreateBookmarkAislesTable);
             db.execSQL(mCreateMyBookmarkedAislesTable);
+            db.execSQL(mCreateAllReatingImagesTable);
             // Restore Previous version data...
             DataBaseManager.getInstance(VueApplication.getInstance())
                     .insertRecentlyViewedAislesOnUpgrade(recentlyViewedAisles,

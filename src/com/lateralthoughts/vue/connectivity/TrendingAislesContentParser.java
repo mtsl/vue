@@ -17,6 +17,8 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.utils.Logging;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesContentParser extends ResultReceiver {
     private int mState;
@@ -101,7 +103,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                             resultData.getString("result"),
                                             resultData.getBoolean("loadMore"));
                             int offset = resultData.getInt("offset");
-                            
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null
                                     && (VueLandingPageActivity.mLandingScreenName

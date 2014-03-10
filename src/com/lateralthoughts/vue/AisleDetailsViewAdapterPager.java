@@ -54,7 +54,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -64,6 +63,7 @@ import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.DetailClickListener;
 import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
@@ -104,7 +104,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private ViewHolder mViewHolder;
     private static final int mWaitTime = 1000;
     private VueTrendingAislesDataModel mVueTrendingAislesDataModel;
-    private LoginWarningMessage mLoginWarningMessage = null;
     private long mUserId;
     private ImageLoader mImageLoader;
     private ShareViaVueListner mShareViaVueListner;
@@ -287,15 +286,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         e.printStackTrace();
                     }
                     mixpanel.track("Aisle Viewed", aisleViewedProps);
-                    Map<String, String> articleParams = new HashMap<String, String>();
-                    articleParams.put("Category",
-                            mCurrentAisle.getAisleContext().mCategory);
-                    articleParams.put("Lookingfor",
-                            mCurrentAisle.getAisleContext().mLookingForItem);
-                    articleParams.put("Occasion",
-                            mCurrentAisle.getAisleContext().mOccasion);
-                    FlurryAgent.logEvent("Visited_Categories", articleParams);
-                    
                 }
                 // wait time for flurry session starts
             }, mWaitTime);
@@ -758,108 +748,116 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             @Override
             public void onClick(View v) {
-                mSetPager = false;
-                mIsBookImageClciked = true;
-                boolean bookmarkStatus = false;
-                if (mCurrentAisle.getWindowBookmarkIndicator()) {
-                    String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
-                    String userId = VueTrendingAislesDataModel
-                            .getInstance(mContext).getNetworkHandler()
-                            .getUserId();
-                    boolean isOwner = false;
-                    if (imgOwnerId == userId) {
-                        isOwner = true;
-                    }
-                    JSONObject aisleBookmarkProps = new JSONObject();
-                    try {
-                        aisleBookmarkProps.put("AisleId",
+                if (loginChcecking()) {
+                    mSetPager = false;
+                    mIsBookImageClciked = true;
+                    boolean bookmarkStatus = false;
+                    if (mCurrentAisle.getWindowBookmarkIndicator()) {
+                        String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+                        String userId = VueTrendingAislesDataModel
+                                .getInstance(mContext).getNetworkHandler()
+                                .getUserId();
+                        boolean isOwner = false;
+                        if (imgOwnerId == userId) {
+                            isOwner = true;
+                        }
+                        JSONObject aisleBookmarkProps = new JSONObject();
+                        try {
+                            aisleBookmarkProps.put("AisleId",
+                                    mCurrentAisle.getAisleId());
+                            aisleBookmarkProps.put("Is Aisle Owner", isOwner);
+                            aisleBookmarkProps.put("Owner Name",
+                                    mCurrentAisle.getAisleContext().mFirstName);
+                            aisleBookmarkProps.put("Share Count",
+                                    mCurrentAisle.getAisleContext().mShareCount);
+                            aisleBookmarkProps.put("Images Count",
+                                    mCurrentAisle.getImageList().size());
+                            aisleBookmarkProps.put("Category",
+                                    mCurrentAisle.getAisleContext().mCategory);
+                            aisleBookmarkProps.put(
+                                    "Looking For",
+                                    mCurrentAisle.getAisleContext().mLookingForItem);
+                            aisleBookmarkProps.put("Occasion",
+                                    mCurrentAisle.getAisleContext().mOccasion);
+                            aisleBookmarkProps.put("Shared From",
+                                    "Detail View Screen");
+                            
+                        } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("Bookmark Removed", aisleBookmarkProps);
+                        if (mBookmarksCount > 0) {
+                            mBookmarksCount--;
+                        }
+                        mCurrentAisle
+                                .setWindowBookmarkIndicator(bookmarkStatus);
+                        handleBookmark(bookmarkStatus,
                                 mCurrentAisle.getAisleId());
-                        aisleBookmarkProps.put("Is Aisle Owner", isOwner);
-                        aisleBookmarkProps.put("Owner Name",
-                                mCurrentAisle.getAisleContext().mFirstName);
-                        aisleBookmarkProps.put("Share Count",
-                                mCurrentAisle.getAisleContext().mShareCount);
-                        aisleBookmarkProps.put("Images Count", mCurrentAisle
-                                .getImageList().size());
-                        aisleBookmarkProps.put("Category",
-                                mCurrentAisle.getAisleContext().mCategory);
-                        aisleBookmarkProps.put("Looking For",
-                                mCurrentAisle.getAisleContext().mLookingForItem);
-                        aisleBookmarkProps.put("Occasion",
-                                mCurrentAisle.getAisleContext().mOccasion);
-                        aisleBookmarkProps.put("Shared From",
-                                "Detail View Screen");
-                        
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    } else {
+                        bookmarkStatus = true;
+                        String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+                        String userId = VueTrendingAislesDataModel
+                                .getInstance(mContext).getNetworkHandler()
+                                .getUserId();
+                        boolean isOwner = false;
+                        if (imgOwnerId == userId) {
+                            isOwner = true;
+                        }
+                        JSONObject aisleUnbookmarkProps = new JSONObject();
+                        try {
+                            aisleUnbookmarkProps.put("AisleId",
+                            
+                            mCurrentAisle.getAisleId());
+                            aisleUnbookmarkProps.put("Is Aisle Owner", isOwner);
+                            aisleUnbookmarkProps.put("Owner Name",
+                                    mCurrentAisle.getAisleContext().mFirstName);
+                            aisleUnbookmarkProps.put("Share Count",
+                                    mCurrentAisle.getAisleContext().mShareCount);
+                            aisleUnbookmarkProps.put("Images Count",
+                                    mCurrentAisle.getImageList().size());
+                            
+                            aisleUnbookmarkProps.put("Category",
+                                    mCurrentAisle.getAisleContext().mCategory);
+                            aisleUnbookmarkProps.put(
+                                    "Lookingfor",
+                                    mCurrentAisle.getAisleContext().mLookingForItem);
+                            aisleUnbookmarkProps.put("Occasion",
+                            
+                            mCurrentAisle.getAisleContext().mOccasion);
+                            aisleUnbookmarkProps.put("Bookmarked From",
+                                    "Detail View Screen");
+                            
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
+                        mBookmarksCount++;
+                        mCurrentAisle
+                                .setWindowBookmarkIndicator(bookmarkStatus);
+                        handleBookmark(bookmarkStatus,
+                                mCurrentAisle.getAisleId());
                     }
-                    mixpanel.track("Bookmark Removed", aisleBookmarkProps);
-                    FlurryAgent.logEvent("BOOKMARK_DETAILSVIEW");
-                    if (mBookmarksCount > 0) {
-                        mBookmarksCount--;
-                    }
-                    mCurrentAisle.setWindowBookmarkIndicator(bookmarkStatus);
-                    handleBookmark(bookmarkStatus, mCurrentAisle.getAisleId());
-                } else {
-                    bookmarkStatus = true;
-                    String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
-                    String userId = VueTrendingAislesDataModel
-                            .getInstance(mContext).getNetworkHandler()
-                            .getUserId();
-                    boolean isOwner = false;
-                    if (imgOwnerId == userId) {
-                        isOwner = true;
-                    }
-                    JSONObject aisleUnbookmarkProps = new JSONObject();
-                    try {
-                        aisleUnbookmarkProps.put("AisleId",
-                        
-                        mCurrentAisle.getAisleId());
-                        aisleUnbookmarkProps.put("Is Aisle Owner", isOwner);
-                        aisleUnbookmarkProps.put("Owner Name",
-                                mCurrentAisle.getAisleContext().mFirstName);
-                        aisleUnbookmarkProps.put("Share Count",
-                                mCurrentAisle.getAisleContext().mShareCount);
-                        aisleUnbookmarkProps.put("Images Count", mCurrentAisle
-                                .getImageList().size());
-                        
-                        aisleUnbookmarkProps.put("Category",
-                                mCurrentAisle.getAisleContext().mCategory);
-                        aisleUnbookmarkProps.put("Lookingfor",
-                                mCurrentAisle.getAisleContext().mLookingForItem);
-                        aisleUnbookmarkProps.put("Occasion",
-                        
-                        mCurrentAisle.getAisleContext().mOccasion);
-                        aisleUnbookmarkProps.put("Bookmarked From",
-                                "Detail View Screen");
-                        
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    mixpanel.track("Aisle Bookmarked", aisleUnbookmarkProps);
-                    FlurryAgent.logEvent("UNBOOKMARK_DETAILSVIEW");
-                    mBookmarksCount++;
-                    mCurrentAisle.setWindowBookmarkIndicator(bookmarkStatus);
-                    handleBookmark(bookmarkStatus, mCurrentAisle.getAisleId());
+                    mCurrentAisle.getAisleContext().mBookmarkCount = mBookmarksCount;
+                    VueTrendingAislesDataModel
+                            .getInstance(VueApplication.getInstance())
+                            .getNetworkHandler()
+                            .modifyBookmarkList(mCurrentAisle.getAisleId(),
+                                    bookmarkStatus);
+                    notifyDataSetChanged();
+                    setmSetPagerToTrue();
                 }
-                mCurrentAisle.getAisleContext().mBookmarkCount = mBookmarksCount;
-                VueTrendingAislesDataModel
-                        .getInstance(VueApplication.getInstance())
-                        .getNetworkHandler()
-                        .modifyBookmarkList(mCurrentAisle.getAisleId(),
-                                bookmarkStatus);
-                notifyDataSetChanged();
-                setmSetPagerToTrue();
             }
         });
         mViewHolder.likelay.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                mSetPager = false;
-                toggleRatingImage();
-                setmSetPagerToTrue();
+                if (loginChcecking()) {
+                    mSetPager = false;
+                    toggleRatingImage();
+                    setmSetPagerToTrue();
+                }
             }
         });
         mViewHolder.likelay.setOnLongClickListener(new OnLongClickListener() {
@@ -925,6 +923,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.getAisleContext().mShareCount);
             aisleSharedProps.put("Images Count", mCurrentAisle.getImageList()
                     .size());
+            aisleSharedProps.put("Category",
+                    mCurrentAisle.getAisleContext().mCategory);
+            aisleSharedProps.put("Lookingfor",
+                    mCurrentAisle.getAisleContext().mLookingForItem);
+            aisleSharedProps.put("Occasion",
+                    mCurrentAisle.getAisleContext().mOccasion);
             aisleSharedProps.put("Shared From", "Detail View Screen");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1005,12 +1009,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private class DetailImageClickListener implements DetailClickListener {
         @Override
         public void onImageClicked() {
-            onHandleLikeEvent();
+            if (loginChcecking()) {
+                onHandleLikeEvent();
+            }
         }
         
         @Override
         public void onImageLongPress() {
-            onHandleDisLikeEvent();
+            if (loginChcecking()) {
+                onHandleDisLikeEvent();
+            }
         }
         
         @Override
@@ -1060,123 +1068,111 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     }
     
     private void toggleRatingImage() {
-        if (checkLimitForLoginDialog()) {
-            if (mLoginWarningMessage == null) {
-                mLoginWarningMessage = new LoginWarningMessage(mContext);
-            }
-            mLoginWarningMessage.showLoginWarningMessageDialog(
-                    "You need to Login with the app to Like.", true, false, 0,
-                    null, null);
-        } else {
-            if (mCurrentDispImageIndex >= 0
-                    && mCurrentDispImageIndex < mCurrentAisle.getImageList()
-                            .size()) {
-                if (mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
-                    mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
-                    if (mCurrentAisle.getImageList()
-                            .get(mCurrentDispImageIndex).mLikesCount > 0) {
-                        mCurrentAisle.getImageList()
-                                .get(mCurrentDispImageIndex).mLikesCount = mCurrentAisle
-                                .getImageList().get(mCurrentDispImageIndex).mLikesCount - 1;
-                        sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES,
-                                false);
-                    }
-                    String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
-                    String userId = VueTrendingAislesDataModel
-                            .getInstance(mContext).getNetworkHandler()
-                            .getUserId();
-                    boolean isOwner = false;
-                    if (imgOwnerId == userId) {
-                        isOwner = true;
-                    }
-                    JSONObject aisleLikedProps = new JSONObject();
-                    try {
-                        aisleLikedProps
-                                .put("Image Id", mCurrentAisle.getImageList()
-                                        .get(mCurrentDispImageIndex).mId);
-                        aisleLikedProps.put("Aisle Id",
-                                mCurrentAisle.getAisleId());
-                        aisleLikedProps.put("Is Aisle Owner", isOwner);
-                        aisleLikedProps.put("Owner Name",
-                                mCurrentAisle.getAisleContext().mFirstName);
-                        aisleLikedProps.put(
-                                "Like Count",
-                                mCurrentAisle.getImageList().get(
-                                        mCurrentDispImageIndex).mLikesCount);
-                        aisleLikedProps.put("Category",
-                                mCurrentAisle.getAisleContext().mCategory);
-                        aisleLikedProps
-                                .put("Looking For",
-                                        mCurrentAisle.getAisleContext().mLookingForItem);
-                        aisleLikedProps.put("Occasion",
-                                mCurrentAisle.getAisleContext().mOccasion);
-                        aisleLikedProps.put("Unliked From",
-                                "Detail View Screen");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    mixpanel.track("Image Unliked", aisleLikedProps);
-                    
-                } else {
-                    mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+        if (mCurrentDispImageIndex >= 0
+                && mCurrentDispImageIndex < mCurrentAisle.getImageList().size()) {
+            if (mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
+                mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
+                if (mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikesCount > 0) {
                     mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikesCount = mCurrentAisle
-                            .getImageList().get(mCurrentDispImageIndex).mLikesCount + 1;
-                    sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
-                    String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
-                    String userId = VueTrendingAislesDataModel
-                            .getInstance(mContext).getNetworkHandler()
-                            .getUserId();
-                    boolean isOwner = false;
-                    if (imgOwnerId == userId) {
-                        isOwner = true;
-                    }
-                    JSONObject aisleLikedProps = new JSONObject();
-                    try {
-                        aisleLikedProps
-                                .put("Image Id", mCurrentAisle.getImageList()
-                                        .get(mCurrentDispImageIndex).mId);
-                        aisleLikedProps.put("Aisle Id",
-                                mCurrentAisle.getAisleId());
-                        aisleLikedProps.put("Is Aisle Owner", isOwner);
-                        aisleLikedProps.put("Owner Name",
-                                mCurrentAisle.getAisleContext().mFirstName);
-                        aisleLikedProps.put(
-                                "Like Count",
-                                mCurrentAisle.getImageList().get(
-                                        mCurrentDispImageIndex).mLikesCount);
-                        aisleLikedProps.put("Category",
-                                mCurrentAisle.getAisleContext().mCategory);
-                        aisleLikedProps
-                                .put("LookingfFor",
-                                        mCurrentAisle.getAisleContext().mLookingForItem);
-                        aisleLikedProps.put("Occasion",
-                                mCurrentAisle.getAisleContext().mOccasion);
-                        aisleLikedProps.put("Liked From", "Detail View Screen");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    mixpanel.track("Image Liked", aisleLikedProps);
-                    
+                            .getImageList().get(mCurrentDispImageIndex).mLikesCount - 1;
+                    sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
                 }
-                mLikes = mCurrentAisle.getImageList().get(
-                        mCurrentDispImageIndex).mLikesCount;
+                String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+                String userId = VueTrendingAislesDataModel
+                        .getInstance(mContext).getNetworkHandler().getUserId();
+                boolean isOwner = false;
+                if (imgOwnerId == userId) {
+                    isOwner = true;
+                }
+                
+                JSONObject aisleLikedProps = new JSONObject();
+                try {
+                    VueUser storedVueUser = null;
+                    storedVueUser = Utils.readUserObjectFromFile(
+                            VueApplication.getInstance(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                    String userName = storedVueUser.getFirstName() + " "
+                            + storedVueUser.getLastName();
+                    aisleLikedProps.put("Image Id", mCurrentAisle
+                            .getImageList().get(mCurrentDispImageIndex).mId);
+                    aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+                    aisleLikedProps.put("Is Aisle Owner", isOwner);
+                    aisleLikedProps.put("Image Position",
+                            mCurrentDispImageIndex);
+                    aisleLikedProps.put("Owner Name",
+                            mCurrentAisle.getAisleContext().mFirstName);
+                    aisleLikedProps.put(
+                            "Like Count",
+                            mCurrentAisle.getImageList().get(
+                                    mCurrentDispImageIndex).mLikesCount);
+                    aisleLikedProps.put("Category",
+                            mCurrentAisle.getAisleContext().mCategory);
+                    aisleLikedProps.put("Looking For",
+                            mCurrentAisle.getAisleContext().mLookingForItem);
+                    aisleLikedProps.put("Occasion",
+                            mCurrentAisle.getAisleContext().mOccasion);
+                    aisleLikedProps.put("Unliked From", "Detail View Screen");
+                    aisleLikedProps.put("Image Unliked By", userName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Image Unliked", aisleLikedProps);
+                
+            } else {
+                mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
+                mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikesCount = mCurrentAisle
+                        .getImageList().get(mCurrentDispImageIndex).mLikesCount + 1;
+                sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, true);
+                String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+                String userId = VueTrendingAislesDataModel
+                        .getInstance(mContext).getNetworkHandler().getUserId();
+                boolean isOwner = false;
+                if (imgOwnerId == userId) {
+                    isOwner = true;
+                }
+                JSONObject aisleLikedProps = new JSONObject();
+                try {
+                    VueUser storedVueUser = null;
+                    storedVueUser = Utils.readUserObjectFromFile(
+                            VueApplication.getInstance(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                    String userName = storedVueUser.getFirstName() + " "
+                            + storedVueUser.getLastName();
+                    aisleLikedProps.put("Image Id", mCurrentAisle
+                            .getImageList().get(mCurrentDispImageIndex).mId);
+                    aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+                    aisleLikedProps.put("Image Position",
+                            mCurrentDispImageIndex);
+                    aisleLikedProps.put("Is Aisle Owner", isOwner);
+                    aisleLikedProps.put("Owner Name",
+                            mCurrentAisle.getAisleContext().mFirstName);
+                    aisleLikedProps.put(
+                            "Like Count",
+                            mCurrentAisle.getImageList().get(
+                                    mCurrentDispImageIndex).mLikesCount);
+                    aisleLikedProps.put("Category",
+                            mCurrentAisle.getAisleContext().mCategory);
+                    aisleLikedProps.put("LookingfFor",
+                            mCurrentAisle.getAisleContext().mLookingForItem);
+                    aisleLikedProps.put("Occasion",
+                            mCurrentAisle.getAisleContext().mOccasion);
+                    aisleLikedProps.put("Liked From", "Detail View Screen");
+                    aisleLikedProps.put("Image Liked By", userName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("Image Liked", aisleLikedProps);
+                
             }
-            mIsLikeImageClicked = true;
-            findMostLikesImage();
-            notifyAdapter();
+            mLikes = mCurrentAisle.getImageList().get(mCurrentDispImageIndex).mLikesCount;
         }
+        mIsLikeImageClicked = true;
+        findMostLikesImage();
+        notifyAdapter();
     }
     
     public void changeLikesCountFromCopmareScreen(int position, String eventType) {
-        
-        if (checkLimitForLoginDialog()) {
-            if (mLoginWarningMessage == null) {
-                mLoginWarningMessage = new LoginWarningMessage(mContext);
-            }
-            mLoginWarningMessage.showLoginWarningMessageDialog(
-                    "You need to Login with the app to Like.", true, false, 0,
-                    null, null);
-        } else {
+        if (loginChcecking()) {
             if (position >= 0 && position < mCurrentAisle.getImageList().size()) {
                 if (eventType
                         .equalsIgnoreCase(AisleDetailsViewActivity.CLICK_EVENT)) {
@@ -1189,44 +1185,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             }
             
         }
-        
     }
     
     private void onHandleLikeEvent() {
-        if (checkLimitForLoginDialog()) {
-            if (mLoginWarningMessage == null) {
-                mLoginWarningMessage = new LoginWarningMessage(mContext);
-            }
-            mLoginWarningMessage.showLoginWarningMessageDialog(
-                    "You need to Login with the app to Like.", true, false, 0,
-                    null, null);
-        } else {
-            // increase the likes count
-            if (mCurrentDispImageIndex >= 0
-                    && mCurrentDispImageIndex < mCurrentAisle.getImageList()
-                            .size()) {
-                onChangeLikesCount(mCurrentDispImageIndex);
-                mIsLikeImageClicked = true;
-            }
+        // increase the likes count
+        if (mCurrentDispImageIndex >= 0
+                && mCurrentDispImageIndex < mCurrentAisle.getImageList().size()) {
+            onChangeLikesCount(mCurrentDispImageIndex);
+            mIsLikeImageClicked = true;
         }
     }
     
     private void onHandleDisLikeEvent() {
-        if (checkLimitForLoginDialog()) {
-            if (mLoginWarningMessage == null) {
-                mLoginWarningMessage = new LoginWarningMessage(mContext);
-            }
-            mLoginWarningMessage.showLoginWarningMessageDialog(
-                    "You need to Login with the app to Like.", true, false, 0,
-                    null, null);
-        } else {
-            // decrease the likes count
-            if (mCurrentDispImageIndex >= 0
-                    && mCurrentDispImageIndex < mCurrentAisle.getImageList()
-                            .size()) {
-                mIsLikeImageClicked = true;
-                onChangeDislikesCount(mCurrentDispImageIndex);
-            }
+        // decrease the likes count
+        if (mCurrentDispImageIndex >= 0
+                && mCurrentDispImageIndex < mCurrentAisle.getImageList().size()) {
+            mIsLikeImageClicked = true;
+            onChangeDislikesCount(mCurrentDispImageIndex);
         }
     }
     
@@ -1283,15 +1258,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } else {
                     likeCountValue = -2;
                 }
+                // add user point 2 for every like
                 Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS,
                         likeCountValue, mContext);
+                // update the like ids list
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .modifyImageRatedStatus(imageId, likeOrDislike);
                 mLikeCount = itemDetails.mLikesCount;
+                // get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
+                
                 mImgRating = new ImageRating();
                 mImgRating.mAisleId = Long.parseLong(aisleId);
                 mImgRating.mImageId = Long.parseLong(imageId);
@@ -1310,6 +1289,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mImgRating.mImageRatingOwnerLastName = storedVueUser
                             .getLastName();
                 }
+                // if image have already an rate id get it from db.
                 for (ImageRating imgRat : imgRatingList) {
                     if (mImgRating.mImageId.longValue() == imgRat.mImageId
                             .longValue()) {
@@ -1339,31 +1319,6 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         return mCurrentAisle.getAisleContext();
     }
     
-    public boolean checkLimitForLoginDialog() {
-        if (mContext != null) {
-            SharedPreferences sharedPreferencesObj = mContext
-                    .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-            boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
-                    VueConstants.VUE_LOGIN, false);
-            if (!isUserLoggedInFlag) {
-                int createdAisleCount = sharedPreferencesObj.getInt(
-                        VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-                int commentsCount = sharedPreferencesObj.getInt(
-                        VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-                if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-                        || commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-    
     private void onChangeLikesCount(int position) {
         if (mStoredVueUser == null) {
             try {
@@ -1382,9 +1337,16 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         JSONObject aisleLikedProps = new JSONObject();
         try {
+            VueUser storedVueUser = null;
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName();
             aisleLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+            aisleLikedProps.put("Image Position", position);
             aisleLikedProps.put("Is Aisle Owner", isOwner);
             aisleLikedProps.put("Owner Name",
                     mCurrentAisle.getAisleContext().mFirstName);
@@ -1399,36 +1361,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             aisleLikedProps.put("Occasion",
                     mCurrentAisle.getAisleContext().mOccasion);
             aisleLikedProps.put("Liked From", "Detail View Screen");
-        } catch (JSONException e) {
+            aisleLikedProps.put("Image Liked By", userName);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mixpanel.track("Image Liked", aisleLikedProps);
-        Map<String, String> articleParams = new HashMap<String, String>();
-        articleParams
-                .put("Category", mCurrentAisle.getAisleContext().mCategory);
-        articleParams.put("Lookingfor",
-                mCurrentAisle.getAisleContext().mLookingForItem);
-        articleParams
-                .put("Occasion", mCurrentAisle.getAisleContext().mOccasion);
-        if (mStoredVueUser != null) {
-            articleParams.put("Unique_User_Like", "" + mStoredVueUser.getId());
-        } else {
-            articleParams.put("Unique_User_Like", "anonymous");
-        }
-        FlurryAgent.logEvent("LIKES_DETAILSVIEW", articleParams);
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
-            
-            Map<String, String> articleParams1 = new HashMap<String, String>();
-            articleParams1.put("Unique_Aisle_Likes",
-                    "" + mCurrentAisle.getAisleId());
-            if (mStoredVueUser != null) {
-                articleParams1.put("Unique_User_Like",
-                        "" + mStoredVueUser.getId());
-            } else {
-                articleParams1.put("Unique_User_Like", "anonymous");
-            }
-            FlurryAgent.logEvent("Aisle_Likes", articleParams1);
         } else if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_NONE_STATUS) {
             
             mCurrentAisle.getImageList().get(position).mLikesCount = mCurrentAisle
@@ -1456,10 +1395,17 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             isOwner = true;
         }
         JSONObject aisleUnLikedProps = new JSONObject();
+        VueUser storedVueUser = null;
         try {
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName();
             aisleUnLikedProps.put("Image Id",
                     mCurrentAisle.getImageList().get(position).mId);
             aisleUnLikedProps.put("Aisle Id", mCurrentAisle.getAisleId());
+            aisleUnLikedProps.put("Image Position", mCurrentDispImageIndex);
             aisleUnLikedProps.put("Is Aisle Owner", isOwner);
             aisleUnLikedProps.put("Owner Name",
                     mCurrentAisle.getAisleContext().mFirstName);
@@ -1472,11 +1418,12 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             aisleUnLikedProps.put("Occasion",
                     mCurrentAisle.getAisleContext().mOccasion);
             aisleUnLikedProps.put("Unlike From", "Detail View Screen");
-        } catch (JSONException e) {
+            aisleUnLikedProps.put("Image Unliked By", userName);
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mixpanel.track("Image Unliked", aisleUnLikedProps);
-        FlurryAgent.logEvent("DIS_LIKES_DETAILSVIEW");
         if (mCurrentAisle.getImageList().get(position).mLikeDislikeStatus == VueConstants.IMG_LIKE_STATUS) {
             // false
             mCurrentAisle.getImageList().get(position).mLikeDislikeStatus = VueConstants.IMG_NONE_STATUS;
@@ -1503,22 +1450,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 Long.parseLong(aisleId));
         ArrayList<AisleBookmark> aisleBookmarkList = DataBaseManager
                 .getInstance(VueApplication.getInstance())
-                .getBookmarkAisleIdsList();
+                .getAllBookmarkAisleIdsList();
         
         for (AisleBookmark b : aisleBookmarkList) {
             if (aisleId.equals(Long.toString(b.getAisleId().longValue()))) {
                 aisleBookmark.setId(b.getId());
-                
                 break;
             }
         }
-        VueUser storedVueUser = null;
+        if (aisleBookmark.getId() != null && aisleBookmark.getId() == 0) {
+            aisleBookmark.setId(null);
+        }
         try {
-            
-            storedVueUser = Utils.readUserObjectFromFile(mContext,
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark,
-                    Long.valueOf(storedVueUser.getId()).toString());
+            AisleManager.getAisleManager().aisleBookmarkUpdate(aisleBookmark);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1543,7 +1487,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             
             for (ImageRating imgRating : imgRatingList) {
                 if (imgRating.mImageId == Long.parseLong(imgDetail.mId)
-                        && imgRating.mLiked && imgRating.mIsUserRating == 1) {
+                        && imgRating.mLiked) {
                     imgDetail.mLikeDislikeStatus = VueConstants.IMG_LIKE_STATUS;
                 }
             }
@@ -2142,5 +2086,37 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     private class Holder {
         TextView textone, texttwo;
         ImageView imageone, imagetwo;
+    }
+    
+    private boolean loginChcecking() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+                VueConstants.VUE_LOGIN, false);
+        if (isUserLoggedInFlag) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(mContext,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null && storedVueUser.getId() != null) {
+                return true;
+            } else {
+                Toast.makeText(
+                        mContext,
+                        mContext.getResources().getString(
+                                R.string.vue_server_login_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    mContext,
+                    mContext.getResources().getString(
+                            R.string.vue_fb_gplus_login_mesg),
+                    Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }

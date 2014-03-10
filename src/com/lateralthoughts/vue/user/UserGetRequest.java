@@ -1,4 +1,4 @@
-package com.lateralthoughts.vue.utils;
+package com.lateralthoughts.vue.user;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;

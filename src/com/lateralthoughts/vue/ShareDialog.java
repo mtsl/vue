@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,7 +33,8 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.user.VueUserProfile;
+import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -55,7 +55,7 @@ public class ShareDialog {
     private ArrayList<String> mAppNames = new ArrayList<String>();
     private ArrayList<String> mActivityNames = new ArrayList<String>();
     private ArrayList<String> mPackageNames = new ArrayList<String>();
-    private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
+    private ArrayList<String> mAppIconsPath = new ArrayList<String>();
     private Intent mSendIntent;
     private Context mContext;
     private Activity mActivity;
@@ -74,6 +74,7 @@ public class ShareDialog {
     private MixpanelAPI mixpanel;
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
+    private FileCache mFileCache = null;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -86,6 +87,7 @@ public class ShareDialog {
      */
     public ShareDialog(Context context, Activity activity,
             MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
+        mFileCache = new FileCache(context);
         this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
@@ -149,7 +151,6 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
-                FlurryAgent.logEvent("Ailse_share");
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     if (createAisleSelectionActivity != null) {
@@ -197,7 +198,7 @@ public class ShareDialog {
                 try {
                     mAppNames.clear();
                     mActivityNames.clear();
-                    mAppIcons.clear();
+                    mAppIconsPath.clear();
                     mPackageNames.clear();
                 } catch (Exception e) {
                 }
@@ -276,9 +277,11 @@ public class ShareDialog {
             } else {
                 holderView = (Holder) convertView.getTag();
             }
-            if (mAppIcons.get(position) != null) {
+            if (mAppIconsPath.get(position) != null) {
                 holderView.launcheicon
-                        .setImageDrawable(mAppIcons.get(position));
+                        .setImageURI(Uri.fromFile(mFileCache
+                                .getVueInstalledAppIconFile(mAppIconsPath
+                                        .get(position))));
             } else {
                 if (mAppNames.get(position).equals(
                         mContext.getResources().getString(R.string.more))) {
@@ -317,7 +320,24 @@ public class ShareDialog {
                             + APPLINK;
                     
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
@@ -408,7 +428,7 @@ public class ShareDialog {
             mShareIntentObj.getInstalledPackages();
             mAppNames = mShareIntentObj.getAppNames();
             mPackageNames = mShareIntentObj.getpackageNames();
-            mAppIcons = mShareIntentObj.getDrawables();
+            mAppIconsPath = mShareIntentObj.getDrawables();
         }
     }
     
@@ -418,15 +438,15 @@ public class ShareDialog {
                 && dataEntryShoppingApplicationsList.size() > 0) {
             mAppNames.clear();
             mActivityNames.clear();
-            mAppIcons.clear();
+            mAppIconsPath.clear();
             mPackageNames.clear();
             for (int i = 0; i < dataEntryShoppingApplicationsList.size(); i++) {
                 mAppNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getAppName());
                 mPackageNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getPackageName());
-                mAppIcons.add(dataEntryShoppingApplicationsList.get(i)
-                        .getAppIcon());
+                mAppIconsPath.add(dataEntryShoppingApplicationsList.get(i)
+                        .getAppIconPath());
                 mActivityNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getActivityName());
             }
@@ -499,7 +519,24 @@ public class ShareDialog {
                             + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
                             + APPLINK;
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
@@ -519,7 +556,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -586,7 +623,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -624,16 +661,33 @@ public class ShareDialog {
                     + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
                     + APPLINK;
         } else {
-            shareText = VueApplication.getInstance().getmUserName()
+            String userName = null;
+            if (VueApplication.getInstance().getmUserName() != null) {
+                userName = VueApplication.getInstance().getmUserName();
+            } else {
+                VueUserProfile storedUserProfile = null;
+                try {
+                    storedUserProfile = Utils.readUserProfileObjectFromFile(
+                            mContext,
+                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (storedUserProfile != null) {
+                    userName = storedUserProfile.getUserName();
+                }
+            }
+            shareText = userName
                     + " would like you to check this aisle out on Vue - "
                     + mImagePathArray.get(0).getLookingFor() + " by "
                     + mImagePathArray.get(0).getAisleOwnerName()
                     + ". Get Vue to create your own aisles! " + APPLINK;
         }
+        mSendIntent.setAction(Intent.ACTION_SEND);
         mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
         String activityname = null;
         if (mAppNames.get(position).equals(VueConstants.TWITTER_APP_NAME)) {
-            activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+            activityname = VueApplication.getInstance().twitterActivityName;
         } else if (mAppNames.get(position).equals(VueConstants.GMAIL_APP_NAME)) {
             activityname = VueConstants.GMAIL_ACTIVITY_NAME;
         } else if (mAppNames.get(position).equals(
