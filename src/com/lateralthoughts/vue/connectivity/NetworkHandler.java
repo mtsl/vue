@@ -685,20 +685,25 @@ public class NetworkHandler {
         if (VueConnectivityManager.isNetworkConnected(mContext)) {
             URL url = new URL(UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
                     + Long.valueOf(getUserObj().getId()).toString());
+            Log.i("createComment", "createComment request url: "+UrlConstants.CREATE_IMAGECOMMENT_RESTURL + "/"
+                    + Long.valueOf(getUserObj().getId()).toString());
             HttpPut httpPut = new HttpPut(url.toString());
             StringEntity entity = new StringEntity(
                     mapper.writeValueAsString(comment));
+            Log.i("createComment", "createComment request object: "+mapper.writeValueAsString(comment) );
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
             httpPut.setEntity(entity);
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
+            Log.i("createComment", "createComment response status code: "+response.getStatusLine().getStatusCode());
             if (response.getEntity() != null
                     && response.getStatusLine().getStatusCode() == 200) {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
                 if (responseMessage.length() > 0) {
+                    Log.i("createComment", "createComment response");
                     createdImageComment = (new ObjectMapper()).readValue(
                             responseMessage, ImageComment.class);
                     Editor editor = mSharedPreferencesObj.edit();
