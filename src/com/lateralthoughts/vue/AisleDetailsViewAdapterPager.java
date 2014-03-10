@@ -1563,7 +1563,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 try {
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
-                            .getNetworkHandler().createImageComment(imgComment);
+                            .getNetworkHandler().createImageComment(imgComment,0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

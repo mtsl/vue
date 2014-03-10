@@ -678,8 +678,7 @@ public class NetworkHandler {
         }
         return userId;
     }
-    
-    public ImageComment createImageComment(ImageCommentRequest comment)
+    public ImageComment createImageComment(ImageCommentRequest comment,long diryTime)
             throws Exception {
         ImageComment createdImageComment = null;
         ObjectMapper mapper = new ObjectMapper();

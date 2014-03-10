@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue.utils;
 
 public class UrlConstants {
-    
     // Uncomment this to point to production content server
     // public static final String SERVER_BASE_URL =
     // "http://2dot12-restlet.vueapi-canary-development.appspot.com/";
