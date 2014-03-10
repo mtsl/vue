@@ -54,8 +54,8 @@ public class DbHelper extends SQLiteOpenHelper {
             + VueConstants.WIDTH + " text);";
     
     private String mCreateImageCommentsTable = "create table if not exists "
-            + DATABASE_TABLE_COMMENTS_ON_IMAGES + " (" + VueConstants.ID
-            + " long primary key, " + VueConstants.IMAGE_ID + " long, "
+            + DATABASE_TABLE_COMMENTS_ON_IMAGES + " (" + VueConstants.ID + " long primary key, "
+            + VueConstants.IMAGE_ID + " long, "
             + VueConstants.AISLE_Id + " long," + VueConstants.DIRTY_FLAG
             + " integer, " + VueConstants.DELETE_FLAG + " integer, "
             + VueConstants.LAST_MODIFIED_TIME + " long, "
