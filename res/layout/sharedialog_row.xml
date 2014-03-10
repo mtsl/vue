@@ -19,7 +19,8 @@
                 android:layout_width="36dip"
                 android:layout_height="36dip"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/Image" />
+                android:contentDescription="@string/Image"
+                android:scaleType="centerCrop" />
         </RelativeLayout>
 
         <TextView
