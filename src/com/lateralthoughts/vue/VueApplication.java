@@ -2,8 +2,14 @@ package com.lateralthoughts.vue;
 
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -18,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 import android.util.TypedValue;
@@ -26,6 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
@@ -338,6 +346,7 @@ public class VueApplication extends Application {
             
             @Override
             public void run() {
+                writeToSdcard("before thread ??? " + new Date());
                 mInstalledAppsLoadStatus = false;
                 mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
                 FileCache fileCache = new FileCache(context);
@@ -350,7 +359,7 @@ public class VueApplication extends Application {
                             File file = fileCache
                                     .getVueInstalledAppIconFile(SHOPPINGAPP_PACKAGES_ARRAY[i]
                                             .replace(".", ""));
-                            fileName = null/*file.getPath()*/;
+                            fileName = null/* file.getPath() */;
                             if (!file.exists()) {
                                 /*
                                  * appIcon = context.getPackageManager()
@@ -374,9 +383,43 @@ public class VueApplication extends Application {
                 mMoreInstalledApplicationDetailsList = Utils
                         .getInstalledApplicationsList(getApplicationContext());
                 mInstalledAppsLoadStatus = true;
+                writeToSdcard("after thread ??? " + new Date());
                 
             }
         }).start();
         
     }
+    
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueBGThreadTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "vueBGThreadTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
 }

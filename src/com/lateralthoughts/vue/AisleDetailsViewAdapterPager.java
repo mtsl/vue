@@ -466,31 +466,31 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             mViewHolder.decisionLay.setVisibility(View.VISIBLE);
             mViewHolder.decisionLay.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    VueUser storedVueUser = null;
-                    boolean isUserAisleFlag = false;
-                    try {
-                        storedVueUser = Utils.readUserObjectFromFile(mContext,
-                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                        if (mCurrentAisle.getAisleContext().mUserId
-                                .equals(String.valueOf(storedVueUser.getId()))) {
-                            isUserAisleFlag = true;
-                        }
-                    } catch (Exception e2) {
-                        e2.printStackTrace();
-                    }
-                    if (isUserAisleFlag) {
-                        Intent intent = new Intent(mContext,
-                                DecisionScreen.class);
-                        
-                        mContext.startActivity(intent);
-                    } else {
-                        Toast.makeText(
-                                mContext,
-                                "Sorry, You can't make decision on another person aisle.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    
+                public void onClick(View v) {/*
+                                              * VueUser storedVueUser = null;
+                                              * boolean isUserAisleFlag = false;
+                                              * try { storedVueUser =
+                                              * Utils.readUserObjectFromFile
+                                              * (mContext, VueConstants.
+                                              * VUE_APP_USEROBJECT__FILENAME);
+                                              * if
+                                              * (mCurrentAisle.getAisleContext
+                                              * ().mUserId
+                                              * .equals(String.valueOf
+                                              * (storedVueUser.getId()))) {
+                                              * isUserAisleFlag = true; } }
+                                              * catch (Exception e2) {
+                                              * e2.printStackTrace(); } if
+                                              * (isUserAisleFlag) { Intent
+                                              * intent = new Intent(mContext,
+                                              * DecisionScreen.class);
+                                              * 
+                                              * mContext.startActivity(intent);
+                                              * } else { Toast.makeText(
+                                              * mContext,
+                                              * "Sorry, You can't make decision on another person aisle."
+                                              * , Toast.LENGTH_LONG).show(); }
+                                              */
                 }
             });
             String descisionText = " ";
@@ -1259,19 +1259,19 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } else {
                     likeCountValue = -2;
                 }
-                //add user point 2 for every like
+                // add user point 2 for every like
                 Utils.saveUserPoints(VueConstants.USER_LIKES_POINTS,
                         likeCountValue, mContext);
-                //update the like ids list
+                // update the like ids list
                 VueTrendingAislesDataModel
                         .getInstance(VueApplication.getInstance())
                         .getNetworkHandler()
                         .modifyImageRatedStatus(imageId, likeOrDislike);
                 mLikeCount = itemDetails.mLikesCount;
-                //get all liked images list form db.
+                // get all liked images list form db.
                 ArrayList<ImageRating> imgRatingList = DataBaseManager
                         .getInstance(mContext).getRatedImagesList(aisleId);
-               
+                
                 mImgRating = new ImageRating();
                 mImgRating.mAisleId = Long.parseLong(aisleId);
                 mImgRating.mImageId = Long.parseLong(imageId);
@@ -1290,7 +1290,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mImgRating.mImageRatingOwnerLastName = storedVueUser
                             .getLastName();
                 }
-                //if image have already an rate id get it from db.
+                // if image have already an rate id get it from db.
                 for (ImageRating imgRat : imgRatingList) {
                     if (mImgRating.mImageId.longValue() == imgRat.mImageId
                             .longValue()) {
@@ -1305,7 +1305,9 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     }
                 }
                 try {
-                    Log.e("NetworkStateChangeReciver", "VueConstants.IS_IMAGE_DIRTY  in adapter rating ID: "+mImgRating.mId);
+                    Log.e("NetworkStateChangeReciver",
+                            "VueConstants.IS_IMAGE_DIRTY  in adapter rating ID: "
+                                    + mImgRating.mId);
                     AisleManager.getAisleManager().updateRating(mImgRating,
                             mLikeCount);
                 } catch (Exception e) {
