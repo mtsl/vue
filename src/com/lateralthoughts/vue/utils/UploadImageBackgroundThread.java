@@ -39,7 +39,7 @@ public class UploadImageBackgroundThread implements Runnable,
     private File mImageFile;
     private ImageUploadCallback mImageUploadCallback;
     private String mImageUrl;
-    private static final int IMAGE_MAX_SIZE = 1024;
+    private static final int IMAGE_MAX_SIZE = 600;
     private int mImageWidth, mImageHeight;
     
     @SuppressWarnings("static-access")

@@ -278,10 +278,12 @@ public class ShareDialog {
                 holderView = (Holder) convertView.getTag();
             }
             if (mAppIconsPath.get(position) != null) {
-                holderView.launcheicon
-                        .setImageURI(Uri.fromFile(mFileCache
-                                .getVueInstalledAppIconFile(mAppIconsPath
-                                        .get(position))));
+                try {
+                    holderView.launcheicon.setImageDrawable(mContext
+                            .getPackageManager().getApplicationIcon(
+                                    mPackageNames.get(position)));
+                } catch (Exception e) {
+                }
             } else {
                 if (mAppNames.get(position).equals(
                         mContext.getResources().getString(R.string.more))) {
@@ -292,8 +294,12 @@ public class ShareDialog {
                     holderView.launcheicon
                             .setImageResource(R.drawable.browser_icon);
                 } else {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.vue_launcher_icon);
+                    try {
+                        holderView.launcheicon.setImageDrawable(mContext
+                                .getPackageManager().getApplicationIcon(
+                                        mPackageNames.get(position)));
+                    } catch (Exception e) {
+                    }
                 }
             }
             holderView.network.setText(mAppNames.get(position));

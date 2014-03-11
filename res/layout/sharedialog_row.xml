@@ -18,9 +18,9 @@
                 android:id="@+id/launchericon"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:scaleType="centerCrop"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/Image" />
+                android:contentDescription="@string/Image"
+                android:scaleType="centerCrop" />
         </RelativeLayout>
 
         <TextView

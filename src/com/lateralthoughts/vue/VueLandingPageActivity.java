@@ -238,10 +238,6 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         });
-        
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onCreate: ");
-        }
     }
     
     @Override
@@ -255,9 +251,6 @@ public class VueLandingPageActivity extends Activity implements
                         mLandingScreenTitleReceiver);
             }
         } catch (Exception e) {
-        }
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onDestroy: ");
         }
     }
     
@@ -465,19 +458,12 @@ public class VueLandingPageActivity extends Activity implements
     
     @Override
     protected void onStart() {
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onStart: ");
-        }
         super.onStart();
-        
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onStop: ");
-        }
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
     }
@@ -828,17 +814,6 @@ public class VueLandingPageActivity extends Activity implements
         getActionBar().setDisplayHomeAsUpEnabled(true);
         if (mIsFromOncreate) {
             openHelpTask();
-            /*
-             * new Handler().postDelayed(new Runnable() {
-             * 
-             * @Override public void run() {
-             * VueApplication.getInstance().getInstalledApplications(
-             * VueLandingPageActivity.this); } }, 500);
-             */
-            
-        }
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onResume: ");
         }
     }
     
@@ -846,10 +821,6 @@ public class VueLandingPageActivity extends Activity implements
     public void onPause() {
         super.onPause();
         mLandingScreenActive = false;
-        if (Utils.sIsLoged) {
-            Log.i("emptyScreenissue", "emptyScreenissue onPause: ");
-        }
-        
     }
     
     @Override

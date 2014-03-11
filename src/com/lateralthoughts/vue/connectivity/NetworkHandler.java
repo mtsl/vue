@@ -678,8 +678,9 @@ public class NetworkHandler {
         }
         return userId;
     }
-    public ImageComment createImageComment(ImageCommentRequest comment,long diryTime)
-            throws Exception {
+    
+    public ImageComment createImageComment(ImageCommentRequest comment,
+            long diryTime) throws Exception {
         ImageComment createdImageComment = null;
         ObjectMapper mapper = new ObjectMapper();
         if (VueConnectivityManager.isNetworkConnected(mContext)) {
@@ -699,8 +700,8 @@ public class NetworkHandler {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
                 if (responseMessage.length() > 0) {
-                    createdImageComment = (new ObjectMapper()).readValue(
-                            responseMessage, ImageComment.class);
+                    createdImageComment = new Parser()
+                            .parseCommentResponse(responseMessage);
                     Editor editor = mSharedPreferencesObj.edit();
                     editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, false);
                     editor.commit();
