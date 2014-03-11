@@ -345,12 +345,12 @@ public class Utils {
         return twoWeeksDifferenceTime + "";
     }
     
-    public static Bitmap getBitmap() {
+ /*   public static Bitmap getBitmap() {
         Bitmap icon = BitmapFactory.decodeResource(
-                VueApplication.getInstance().mVueApplicationContext
+                VueApplication.getInstance()
                         .getResources(), R.drawable.ic_launcher);
         return icon;
-    }
+    }*/
     
     public static boolean appInstalledOrNot(String uri, Context context) {
         PackageManager pm = context.getPackageManager();

@@ -10,14 +10,21 @@
  */
 package com.lateralthoughts.vue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -70,7 +77,7 @@ public class VueContentGateway {
      * Trending Aisles. The ResultReceiver object will be notified when the list
      * is available
      */
-    public boolean getTrendingAisles(int limit, final int offset,
+    public boolean getTrendingAisles(final int limit, final int offset,
             final ResultReceiver receiver, final boolean loadMore,
             final String screenName) {
         boolean status = true;
@@ -85,16 +92,68 @@ public class VueContentGateway {
                     .dismissProgress();
             return status;
         } else if (isConnection) {
-            final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
-                    + "/" + limit + "/" + offset;
+           new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
+                            + "/" + limit + "/" + offset;
+                    HttpGet httpGet = new HttpGet(requestUrl.toString());
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    HttpResponse response;
+                    response = httpClient.execute(httpGet);
+                    if(response.getEntity()!=null &&
+                            response.getStatusLine().getStatusCode() == 200) {
+                            String responseMessage = EntityUtils.toString(response.getEntity());
+                           
+                            if (responseMessage != null && responseMessage.length() > 0)
+                            {
+                                if(responseMessage.length() < 5 && screenName.equalsIgnoreCase("Trending")){
+                                    mNomoreTrendingAilse = true;
+                                }
+                                Bundle responseBundle = new Bundle();
+                                responseBundle
+                                        .putString("result", responseMessage.toString());
+                                responseBundle.putBoolean("loadMore", loadMore);
+                                responseBundle.putInt("offset", offset);
+                                receiver.send(1, responseBundle);
+                                Intent intent = new Intent(
+                                        VueConstants.LANDING_SCREEN_RECEIVER);
+                                intent.putExtra(
+                                        VueConstants.LANDING_SCREEN_RECEIVER_KEY,
+                                        screenName);
+                                VueApplication.getInstance().sendBroadcast(intent);
+                            } else {
+                                if(responseMessage != null && responseMessage.length() < 5 && screenName.equalsIgnoreCase("Trending")){
+                                    mNomoreTrendingAilse = true;
+                                }
+                            }
+                            
+                            }
+                } catch (ClientProtocolException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+            }
+        }).start();
+
+  
+            
+/*            
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
-                    if (null != jsonArray) {
+                     if (null != jsonArray) {
                         if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
                             mNomoreTrendingAilse = true;
                         }
+                        Log.i("emptyScreenIssue", "emptyScreenIssueAAA onResponse");
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
@@ -108,7 +167,7 @@ public class VueContentGateway {
                                 screenName);
                         VueApplication.getInstance().sendBroadcast(intent);
                     }
-                }
+                } 
             };
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
@@ -125,10 +184,11 @@ public class VueContentGateway {
             VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
                     listener, errorListener) {
             };
+            Log.i("emptyScreenIssue", "emptyScreenIssueAAA AisleRequest");
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VueApplication.getInstance().getRequestQueue().add(vueRequest);
+            VueApplication.getInstance().getRequestQueue().add(vueRequest);*/
         }
         return status;
     }
