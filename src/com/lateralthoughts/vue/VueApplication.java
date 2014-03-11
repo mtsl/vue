@@ -29,6 +29,7 @@ import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
