@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 
 public class Logger {
-    public static boolean sWrightToSdCard = false;
+    public static boolean sWrightToSdCard = true;
     
     public static void log(String level, String TAG, String message) {
         

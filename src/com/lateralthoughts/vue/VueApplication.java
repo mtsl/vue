@@ -52,7 +52,7 @@ public class VueApplication extends Application {
     ListFragementObj mListRefresobj;
     public boolean mInstalledAppsLoadStatus = false;
     public String mFBLoginFailureReason = null;
-    public String MIXPANEL_TOKEN = "178a869c17a98b1f044ae5548ad9f4c4"; // "72f1b89ae2fc217079ef18cd9a67150b";
+    public String MIXPANEL_TOKEN = "72f1b89ae2fc217079ef18cd9a67150b"; // "72f1b89ae2fc217079ef18cd9a67150b";
                                                                        // //
                                                                        // "Vue
     // India
