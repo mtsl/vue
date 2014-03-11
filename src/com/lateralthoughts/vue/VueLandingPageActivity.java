@@ -2099,7 +2099,6 @@ public class VueLandingPageActivity extends Activity implements
                 e.printStackTrace();
             }
         }
-        
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
