@@ -2,9 +2,7 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,24 +30,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -101,7 +94,6 @@ public class VueLandingPageActivity extends Activity implements
     public static String mOtherSourceImageLookingFor = null;
     public static String mOtherSourceImageCategory = null;
     public static String mOtherSourceAddImageAisleId = null;
-    private static final String TRENDING_SCREEN_VISITORS = "Trending_Screen_Visitors";
     public static Activity landingPageActivity = null;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private ProgressDialog mPd;
@@ -132,37 +124,6 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
     public static boolean mLandingScreenActive = false;
-    
-    /**
-     * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
-     * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.
-     */
-    public void copydbToSdcard() {
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            
-            if (sd.canWrite()) {
-                String currentDBPath = "//data//com.lateralthoughts.vue//databases//Vue.db";
-                String backupDBPath = "Vue.db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-                
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB)
-                            .getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB)
-                            .getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -189,55 +150,6 @@ public class VueLandingPageActivity extends Activity implements
         VueApplication.getInstance().mLastRecordedTime = System
                 .currentTimeMillis();
         invalidateOptionsMenu();
-        mVueLandingActionbarView = LayoutInflater.from(this).inflate(
-                R.layout.vue_landing_custom_actionbar, null);
-        mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
-                .findViewById(R.id.vue_landing_keyboard_cancel);
-        mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
-                .findViewById(R.id.vue_landing_keyboard_done);
-        mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                String lookingfor = "";
-                if (VueTrendingAislesDataModel.getInstance(
-                        VueLandingPageActivity.this).getAisleAt(
-                        mOtherSourceAddImageAisleId) != null
-                        && VueTrendingAislesDataModel
-                                .getInstance(VueLandingPageActivity.this)
-                                .getAisleAt(mOtherSourceAddImageAisleId)
-                                .getAisleContext() != null) {
-                    lookingfor = VueTrendingAislesDataModel
-                            .getInstance(VueLandingPageActivity.this)
-                            .getAisleAt(mOtherSourceAddImageAisleId)
-                            .getAisleContext().mLookingForItem;
-                }
-                addImageToExistingAisle(mOtherSourceAddImageAisleId, lookingfor);
-                mOtherSourceAddImageAisleId = null;
-                ((VueLandingAislesFragment) mLandingAilsesFrag)
-                        .notifyAdapters();
-                mHideDefaultActionbar = false;
-                invalidateOptionsMenu();
-            }
-        });
-        mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOtherSourceAddImageAisleId = null;
-                mOtherSourceImagePath = null;
-                mOtherSourceImageUrl = null;
-                mOtherSourceImageWidth = 0;
-                mOtherSourceImageHeight = 0;
-                mOtherSourceImageDetailsUrl = null;
-                mOtherSourceImageStore = null;
-                mOtherSourceImageLookingFor = null;
-                mOtherSourceImageCategory = null;
-                mOtherSourceImageOccasion = null;
-                ((VueLandingAislesFragment) mLandingAilsesFrag)
-                        .notifyAdapters();
-                mHideDefaultActionbar = false;
-                invalidateOptionsMenu();
-            }
-        });
     }
     
     @Override
@@ -382,7 +294,7 @@ public class VueLandingPageActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
     
-    public void setRefreshActionButtonState(Menu optionsMenu,
+    private void setRefreshActionButtonState(Menu optionsMenu,
             final boolean refreshing) {
         if (optionsMenu != null) {
             final MenuItem refreshItem = optionsMenu
@@ -428,7 +340,7 @@ public class VueLandingPageActivity extends Activity implements
                 getActionBar().setDisplayHomeAsUpEnabled(false);
                 getActionBar().setDisplayShowCustomEnabled(true);
                 getActionBar().setDisplayShowHomeEnabled(false);
-                getActionBar().setCustomView(mVueLandingActionbarView);
+                getActionBar().setCustomView(loadCustomActionBar());
                 // menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_create_aisle).setVisible(false);
                 menu.findItem(R.id.menu_refrsh_aisles).setVisible(false);
@@ -1070,15 +982,10 @@ public class VueLandingPageActivity extends Activity implements
             if (mPd != null) {
                 mPd.dismiss();
             }
-            if (fromWhere) {
-                // mFragment.moveListToPosition(0);
-            } else {
-                // mFragment.moveListToPosition(mCurentScreenPosition);
-            }
-            if (mLandingAilsesFrag != null) {
+           /* if (mLandingAilsesFrag != null) {
                 ((VueLandingAislesFragment) mLandingAilsesFrag)
                         .notifyAdapters();
-            }
+            }*/
             if (StackViews.getInstance().getStackCount() > 0) {
                 if (StackViews.getInstance().getTop()
                         .equals(getResources().getString(R.string.trending))) {
@@ -1906,64 +1813,7 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
     }
-    
-    private class HintAdapter extends BaseAdapter {
-        ArrayList<String> mHintList;
-        
-        public HintAdapter(ArrayList<String> hintList) {
-            mHintList = hintList;
-        }
-        
-        @Override
-        public int getCount() {
-            return mHintList.size();
-        }
-        
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-        
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-        
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            
-            Holder holder = null;
-            if (convertView == null) {
-                
-                holder = new Holder();
-                LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
-                holder.textone = (TextView) convertView
-                        .findViewById(R.id.gmail);
-                holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
-                holder.imageone = (ImageView) convertView
-                        .findViewById(R.id.shareicon);
-                holder.imagetwo = (ImageView) convertView
-                        .findViewById(R.id.shareicon2);
-                convertView.setTag(holder);
-            } else {
-                holder = (Holder) convertView.getTag();
-            }
-            holder.textone.setTextSize(16);
-            String text = mHintList.get(position);
-            holder.imageone.setVisibility(View.GONE);
-            holder.imagetwo.setVisibility(View.GONE);
-            holder.texttwo.setVisibility(View.GONE);
-            holder.textone.setText(text);
-            return convertView;
-        }
-    }
-    
-    private class Holder {
-        TextView textone, texttwo;
-        ImageView imageone, imagetwo;
-    }
-    
+ 
     private void openHelpTask() {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         mIsFromOncreate = false;
@@ -1994,7 +1844,7 @@ public class VueLandingPageActivity extends Activity implements
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            } 
             // TODO: This is to register old users in mixpanel. Remove this code
             // after 2 months.
             if (storedVueUser != null && storedUserProfile != null) {
@@ -2119,5 +1969,60 @@ public class VueLandingPageActivity extends Activity implements
         }
         loadDetailsScreenForNotificationClick(getIntent().getExtras());
         
+    }
+    
+    private View loadCustomActionBar(){
+        if(mVueLandingActionbarView == null){
+        mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+                R.layout.vue_landing_custom_actionbar, null);
+        mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
+                .findViewById(R.id.vue_landing_keyboard_cancel);
+        mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
+                .findViewById(R.id.vue_landing_keyboard_done);
+        mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                String lookingfor = "";
+                if (VueTrendingAislesDataModel.getInstance(
+                        VueLandingPageActivity.this).getAisleAt(
+                        mOtherSourceAddImageAisleId) != null
+                        && VueTrendingAislesDataModel
+                                .getInstance(VueLandingPageActivity.this)
+                                .getAisleAt(mOtherSourceAddImageAisleId)
+                                .getAisleContext() != null) {
+                    lookingfor = VueTrendingAislesDataModel
+                            .getInstance(VueLandingPageActivity.this)
+                            .getAisleAt(mOtherSourceAddImageAisleId)
+                            .getAisleContext().mLookingForItem;
+                }
+                addImageToExistingAisle(mOtherSourceAddImageAisleId, lookingfor);
+                mOtherSourceAddImageAisleId = null;
+                ((VueLandingAislesFragment) mLandingAilsesFrag)
+                        .notifyAdapters();
+                mHideDefaultActionbar = false;
+                invalidateOptionsMenu();
+            }
+        });
+        mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOtherSourceAddImageAisleId = null;
+                mOtherSourceImagePath = null;
+                mOtherSourceImageUrl = null;
+                mOtherSourceImageWidth = 0;
+                mOtherSourceImageHeight = 0;
+                mOtherSourceImageDetailsUrl = null;
+                mOtherSourceImageStore = null;
+                mOtherSourceImageLookingFor = null;
+                mOtherSourceImageCategory = null;
+                mOtherSourceImageOccasion = null;
+                ((VueLandingAislesFragment) mLandingAilsesFrag)
+                        .notifyAdapters();
+                mHideDefaultActionbar = false;
+                invalidateOptionsMenu();
+            }
+        });
+        }
+        return mVueLandingActionbarView; 
     }
 }
