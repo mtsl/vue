@@ -83,7 +83,9 @@ public class NetworkHandler {
     public ArrayList<String> bookmarkedList = new ArrayList<String>();
     private ArrayList<String> ratedImageList = new ArrayList<String>();
     private String userProfileUrl;
-    private boolean mPointsLoaded = false;
+    private boolean mUserPointsLoaded = false;
+    private boolean mUserBookmarksLoaded = false;
+    private boolean mUserRatedImagesLoaded = false;
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -580,7 +582,7 @@ public class NetworkHandler {
             public void run() {
                 try {
                     String userId = getUserId();
-                    if (userId == null) {
+                    if (userId == null || mUserBookmarksLoaded) {
                         return;
                     }
                     URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
@@ -595,6 +597,7 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
+                            mUserBookmarksLoaded = true;
                             bookmarkedList.clear();
                             boolean isDirty = false;
                             for (AisleBookmark aB : bookmarkedAisles) {
@@ -746,9 +749,9 @@ public class NetworkHandler {
      */
     public void getRatedImageList() {
         String userId = getUserId();
-        if (userId == null) {
+        if (userId == null || mUserRatedImagesLoaded) {
             return;
-        }
+        }  
         JsonArrayRequest vueRequest = new JsonArrayRequest(
                 UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
                 new Response.Listener<JSONArray>() {
@@ -766,6 +769,7 @@ public class NetworkHandler {
                                     if (retrievedImageRating != null
                                             && retrievedImageRating.size() > 0) {
                                         ratedImageList.clear();
+                                        mUserRatedImagesLoaded = true;
                                         for (int index = 0; index < retrievedImageRating
                                                 .size(); index++) {
                                             boolean currentRateStatus = retrievedImageRating
@@ -873,18 +877,17 @@ public class NetworkHandler {
     public void getMyAislesPoints() {
         try {
             String userId = getUserId();
-            if (userId == null) {
+            if (userId == null || mUserPointsLoaded) {
                 return;
             }
             Utils.sUserPoints = 0;
             int count = 0;
-            /*
-             * if (mPointsLoaded) { return; } mPointsLoaded = true;
-             */
             ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
             if (windowList != null) {
+                mUserPointsLoaded = true;
                 // for each aisle add 10 points
                 count = windowList.size() * 10;
+                Utils.sUserPoints += count;
                 ArrayList<AisleImageDetails> imageList;
                 for (int i = 0; i < windowList.size(); i++) {
                     imageList = windowList.get(i).getImageList();
