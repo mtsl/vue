@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,7 +15,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 import android.util.TypedValue;
@@ -21,8 +22,7 @@ import android.util.TypedValue;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.lateralthoughts.vue.logging.Logger;
-import com.lateralthoughts.vue.ui.ScaleImageView;
+import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
@@ -34,7 +34,7 @@ public class VueApplication extends Application {
     private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
     private HttpClient mHttpClient;
     private FileCache mFileCache;
-    private ScaleImageView mEmptyImageView;
+    // private ScaleImageView mEmptyImageView;
     private String mWindowID;
     private int mWindowCount;
     private int mStatusBarHeight;
@@ -91,7 +91,7 @@ public class VueApplication extends Application {
     public int mScreenHeight;
     public int mScreenWidth;
     private int mTextSize = 18;
-    public Context mVueApplicationContext;
+    // public Context mVueApplicationContext;
     private int mAisleImgCurrentPos;
     
     private String mUserInitials = null;
@@ -165,13 +165,11 @@ public class VueApplication extends Application {
             "com.amazon.mShop.android", "com.pinterest" };
     
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
-    private final int MAX_BITMAP_COUNT = 128;
     
     @Override
     public void onCreate() {
         super.onCreate();
         sInstance = this;
-        mVueApplicationContext = this;
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
                 UrlConstants.CURRENT_SERVER_PROJECT_ID);
         ScaledImageViewFactory.getInstance(this);
@@ -180,23 +178,21 @@ public class VueApplication extends Application {
         mFileCache = new FileCache(this);
         ContentAdapterFactory.getInstance(this);
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
-        // JSONObject crittercismConfig = new JSONObject();
-        /*
-         * try { // crittercismConfig.put("shouldCollectLogcat", true); // send
-         * logcat // data for // devices with // API Level 16 // and higher }
-         * catch (JSONException je) { }
-         */
-        mEmptyImageView = new ScaleImageView(this);
-        Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
-        mEmptyImageView.setImageDrawable(d);
+        JSONObject crittercismConfig = new JSONObject();
+        
+        try {
+            crittercismConfig.put("shouldCollectLogcat", true); // send
+        }
+        // logcat // data for // devices with // API Level 16 // and higher }
+        catch (JSONException je) {
+        }
+        
         DisplayMetrics dm = getResources().getDisplayMetrics();
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        /*
-         * Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
-         * crittercismConfig);
-         */
+        Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
+                crittercismConfig);
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
@@ -347,8 +343,6 @@ public class VueApplication extends Application {
                                 .add(shoppingApplicationDetails);
                     }
                 }
-                mMoreInstalledApplicationDetailsList = Utils
-                        .getInstalledApplicationsList(getApplicationContext());
                 mInstalledAppsLoadStatus = true;
             }
         }).start();
