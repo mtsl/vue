@@ -17,8 +17,6 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.parser.Parser;
-import com.lateralthoughts.vue.utils.Logging;
-import com.lateralthoughts.vue.utils.Utils;
 
 public class TrendingAislesContentParser extends ResultReceiver {
     private int mState;
@@ -190,12 +188,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                                                 .get(i));
                                                             }
                                                         }
-                                                        
-                                                        VueTrendingAislesDataModel
-                                                                .getInstance(
-                                                                        VueApplication
-                                                                                .getInstance())
-                                                                .dismissProgress();
                                                         // if this is the
                                                         // first
                                                         // set of

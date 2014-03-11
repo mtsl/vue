@@ -26,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
- 
+
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -107,11 +107,6 @@ public class CreateAisleSelectionActivity extends Activity {
                 
             }
         }
-        // More... to show the list of installed applications in the separate
-        // dialog.
-        ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
-                getResources().getString(R.string.more), null, null, null);
-        mDataEntryShoppingApplicationsList.add(shoppingApplicationDetails);
     }
     
     @Override

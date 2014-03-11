@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Vue</string>
-    <string name="app_version">Version: Alpha 1.0 \n\n</string>
+    <string name="app_version">Version: Beta 1.10 \n\n</string>
     <string name="app_id">606559369366437</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  606559369366437; Surendra id -   769961779687972 -->
     <string name="instagram_client_id">379d744556c743c090c8a2014779f59f</string>
     <string name="instagram_client_secret">fd6ec75e44054da1a5088ad2d72f2253</string>

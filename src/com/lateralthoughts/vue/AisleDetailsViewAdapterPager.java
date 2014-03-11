@@ -404,7 +404,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     .findViewById(R.id.vuewndow_comment_img);
             mViewHolder.myPager = (ViewPager) convertView
                     .findViewById(R.id.myfivepanelpager);
-            // mViewHolder.myPager.setOffscreenPageLimit(4);
+            mViewHolder.myPager.setOffscreenPageLimit(4);
             mViewHolder.textcount = (TextView) convertView
                     .findViewById(R.id.textcount);
             mViewHolder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;

@@ -12,7 +12,8 @@ public class AisleWindowContentFactory {
     private ArrayList<AisleWindowContent> mAvailableObjects = null;
     private ArrayList<AisleWindowContent> mObjectsInUse = null;
     
-    private final int POOL_SIZE = 100;
+    //private final int POOL_SIZE = 100;
+    private final int POOL_SIZE = 50;
     private final int POOL_STEP_SIZE = 100;
     private final int POOL_MAX_SIZE = 500;
     public final String EMPTY_AISLE_ID = "-1";

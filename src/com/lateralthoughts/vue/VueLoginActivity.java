@@ -271,7 +271,7 @@ public class VueLoginActivity extends FragmentActivity {
     
     private boolean resolveIntent(Intent intent) {
         try {
-            ResolveInfo resolveInfo = VueApplication.getInstance().mVueApplicationContext
+            ResolveInfo resolveInfo = VueApplication.getInstance()
                     .getPackageManager().resolveActivity(intent, 0);
             if (resolveInfo == null) {
                 return false;
