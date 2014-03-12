@@ -154,7 +154,7 @@ public class VueContentGateway {
                         if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
                             mNomoreTrendingAilse = true;
                         }
-                        Log.i("emptyScreenIssue", "emptyScreenIssueAAA onResponse");
+                        Log.i("emptyScreenIssue", "emptyScreenIssueAAA onResponse"); 
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
