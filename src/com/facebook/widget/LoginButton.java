@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -692,6 +693,8 @@ public class LoginButton extends Button {
                                     .equals(properties.authorizationType)) {
                                 currentSession.openForPublish(openRequest);
                             } else {
+                                openRequest.setPermissions(Arrays
+                                        .asList("email"));
                                 currentSession.openForRead(openRequest);
                             }
                         }
