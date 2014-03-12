@@ -3,6 +3,7 @@ package com.lateralthoughts.vue;
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -11,8 +12,12 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
@@ -341,6 +346,22 @@ public class VueApplication extends Application {
                                 SHOPPINGAPP_PACKAGES_ARRAY[i], null);
                         mShoppingApplicationDetailsList
                                 .add(shoppingApplicationDetails);
+                    }
+                }
+                Intent shareIntent = new Intent(
+                        android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                List<ResolveInfo> activities1 = context.getPackageManager()
+                        .queryIntentActivities(shareIntent, 0);
+                final Object a1[] = activities1.toArray();
+                for (int i = 0; i < activities1.size(); i++) {
+                    String packageName = ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName;
+                    if ((packageName.equals(VueConstants.TWITTER_PACKAGE_NAME))) {
+                        if (packageName
+                                .equals(VueConstants.TWITTER_PACKAGE_NAME)) {
+                            VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a1[i]).activityInfo.name;
+                            break;
+                        }
                     }
                 }
                 mInstalledAppsLoadStatus = true;

@@ -378,10 +378,16 @@ public class VueLoginActivity extends FragmentActivity {
                 if (user != null) {
                     JSONObject loginprops = new JSONObject();
                     try {
-                        loginprops.put(
-                                "Email",
-                                user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
-                                        + "");
+                        JSONObject innerObject = user.getInnerJSONObject();
+                        String email;
+                        try {
+                            email = innerObject
+                                    .getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
+                        } catch (Exception e) {
+                            email = user.getUsername();
+                            e.printStackTrace();
+                        }
+                        loginprops.put("Email", email);
                         loginprops.put("Login with", "Facebook");
                     } catch (JSONException e1) {
                         e1.printStackTrace();
@@ -400,18 +406,10 @@ public class VueLoginActivity extends FragmentActivity {
                                 public void onUserUpdated(VueUser vueUser,
                                         final boolean loginSuccessFlag) {
                                     if (vueUser != null) {
-                                        new Handler().postDelayed(
-                                                new Runnable() {
-                                                    
-                                                    @Override
-                                                    public void run() {
+                                        VueApplication.getInstance()
+                                                .getInstalledApplications(
                                                         VueApplication
-                                                                .getInstance()
-                                                                .getInstalledApplications(
-                                                                        VueApplication
-                                                                                .getInstance());
-                                                    }
-                                                }, 500);
+                                                                .getInstance());
                                         writeToSdcard("After server Succefull login for Facebook : "
                                                 + new Date());
                                         try {
@@ -521,6 +519,7 @@ public class VueLoginActivity extends FragmentActivity {
     }
     
     private void saveFacebookProfileDetails(GraphUser user) {
+        
         String location = "";
         try {
             if (user.getLocation() != null) {
@@ -542,12 +541,20 @@ public class VueLoginActivity extends FragmentActivity {
         if (storedUserProfile == null
                 || (storedUserProfile != null && !storedUserProfile
                         .isUserDetailsModified())) {
+            JSONObject innerObject = user.getInnerJSONObject();
+            String email;
+            try {
+                email = innerObject
+                        .getString(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY);
+            } catch (Exception e) {
+                email = user.getUsername();
+                e.printStackTrace();
+            }
             VueUserProfile vueUserProfile = new VueUserProfile(
                     VueConstants.FACEBOOK_USER_PROFILE_PICTURE_MAIN_URL
                             + user.getId()
                             + VueConstants.FACEBOOK_USER_PROFILE_PICTURE_SUB_URL,
-                    user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_EMAIL_KEY)
-                            + "",
+                    email,
                     user.getName(),
                     user.getBirthday(),
                     user.getProperty(VueConstants.FACEBOOK_GRAPHIC_OBJECT_GENDER_KEY)
@@ -562,18 +569,17 @@ public class VueLoginActivity extends FragmentActivity {
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
-            
-            mixpanel.identify(storedUserProfile.getUserEmail());
-            people.identify(vueUserProfile.getUserEmail());
-            people.set("$first_name", user.getFirstName());
-            people.set("$last_name", user.getLastName());
-            people.set("Gender", vueUserProfile.getUserGender());
             String mixpanelUserEmail = null;
             if (vueUserProfile.getUserEmail() != null) {
                 mixpanelUserEmail = vueUserProfile.getUserEmail();
             } else {
                 mixpanelUserEmail = user.getUsername();
             }
+            mixpanel.identify(mixpanelUserEmail);
+            people.identify(mixpanelUserEmail);
+            people.set("$first_name", user.getFirstName());
+            people.set("$last_name", user.getLastName());
+            people.set("Gender", vueUserProfile.getUserGender());
             people.set("$email", mixpanelUserEmail);
             people.set("Current location", vueUserProfile.getUserLocation());
             people.setOnce("Joined On", new Date());
