@@ -34,7 +34,6 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -109,8 +108,8 @@ public class VueLandingPageActivity extends Activity implements
     public static String mLandingScreenName = null;
     private boolean mHideDefaultActionbar = false;
     private LandingScreenTitleReceiver mLandingScreenTitleReceiver = null;
-    public static boolean mIsMyAilseCallEnable = false; 
-    private MixpanelAPI mixpanel; 
+    public static boolean mIsMyAilseCallEnable = false;
+    private MixpanelAPI mixpanel;
     private MixpanelAPI.People people;
     private boolean mRefreshFalg;
     private boolean mShowRefreshIcon = true;
@@ -121,21 +120,21 @@ public class VueLandingPageActivity extends Activity implements
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
-    private boolean mShowSwipeHelp = false; 
+    private boolean mShowSwipeHelp = false;
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
     public static boolean mLandingScreenActive = false;
-     
+    
     @Override
-    public void onCreate(Bundle icicle) { 
-        super.onCreate(icicle); 
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
         
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
-        try{
+        try {
             trimCache(this);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
@@ -169,35 +168,36 @@ public class VueLandingPageActivity extends Activity implements
             if (mLandingScreenTitleReceiver != null) {
                 VueApplication.getInstance().unregisterReceiver(
                         mLandingScreenTitleReceiver);
-            } 
+            }
         } catch (Exception e) {
         }
     }
     
-    public   void trimCache(Context context) {
+    public void trimCache(Context context) {
         try {
-           File dir = context.getCacheDir();
-           if (dir != null && dir.isDirectory()) {
-              deleteDir(dir);
-           }
+            File dir = context.getCacheDir();
+            if (dir != null && dir.isDirectory()) {
+                deleteDir(dir);
+            }
         } catch (Exception e) {
         }
-     }
- 
-     public   boolean deleteDir(File dir) {
+    }
+    
+    public boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
-           String[] children = dir.list();
-           for (int i = 0; i < children.length; i++) {
-              boolean success = deleteDir(new File(dir, children[i]));
-              if (!success) {
-                 return false;
-              }
-           }
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
         }
-
+        
         // The directory is now empty so delete it
         return dir.delete();
-     }
+    }
+    
     private void initialize() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -763,7 +763,7 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     @Override
-    public void onPause() { 
+    public void onPause() {
         super.onPause();
         mLandingScreenActive = false;
     }
@@ -777,7 +777,7 @@ public class VueLandingPageActivity extends Activity implements
         
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-                 handleSendText(intent, false); // Handle text being sent
+                handleSendText(intent, false); // Handle text being sent
             } else if (type.startsWith("image/")) {
                 handleSendImage(intent, false); // Handle single image being
             }
