@@ -345,12 +345,11 @@ public class Utils {
         return twoWeeksDifferenceTime + "";
     }
     
- /*   public static Bitmap getBitmap() {
-        Bitmap icon = BitmapFactory.decodeResource(
-                VueApplication.getInstance()
-                        .getResources(), R.drawable.ic_launcher);
-        return icon;
-    }*/
+    /*
+     * public static Bitmap getBitmap() { Bitmap icon =
+     * BitmapFactory.decodeResource( VueApplication.getInstance()
+     * .getResources(), R.drawable.ic_launcher); return icon; }
+     */
     
     public static boolean appInstalledOrNot(String uri, Context context) {
         PackageManager pm = context.getPackageManager();
@@ -796,32 +795,6 @@ public class Utils {
                     VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a[i]).activityInfo.name;
                 }
                 installedApplicationdetailsList.add(shoppingApplicationDetails);
-            }
-        }
-        
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        List<ResolveInfo> activities1 = context.getPackageManager()
-                .queryIntentActivities(shareIntent, 0);
-        PackageManager pm1 = context.getPackageManager();
-        final Object a1[] = activities1.toArray();
-        for (int i = 0; i < activities1.size(); i++) {
-            boolean isSystemApp = false;
-            try {
-                isSystemApp = isSystemPackage(pm1
-                        .getPackageInfo(
-                                ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName,
-                                PackageManager.GET_ACTIVITIES));
-            } catch (NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            String packageName = ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName;
-            if (!isSystemApp
-                    && (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME))) {
-                if (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME)) {
-                    VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a1[i]).activityInfo.name;
-                    break;
-                }
             }
         }
         return installedApplicationdetailsList;

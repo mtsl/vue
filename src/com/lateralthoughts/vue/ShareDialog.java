@@ -375,7 +375,6 @@ public class ShareDialog {
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.TWITTER_APP_NAME)) {
                 shareVia = "Twitter";
-                // shareText(position);
                 shareSingleImage(position, mCurrentAislePosition);
             } else if (mAppNames.get(position)
                     .equalsIgnoreCase(

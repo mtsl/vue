@@ -125,6 +125,7 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
     public static boolean mLandingScreenActive = false;
+    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -983,10 +984,10 @@ public class VueLandingPageActivity extends Activity implements
             if (mPd != null && mPd.isShowing()) {
                 mPd.dismiss();
             }
-           /* if (mLandingAilsesFrag != null) {
-                ((VueLandingAislesFragment) mLandingAilsesFrag)
-                        .notifyAdapters();
-            }*/
+            /*
+             * if (mLandingAilsesFrag != null) { ((VueLandingAislesFragment)
+             * mLandingAilsesFrag) .notifyAdapters(); }
+             */
             if (StackViews.getInstance().getStackCount() > 0) {
                 if (StackViews.getInstance().getTop()
                         .equals(getResources().getString(R.string.trending))) {
@@ -1814,7 +1815,7 @@ public class VueLandingPageActivity extends Activity implements
             }
         }
     }
- 
+    
     private void openHelpTask() {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         mIsFromOncreate = false;
@@ -1845,7 +1846,7 @@ public class VueLandingPageActivity extends Activity implements
                         VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
             } catch (Exception e) {
                 e.printStackTrace();
-            } 
+            }
             // TODO: This is to register old users in mixpanel. Remove this code
             // after 2 months.
             if (storedVueUser != null && storedUserProfile != null) {
@@ -1884,15 +1885,8 @@ public class VueLandingPageActivity extends Activity implements
             }
             try {
                 if (storedVueUser != null) {
-                    new Handler().postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            VueApplication.getInstance()
-                                    .getInstalledApplications(
-                                            VueLandingPageActivity.this);
-                        }
-                    }, 500);
+                    VueApplication.getInstance().getInstalledApplications(
+                            VueLandingPageActivity.this);
                     if (storedVueUser != null
                             && storedVueUser.getGooglePlusId().equals(
                                     VueUser.DEFAULT_GOOGLEPLUS_ID)
@@ -1950,7 +1944,6 @@ public class VueLandingPageActivity extends Activity implements
                 e.printStackTrace();
             }
         }
-        
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -1972,58 +1965,59 @@ public class VueLandingPageActivity extends Activity implements
         
     }
     
-    private View loadCustomActionBar(){
-        if(mVueLandingActionbarView == null){
-        mVueLandingActionbarView = LayoutInflater.from(this).inflate(
-                R.layout.vue_landing_custom_actionbar, null);
-        mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
-                .findViewById(R.id.vue_landing_keyboard_cancel);
-        mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
-                .findViewById(R.id.vue_landing_keyboard_done);
-        mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                String lookingfor = "";
-                if (VueTrendingAislesDataModel.getInstance(
-                        VueLandingPageActivity.this).getAisleAt(
-                        mOtherSourceAddImageAisleId) != null
-                        && VueTrendingAislesDataModel
+    private View loadCustomActionBar() {
+        if (mVueLandingActionbarView == null) {
+            mVueLandingActionbarView = LayoutInflater.from(this).inflate(
+                    R.layout.vue_landing_custom_actionbar, null);
+            mVueLandingKeyboardCancel = (FrameLayout) mVueLandingActionbarView
+                    .findViewById(R.id.vue_landing_keyboard_cancel);
+            mVueLandingKeyboardDone = (FrameLayout) mVueLandingActionbarView
+                    .findViewById(R.id.vue_landing_keyboard_done);
+            mVueLandingKeyboardDone.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    String lookingfor = "";
+                    if (VueTrendingAislesDataModel.getInstance(
+                            VueLandingPageActivity.this).getAisleAt(
+                            mOtherSourceAddImageAisleId) != null
+                            && VueTrendingAislesDataModel
+                                    .getInstance(VueLandingPageActivity.this)
+                                    .getAisleAt(mOtherSourceAddImageAisleId)
+                                    .getAisleContext() != null) {
+                        lookingfor = VueTrendingAislesDataModel
                                 .getInstance(VueLandingPageActivity.this)
                                 .getAisleAt(mOtherSourceAddImageAisleId)
-                                .getAisleContext() != null) {
-                    lookingfor = VueTrendingAislesDataModel
-                            .getInstance(VueLandingPageActivity.this)
-                            .getAisleAt(mOtherSourceAddImageAisleId)
-                            .getAisleContext().mLookingForItem;
+                                .getAisleContext().mLookingForItem;
+                    }
+                    addImageToExistingAisle(mOtherSourceAddImageAisleId,
+                            lookingfor);
+                    mOtherSourceAddImageAisleId = null;
+                    ((VueLandingAislesFragment) mLandingAilsesFrag)
+                            .notifyAdapters();
+                    mHideDefaultActionbar = false;
+                    invalidateOptionsMenu();
                 }
-                addImageToExistingAisle(mOtherSourceAddImageAisleId, lookingfor);
-                mOtherSourceAddImageAisleId = null;
-                ((VueLandingAislesFragment) mLandingAilsesFrag)
-                        .notifyAdapters();
-                mHideDefaultActionbar = false;
-                invalidateOptionsMenu();
-            }
-        });
-        mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOtherSourceAddImageAisleId = null;
-                mOtherSourceImagePath = null;
-                mOtherSourceImageUrl = null;
-                mOtherSourceImageWidth = 0;
-                mOtherSourceImageHeight = 0;
-                mOtherSourceImageDetailsUrl = null;
-                mOtherSourceImageStore = null;
-                mOtherSourceImageLookingFor = null;
-                mOtherSourceImageCategory = null;
-                mOtherSourceImageOccasion = null;
-                ((VueLandingAislesFragment) mLandingAilsesFrag)
-                        .notifyAdapters();
-                mHideDefaultActionbar = false;
-                invalidateOptionsMenu();
-            }
-        });
+            });
+            mVueLandingKeyboardCancel.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOtherSourceAddImageAisleId = null;
+                    mOtherSourceImagePath = null;
+                    mOtherSourceImageUrl = null;
+                    mOtherSourceImageWidth = 0;
+                    mOtherSourceImageHeight = 0;
+                    mOtherSourceImageDetailsUrl = null;
+                    mOtherSourceImageStore = null;
+                    mOtherSourceImageLookingFor = null;
+                    mOtherSourceImageCategory = null;
+                    mOtherSourceImageOccasion = null;
+                    ((VueLandingAislesFragment) mLandingAilsesFrag)
+                            .notifyAdapters();
+                    mHideDefaultActionbar = false;
+                    invalidateOptionsMenu();
+                }
+            });
         }
-        return mVueLandingActionbarView; 
+        return mVueLandingActionbarView;
     }
 }
