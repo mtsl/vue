@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.ResultReceiver;
+import android.util.Log;
 
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
@@ -116,7 +117,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 } else {
                                     refreshListFlag = true;
                                 }
-                            }
+                            } 
+                            Log.i("dismissProgress", "dismissProgress12");
                             VueLandingPageActivity.landingPageActivity
                                     .runOnUiThread(new Runnable() {
                                         @Override

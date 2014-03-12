@@ -92,7 +92,7 @@ public class VueContentGateway {
                     .dismissProgress();
             return status;
         } else if (isConnection) {
-           new Thread(new Runnable() {
+     /*      new Thread(new Runnable() {
             
             @Override
             public void run() {
@@ -140,11 +140,12 @@ public class VueContentGateway {
                 }
                 
             }
-        }).start();
+        }).start();*/
 
-  
+    
+            final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
+                    + "/" + limit + "/" + offset;
             
-/*            
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
@@ -157,8 +158,8 @@ public class VueContentGateway {
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
-                        responseBundle.putBoolean("loadMore", loadMore);
-                        responseBundle.putInt("offset", offset);
+                        responseBundle.putBoolean("loadMore", loadMore); 
+                        responseBundle.putInt("offset", offset); 
                         receiver.send(1, responseBundle);
                         Intent intent = new Intent(
                                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -188,7 +189,7 @@ public class VueContentGateway {
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VueApplication.getInstance().getRequestQueue().add(vueRequest);*/
+            VueApplication.getInstance().getRequestQueue().add(vueRequest);
         }
         return status;
     }

@@ -196,7 +196,7 @@ public class VueApplication extends Application {
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
-                            20 * 1024 * 1024);
+                            10 * 1024 * 1024);
                     
                     public void putBitmap(String url, Bitmap bitmap) {
                         mCache.put(url, bitmap);
