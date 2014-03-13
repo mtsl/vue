@@ -757,8 +757,15 @@ public class VueLandingPageActivity extends Activity implements
             }
         }, DELAY_TIME);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        if (mIsFromOncreate) {
-            openHelpTask();
+        VueUser storedVueUser = null;
+        try {
+            storedVueUser = Utils.readUserObjectFromFile(this,
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        if (mIsFromOncreate || (storedVueUser == null)) {
+            openHelpTask(storedVueUser);
         }
     }
     
@@ -1847,7 +1854,7 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-    private void openHelpTask() {
+    private void openHelpTask(VueUser storedVueUser) {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         mIsFromOncreate = false;
         SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
@@ -1864,13 +1871,6 @@ public class VueLandingPageActivity extends Activity implements
                     VueConstants.HelpSCREEN_FROM_LANDING);
             startActivity(intent);
         } else {
-            VueUser storedVueUser = null;
-            try {
-                storedVueUser = Utils.readUserObjectFromFile(this,
-                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
             VueUserProfile storedUserProfile = null;
             try {
                 storedUserProfile = Utils.readUserProfileObjectFromFile(this,
@@ -1881,9 +1881,9 @@ public class VueLandingPageActivity extends Activity implements
             // TODO: This is to register old users in mixpanel. Remove this code
             // after 2 months.
             if (storedVueUser != null && storedUserProfile != null) {
-                mixpanel.identify(storedVueUser.getEmail());
+                mixpanel.identify(String.valueOf(storedVueUser.getId()));
                 people = mixpanel.getPeople();
-                people.identify(storedVueUser.getEmail());
+                people.identify(String.valueOf(storedVueUser.getId()));
                 
                 people.set("$first_name", storedVueUser.getFirstName());
                 people.set("$last_name", storedVueUser.getLastName());
@@ -1923,9 +1923,9 @@ public class VueLandingPageActivity extends Activity implements
                                     VueUser.DEFAULT_GOOGLEPLUS_ID)
                             && storedVueUser.getFacebookId().equals(
                                     VueUser.DEFAULT_FACEBOOK_ID)) {
-                        mixpanel.identify(storedVueUser.getEmail());
+                        mixpanel.identify(String.valueOf(storedVueUser.getId()));
                         people = mixpanel.getPeople();
-                        people.identify(storedVueUser.getEmail());
+                        people.identify(String.valueOf(storedVueUser.getId()));
                         JSONObject nameTag = new JSONObject();
                         try {
                             // Set an "mp_name_tag" super property

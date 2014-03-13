@@ -421,6 +421,8 @@ public class VueLoginActivity extends FragmentActivity {
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
+                                        saveFacebookProfileDetails(user,
+                                                String.valueOf(vueUser.getId()));
                                     }
                                     if (VueLandingPageActivity.landingPageActivity != null) {
                                         VueLandingPageActivity.landingPageActivity
@@ -454,7 +456,6 @@ public class VueLoginActivity extends FragmentActivity {
                                     }
                                 }
                             });
-                    saveFacebookProfileDetails(user);
                     editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
                             session.getAccessToken());
                     editor.putBoolean(VueConstants.VUE_LOGIN, true);
@@ -519,7 +520,7 @@ public class VueLoginActivity extends FragmentActivity {
         mDialog.show();
     }
     
-    private void saveFacebookProfileDetails(GraphUser user) {
+    private void saveFacebookProfileDetails(GraphUser user, String userId) {
         
         String location = "";
         try {
@@ -576,8 +577,8 @@ public class VueLoginActivity extends FragmentActivity {
             } else {
                 mixpanelUserEmail = user.getUsername();
             }
-            mixpanel.identify(mixpanelUserEmail);
-            people.identify(mixpanelUserEmail);
+            mixpanel.identify(userId);
+            people.identify(userId);
             people.set("$first_name", user.getFirstName());
             people.set("$last_name", user.getLastName());
             people.set("Gender", vueUserProfile.getUserGender());

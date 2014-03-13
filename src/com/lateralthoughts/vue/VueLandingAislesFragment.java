@@ -201,23 +201,24 @@ public class VueLandingAislesFragment extends Fragment {
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
-                DataBaseManager.getInstance(mContext)
-                        .updateOrAddRecentlyViewedAisles(id);
-                Intent intent = new Intent();
-                intent.setClass(VueApplication.getInstance(),
-                        AisleDetailsViewActivity.class);
-                VueApplication.getInstance().setClickedWindowID(id);
-                VueApplication.getInstance().setClickedWindowCount(count);
-                VueApplication.getInstance().setmAisleImgCurrentPos(
-                        aisleImgCurrentPos);
-                startActivity(intent);
+                if (storedVueUser != null && storedVueUser.getId() != null) {
+                    DataBaseManager.getInstance(mContext)
+                            .updateOrAddRecentlyViewedAisles(id);
+                    Intent intent = new Intent();
+                    intent.setClass(VueApplication.getInstance(),
+                            AisleDetailsViewActivity.class);
+                    VueApplication.getInstance().setClickedWindowID(id);
+                    VueApplication.getInstance().setClickedWindowCount(count);
+                    VueApplication.getInstance().setmAisleImgCurrentPos(
+                            aisleImgCurrentPos);
+                    startActivity(intent);
+                }
             } else {
                 VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
                 vueLandingPageActivity.hideDefaultActionbar();
                 VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
                 notifyAdapters();
             }
-            
         }
         
         @Override
