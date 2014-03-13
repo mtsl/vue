@@ -42,7 +42,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
- 
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
 import com.lateralthoughts.vue.AisleManager.ImageAddedCallback;

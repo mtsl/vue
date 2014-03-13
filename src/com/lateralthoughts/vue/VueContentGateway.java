@@ -10,14 +10,8 @@
  */
 package com.lateralthoughts.vue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 
 import android.content.Context;
@@ -34,7 +28,6 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
-import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.ParcelableNameValuePair;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;

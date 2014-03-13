@@ -24,7 +24,11 @@ import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.android.volley.*;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.utils.FileCache;

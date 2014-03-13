@@ -225,8 +225,11 @@ public class VueAisleDetailsViewFragment extends Fragment {
             }
         }
         if (profileUrl != null && profileUrl.length() > 5) {
-            mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
-                    .getImageCacheLoader());
+            mVueUserPic.setImageUrl(profileUrl,
+                        VueApplication.getInstance().getImageCacheLoader(),
+                        VueApplication.getInstance().getPixel(32),
+                        VueApplication.getInstance().getPixel(32),
+                        NetworkImageView.BitmapProfile.ProfileLandingView);
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {
             

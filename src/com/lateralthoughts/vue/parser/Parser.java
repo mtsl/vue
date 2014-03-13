@@ -11,8 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;

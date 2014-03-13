@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -216,8 +215,14 @@ public class AisleLoader {
                             itemDetails.mImageUrl, contentBrowser, imageView,
                             bestHeight, windowContent.getAisleId(),
                             itemDetails, listener);
-                    holder.profileThumbnail.setImageUrl(profleUrl,
-                            VueApplication.getInstance().getImageCacheLoader());
+                    if (profleUrl != null && profleUrl.length() > 5) {
+                        ((NetworkImageView) holder.profileThumbnail).setImageUrl(profleUrl,
+                                VueApplication.getInstance().getImageCacheLoader(),
+                                VueApplication.getInstance().getPixel(36),
+                                VueApplication.getInstance().getPixel(36),
+                                NetworkImageView.BitmapProfile.ProfileLandingView);
+                    }
+                    
                 }
             }
         }
