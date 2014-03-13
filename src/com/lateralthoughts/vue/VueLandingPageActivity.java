@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -116,7 +117,7 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsFromOncreate = true;
     public static boolean sMyPointsAvailable = false;
     
-    // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
+    // SCREEN REFRESH TIME THRESHOLD IN MINUTES. 
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
@@ -128,14 +129,15 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
+        if(VueConnectivityManager.isNetworkConnected(this)) {
         try {
             trimCache(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); 
+        }
         }
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
@@ -143,7 +145,7 @@ public class VueLandingPageActivity extends Activity implements
         VueApplication.getInstance().registerReceiver(
                 mLandingScreenTitleReceiver, ifiltercategory);
         landingPageActivity = this;
-        mIsFromOncreate = true;
+        mIsFromOncreate = true; 
         initialize();
         mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -162,6 +164,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i("cachecleartime", "cachecleartime ondestory");
         mLandingScreenActive = false;
         VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
@@ -1891,6 +1894,9 @@ public class VueLandingPageActivity extends Activity implements
                 people.set("$email", storedVueUser.getEmail());
                 people.set("Current location",
                         storedUserProfile.getUserLocation());
+                
+                
+                people.initPushHandling("501672267768");
                 String loginWith;
                 if (!storedVueUser.getFacebookId().equals(
                         VueUser.DEFAULT_FACEBOOK_ID)) {

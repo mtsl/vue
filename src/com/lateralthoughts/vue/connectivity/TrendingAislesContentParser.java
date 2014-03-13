@@ -118,7 +118,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                     refreshListFlag = true;
                                 }
                             } 
-                            Log.i("dismissProgress", "dismissProgress12");
                             VueLandingPageActivity.landingPageActivity
                                     .runOnUiThread(new Runnable() {
                                         @Override
