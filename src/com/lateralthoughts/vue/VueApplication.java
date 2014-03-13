@@ -200,9 +200,14 @@ public class VueApplication extends Application {
                 crittercismConfig);
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
-                    private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
-                            10 * 1024 * 1024);
-                    
+                    int cacheSize = 10 * 1024 * 1024;
+                    LruCache<String, Bitmap> mCache = new LruCache(cacheSize) {
+                        protected int sizeOf(String key, Bitmap value) {
+                            return value.getByteCount();
+
+                        }
+                    };
+
                     public void putBitmap(String url, Bitmap bitmap) {
                         mCache.put(url, bitmap);
                     }
