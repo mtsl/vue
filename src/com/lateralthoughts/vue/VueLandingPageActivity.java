@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -1667,7 +1668,8 @@ public class VueLandingPageActivity extends Activity implements
                     @Override
                     public void run() {
                         final AisleWindowContent aisleWindowContent = new Parser()
-                                .getAisleForAisleId(notificationAisleId);
+                                .getAisleForAisleIdFromServerORDatabase(
+                                        notificationAisleId, false);
                         VueLandingPageActivity.this
                                 .runOnUiThread(new Runnable() {
                                     @Override
@@ -1696,16 +1698,6 @@ public class VueLandingPageActivity extends Activity implements
                                                                                     .getInstance())
                                                                     .getNetworkHandler().offset,
                                                             DataBaseManager.AISLE_CREATED);
-                                            VueUser storedVueUser = null;
-                                            try {
-                                                storedVueUser = Utils
-                                                        .readUserObjectFromFile(
-                                                                VueLandingPageActivity.this,
-                                                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                                            } catch (Exception e2) {
-                                                e2.printStackTrace();
-                                            }
-                                            
                                             DataBaseManager
                                                     .getInstance(
                                                             VueLandingPageActivity.this)

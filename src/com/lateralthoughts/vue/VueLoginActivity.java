@@ -623,7 +623,8 @@ public class VueLoginActivity extends FragmentActivity {
             }
         } else {
             if (fromOnActivityResult) {
-                writeToSdcard("After Fb login failure: " + new Date());
+                writeToSdcard("After Fb login failure: " + new Date() + "????"
+                        + VueApplication.getInstance().mFBLoginFailureReason);
                 JSONObject loginprops = new JSONObject();
                 try {
                     loginprops.put("Login with", "Facebook");
