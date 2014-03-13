@@ -49,9 +49,9 @@ public class InviteFriendsAdapter extends BaseAdapter {
                         VueUser.DEFAULT_GOOGLEPLUS_ID)
                 && storedVueUser.getFacebookId().equals(
                         VueUser.DEFAULT_FACEBOOK_ID)) {
-            mixpanel.identify(storedVueUser.getEmail());
+            mixpanel.identify(String.valueOf(storedVueUser.getId()));
             people = mixpanel.getPeople();
-            people.identify(storedVueUser.getEmail());
+            people.identify(String.valueOf(storedVueUser.getId()));
         }
         this.mContext = context;
         mItems = objects;

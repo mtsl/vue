@@ -2,6 +2,10 @@ package gcm.com.vue.android.gcmclient;
 
 import gcm.com.vue.gcm.notifications.GCMClientNotification;
 import gcm.com.vue.gcm.notifications.GCMClientNotification.NotificationType;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -12,10 +16,14 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.VueTrendingAislesDataModel;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.parser.Parser;
 
 public class GCMBroadcastReceiver extends BroadcastReceiver {
     
@@ -114,6 +122,34 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                             notificationManager.notify(
                                     VueConstants.GCM_NOTIFICATION_ID,
                                     builder.build());
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AisleWindowContent aisleWindowContent = new Parser()
+                                            .getAisleForAisleIdFromServerORDatabase(
+                                                    String.valueOf(lastReceivedNotification
+                                                            .getCorrespondingOwnerAisleId()),
+                                                    true);
+                                    if (aisleWindowContent != null) {
+                                        List<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
+                                        aisleList.add(aisleWindowContent);
+                                        DataBaseManager
+                                                .getInstance(
+                                                        VueApplication
+                                                                .getInstance())
+                                                .addTrentingAislesFromServerToDB(
+                                                        VueApplication
+                                                                .getInstance(),
+                                                        aisleList,
+                                                        VueTrendingAislesDataModel
+                                                                .getInstance(
+                                                                        VueApplication
+                                                                                .getInstance())
+                                                                .getNetworkHandler().offset,
+                                                        DataBaseManager.AISLE_CREATED);
+                                    }
+                                }
+                            }).start();
                         }
                     }
                 }

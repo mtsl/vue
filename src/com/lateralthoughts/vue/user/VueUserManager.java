@@ -21,7 +21,6 @@ import org.json.JSONObject;
 
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -30,7 +29,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
@@ -429,92 +427,67 @@ public class VueUserManager {
             public void run() {
                 try {
                     final String[] response = testCreateUser(userAsString);
-                    if (VueLandingPageActivity.landingPageActivity != null) {
-                        VueLandingPageActivity.landingPageActivity
-                                .runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (response[1].trim().equals("200")) {
-                                            if (null != response[0]) {
-                                                VueUser vueUser = new Parser()
-                                                        .parseUserData(response[0]);
-                                                if (vueUser != null) {
-                                                    if (VueApplication
-                                                            .getInstance()
-                                                            .getmUserInitials() == null) {
-                                                        VueApplication
-                                                                .getInstance()
-                                                                .setmUserInitials(
-                                                                        vueUser.getFirstName());
-                                                    }
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .setmUserId(
-                                                                    vueUser.getId());
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .setmUserEmail(
-                                                                    vueUser.getEmail());
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .setmUserName(
-                                                                    vueUser.getFirstName()
-                                                                            + " "
-                                                                            + vueUser
-                                                                                    .getLastName());
-                                                    VueUserManager.this
-                                                            .setCurrentUser(vueUser);
-                                                    callback.onUserUpdated(
-                                                            vueUser, true);
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .getContentResolver()
-                                                            .delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-                                                                    null, null);
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .getContentResolver()
-                                                            .delete(VueConstants.BOOKMARKER_AISLES_URI,
-                                                                    null, null);
-                                                    VueApplication
-                                                            .getInstance()
-                                                            .getContentResolver()
-                                                            .delete(VueConstants.RATED_IMAGES_URI,
-                                                                    null, null);
-                                                    VueTrendingAislesDataModel
-                                                            .getInstance(
-                                                                    VueApplication
-                                                                            .getInstance())
-                                                            .getNetworkHandler()
-                                                            .getBookmarkAisleByUser();
-                                                    VueTrendingAislesDataModel
-                                                            .getInstance(
-                                                                    VueApplication
-                                                                            .getInstance())
-                                                            .getNetworkHandler()
-                                                            .getRatedImageList();
-                                                } else {
-                                                    callback.onUserUpdated(
-                                                            null, false);
-                                                }
-                                            } else {
-                                                callback.onUserUpdated(null,
-                                                        false);
-                                            }
-                                        } else {
-                                            JSONObject loginprops = new JSONObject();
-                                            try {
-                                                loginprops.put(
-                                                        "Failure Reason",
-                                                        "Unable to Login with Vue Server status code : "
-                                                                + response[1]);
-                                            } catch (JSONException e1) {
-                                                e1.printStackTrace();
-                                            }
-                                            callback.onUserUpdated(null, false);
-                                        }
-                                    }
-                                });
+                    if (response[1].trim().equals("200")) {
+                        if (null != response[0]) {
+                            VueUser vueUser = new Parser()
+                                    .parseUserData(response[0]);
+                            if (vueUser != null) {
+                                if (VueApplication.getInstance()
+                                        .getmUserInitials() == null) {
+                                    VueApplication.getInstance()
+                                            .setmUserInitials(
+                                                    vueUser.getFirstName());
+                                }
+                                VueApplication.getInstance().setmUserId(
+                                        vueUser.getId());
+                                VueApplication.getInstance().setmUserEmail(
+                                        vueUser.getEmail());
+                                VueApplication.getInstance().setmUserName(
+                                        vueUser.getFirstName() + " "
+                                                + vueUser.getLastName());
+                                VueUserManager.this.setCurrentUser(vueUser);
+                                callback.onUserUpdated(vueUser, true);
+                                VueApplication
+                                        .getInstance()
+                                        .getContentResolver()
+                                        .delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+                                                null, null);
+                                VueApplication
+                                        .getInstance()
+                                        .getContentResolver()
+                                        .delete(VueConstants.BOOKMARKER_AISLES_URI,
+                                                null, null);
+                                VueApplication
+                                        .getInstance()
+                                        .getContentResolver()
+                                        .delete(VueConstants.RATED_IMAGES_URI,
+                                                null, null);
+                                VueTrendingAislesDataModel
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .getNetworkHandler()
+                                        .getBookmarkAisleByUser();
+                                VueTrendingAislesDataModel
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .getNetworkHandler()
+                                        .getRatedImageList();
+                            } else {
+                                callback.onUserUpdated(null, false);
+                            }
+                        } else {
+                            callback.onUserUpdated(null, false);
+                        }
+                    } else {
+                        JSONObject loginprops = new JSONObject();
+                        try {
+                            loginprops.put("Failure Reason",
+                                    "Unable to Login with Vue Server status code : "
+                                            + response[1]);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                        callback.onUserUpdated(null, false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
