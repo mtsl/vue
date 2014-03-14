@@ -622,6 +622,12 @@ public class VueLoginActivity extends FragmentActivity {
             }
         } else {
             if (fromOnActivityResult) {
+                if (VueApplication.getInstance().mFBLoginFailureReason
+                        .equals(getResources().getString(
+                                R.string.facebook_session_expire_mesg))) {
+                    showAlertToLoginWithFacebookApp(getResources().getString(
+                            R.string.facebook_session_expire_mesg));
+                }
                 writeToSdcard("After Fb login failure: " + new Date() + "????"
                         + VueApplication.getInstance().mFBLoginFailureReason);
                 JSONObject loginprops = new JSONObject();
@@ -940,6 +946,25 @@ public class VueLoginActivity extends FragmentActivity {
                 
             }
         }, userPointsExecuteTime);
+    }
+    
+    private void showAlertToLoginWithFacebookApp(String message) {
+        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.vue_popup);
+        dialog.findViewById(R.id.networkdialogline).setVisibility(View.GONE);
+        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
+        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
+        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+        messagetext.setText(message);
+        okButton.setVisibility(View.GONE);
+        noButton.setText(VueApplication.getInstance().getString(R.string.ok));
+        noButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
     
     private void writeToSdcard(String message) {

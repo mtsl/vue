@@ -643,9 +643,23 @@ class AuthorizationClient implements Serializable {
                     Result outcome = null;
                     
                     if (resultCode == Activity.RESULT_CANCELED) {
-                        outcome = Result
-                                .createCancelResult(data
-                                        .getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION));
+                        // TODO
+                        if (data.getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION) != null
+                                && data.getStringExtra(
+                                        NativeProtocol.STATUS_ERROR_DESCRIPTION)
+                                        .equalsIgnoreCase(
+                                                "ApiException:Error validating access token: Session does not match current stored session. This may be because the user changed the password since the time the session was created or Facebook has changed the session for security reasons.")) {
+                            outcome = Result
+                                    .createCancelResult(VueApplication
+                                            .getInstance()
+                                            .getResources()
+                                            .getString(
+                                                    R.string.facebook_session_expire_mesg));
+                        } else {
+                            outcome = Result
+                                    .createCancelResult(data
+                                            .getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION));
+                        }
                     } else if (resultCode != Activity.RESULT_OK) {
                         outcome = Result.createErrorResult(
                                 "Unexpected resultCode from authorization.",
@@ -701,12 +715,23 @@ class AuthorizationClient implements Serializable {
             // Handle stuff
             Result outcome = null;
             if (resultCode == Activity.RESULT_CANCELED) {
-                outcome = Result.createCancelResult(data
-                        .getStringExtra("error"));
+                // TODO
+                if (data.getStringExtra("error") != null
+                        && data.getStringExtra("error")
+                                .equalsIgnoreCase(
+                                        "ApiException:Error validating access token: Session does not match current stored session. This may be because the user changed the password since the time the session was created or Facebook has changed the session for security reasons.")) {
+                    outcome = Result.createCancelResult(VueApplication
+                            .getInstance().getString(
+                                    R.string.facebook_session_expire_mesg));
+                } else {
+                    outcome = Result.createCancelResult(data
+                            .getStringExtra("error"));
+                }
             } else if (resultCode != Activity.RESULT_OK) {
                 outcome = Result.createErrorResult(
                         "Unexpected resultCode from authorization.", null);
             } else {
+                authorize(pendingRequest);
                 outcome = handleResultOk(data);
             }
             

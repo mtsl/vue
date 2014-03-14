@@ -179,6 +179,7 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="app_link">https://play.google.com/store/search?q=Silverlabs%20Vue</string>
     <string name="suggest_something_owner">Add an item to this aisle</string>
     <string name="suggest_something_guest">Suggest something</string>
+    <string name="facebook_session_expire_mesg">Facebook Session is expired. Could you please try after login with facebook app.</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
     <!-- MixPanel -->
