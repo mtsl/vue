@@ -117,7 +117,7 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsFromOncreate = true;
     public static boolean sMyPointsAvailable = false;
     
-    // SCREEN REFRESH TIME THRESHOLD IN MINUTES. 
+    // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
     public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
@@ -132,12 +132,12 @@ public class VueLandingPageActivity extends Activity implements
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
-        if(VueConnectivityManager.isNetworkConnected(this)) {
-        try {
-            trimCache(this);
-        } catch (Exception e) {
-            e.printStackTrace(); 
-        }
+        if (VueConnectivityManager.isNetworkConnected(this)) {
+            try {
+                trimCache(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         mLandingScreenTitleReceiver = new LandingScreenTitleReceiver();
         IntentFilter ifiltercategory = new IntentFilter(
@@ -145,7 +145,7 @@ public class VueLandingPageActivity extends Activity implements
         VueApplication.getInstance().registerReceiver(
                 mLandingScreenTitleReceiver, ifiltercategory);
         landingPageActivity = this;
-        mIsFromOncreate = true; 
+        mIsFromOncreate = true;
         initialize();
         mContent_frame2 = (FrameLayout) findViewById(R.id.content_frame2);
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -1274,6 +1274,8 @@ public class VueLandingPageActivity extends Activity implements
                 null);
         Utils.putDataentryTopAddImageAisleOccasion(VueLandingPageActivity.this,
                 null);
+        Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                VueLandingPageActivity.this, false);
         Utils.putDataentryTopAddImageAisleDescription(
                 VueLandingPageActivity.this, null);
         Utils.putTouchToChnageImagePosition(VueLandingPageActivity.this, -1);
@@ -1397,6 +1399,21 @@ public class VueLandingPageActivity extends Activity implements
                                                                                 }
                                                                             } else {
                                                                                 try {
+                                                                                    ArrayList<String> imageOwnerUserIds = VueTrendingAislesDataModel
+                                                                                            .getInstance(
+                                                                                                    VueLandingPageActivity.this)
+                                                                                            .getImagesForUserAndAisleId(
+                                                                                                    aisleId,
+                                                                                                    String.valueOf(storedVueUser
+                                                                                                            .getId()));
+                                                                                    if (imageOwnerUserIds != null
+                                                                                            && imageOwnerUserIds
+                                                                                                    .size() < 2) {
+                                                                                        mixpanel.getPeople()
+                                                                                                .increment(
+                                                                                                        "no of suggestions posted",
+                                                                                                        1);
+                                                                                    }
                                                                                     imageUploadProps
                                                                                             .put("isOwnerOfAisle",
                                                                                                     false);
@@ -1433,7 +1450,6 @@ public class VueLandingPageActivity extends Activity implements
                                                                     mixpanel.track(
                                                                             "Added Image To Existing Aisle",
                                                                             imageUploadProps);
-                                                                    
                                                                 }
                                                             });
                                         }
@@ -1484,6 +1500,21 @@ public class VueLandingPageActivity extends Activity implements
                                                     }
                                                 } else {
                                                     try {
+                                                        ArrayList<String> imageOwnerUserIds = VueTrendingAislesDataModel
+                                                                .getInstance(
+                                                                        VueLandingPageActivity.this)
+                                                                .getImagesForUserAndAisleId(
+                                                                        aisleId,
+                                                                        String.valueOf(storedVueUser
+                                                                                .getId()));
+                                                        if (imageOwnerUserIds != null
+                                                                && imageOwnerUserIds
+                                                                        .size() < 2) {
+                                                            mixpanel.getPeople()
+                                                                    .increment(
+                                                                            "no of suggestions posted",
+                                                                            1);
+                                                        }
                                                         imageUploadProps
                                                                 .put("isOwnerOfAisle",
                                                                         false);
@@ -1510,7 +1541,6 @@ public class VueLandingPageActivity extends Activity implements
                                             
                                             e.printStackTrace();
                                         }
-                                        
                                         mixpanel.track(
                                                 "Added Image To Existing Aisle",
                                                 imageUploadProps);
@@ -1878,14 +1908,14 @@ public class VueLandingPageActivity extends Activity implements
                 mixpanel.identify(String.valueOf(storedVueUser.getId()));
                 people = mixpanel.getPeople();
                 people.identify(String.valueOf(storedVueUser.getId()));
-                
+                people.setOnce("no of aisles created", 0);
+                people.setOnce("no of suggestions posted", 0);
                 people.set("$first_name", storedVueUser.getFirstName());
                 people.set("$last_name", storedVueUser.getLastName());
                 people.set("Gender", storedUserProfile.getUserGender());
                 people.set("$email", storedVueUser.getEmail());
                 people.set("Current location",
                         storedUserProfile.getUserLocation());
-                
                 
                 people.initPushHandling("501672267768");
                 String loginWith;

@@ -23,7 +23,6 @@ public class VueConstants {
     public static final String TRENDING_SWIPE_COUNT = "TrendingSwipeCount";
     public static final String TRENDING_SWIPE_BLOCK = "TrendigSwipBlock";
     
-    
     public static final String DETAIALS_HELP_BLOCK = "DetailsHelpBlock";
     public static final String NO_IMAGE_URL = "noimageurl";
     public static final int NO_IMAGE_WIDTH = 200;
@@ -110,6 +109,7 @@ public class VueConstants {
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_FLAG = "DataentryTopAddImageAisleFlag";
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR = "DataentryTopAddImageAisleLookingFor";
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION = "DataentryTopAddImageAisleOccasion";
+    public static final String INCREAMENT_MIXPANEL_POSTCOUNT = "IncreamentMixpanelPostCount";
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_CATEGORY = "DataentryTopAddImageAisleCategory";
     public static final String DATAENTRY_TOP_ADDIMAGE_AISLE_DESCRIPTION = "DataentryTopAddImageAisleDescription";
     public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";

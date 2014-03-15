@@ -711,6 +711,8 @@ public class DataEntryActivity extends Activity {
                         DataEntryActivity.this, null);
                 Utils.putDataentryTopAddImageAisleOccasion(
                         DataEntryActivity.this, null);
+                Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                        DataEntryActivity.this, false);
                 Utils.putDataentryTopAddImageAisleDescription(
                         DataEntryActivity.this, null);
                 ArrayList<DataentryImage> mAisleImagePathList = null;
@@ -759,6 +761,8 @@ public class DataEntryActivity extends Activity {
         Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
         Utils.putDataentryTopAddImageAisleCategory(DataEntryActivity.this, null);
         Utils.putDataentryTopAddImageAisleOccasion(DataEntryActivity.this, null);
+        Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                DataEntryActivity.this, false);
         Utils.putDataentryTopAddImageAisleDescription(DataEntryActivity.this,
                 null);
         ArrayList<DataentryImage> mAisleImagePathList = null;

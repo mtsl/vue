@@ -582,6 +582,8 @@ public class VueLoginActivity extends FragmentActivity {
             people.set("$last_name", user.getLastName());
             people.set("Gender", vueUserProfile.getUserGender());
             people.set("$email", mixpanelUserEmail);
+            people.setOnce("no of aisles created", 0);
+            people.setOnce("no of suggestions posted", 0);
             people.set("Current location", vueUserProfile.getUserLocation());
             people.setOnce("Joined On", new Date());
             people.set("loggedIn with", "Facebook");

@@ -121,6 +121,7 @@ public class DataEntryFragment extends Fragment {
     RelativeLayout mFindatLayout = null;
     private MixpanelAPI mixpanel;
     TextView mAddAnItemToAisle;
+    private boolean mIncreamentMixpanelPostCount = false;
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -212,6 +213,8 @@ public class DataEntryFragment extends Fragment {
                 .getDataentryTopAddImageAisleOccasion(getActivity());
         String savedDescription = Utils
                 .getDataentryTopAddImageAisleDescription(getActivity());
+        mIncreamentMixpanelPostCount = Utils
+                .getDataentryTopAddImageIncreamentMixpanelPostCount(getActivity());
         if (Utils.getDataentryTopAddImageAisleFlag(mContext)
                 && savedLookingFor != null
                 && savedLookingFor.trim().length() > 0) {
@@ -954,6 +957,8 @@ public class DataEntryFragment extends Fragment {
             Utils.putDataentryTopAddImageAisleLookingFor(getActivity(),
                     mLookingFor);
             Utils.putDataentryTopAddImageAisleOccasion(getActivity(), mOccasion);
+            Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                    getActivity(), mIncreamentMixpanelPostCount);
             Utils.putDataentryTopAddImageAisleCategory(getActivity(),
                     mCategoryheading.getText().toString());
             Utils.putDataentryTopAddImageAisleDescription(getActivity(),
@@ -1709,6 +1714,13 @@ public class DataEntryFragment extends Fragment {
                                                                     }
                                                                 } else {
                                                                     try {
+                                                                        if (mIncreamentMixpanelPostCount) {
+                                                                            mIncreamentMixpanelPostCount = false;
+                                                                            mixpanel.getPeople()
+                                                                                    .increment(
+                                                                                            "no of suggestions posted",
+                                                                                            1);
+                                                                        }
                                                                         this.imageUploadProps
                                                                                 .put("isOwnerOfAisle",
                                                                                         false);
@@ -1819,11 +1831,17 @@ public class DataEntryFragment extends Fragment {
                                             this.imageUploadProps.put(
                                                     "isOwnerOfAisle", true);
                                         } catch (JSONException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                     } else {
                                         try {
+                                            if (mIncreamentMixpanelPostCount) {
+                                                mIncreamentMixpanelPostCount = false;
+                                                mixpanel.getPeople()
+                                                        .increment(
+                                                                "no of suggestions posted",
+                                                                1);
+                                            }
                                             this.imageUploadProps.put(
                                                     "isOwnerOfAisle", false);
                                         } catch (JSONException e) {
@@ -2132,27 +2150,6 @@ public class DataEntryFragment extends Fragment {
         }
     }
     
-    private boolean checkLimitForLoginDialog() {
-        SharedPreferences sharedPreferencesObj = getActivity()
-                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
-                VueConstants.VUE_LOGIN, false);
-        if (!isUserLoggedInFlag) {
-            int createdAisleCount = sharedPreferencesObj.getInt(
-                    VueConstants.CREATED_AISLE_COUNT_IN_PREFERENCE, 0);
-            int commentsCount = sharedPreferencesObj.getInt(
-                    VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-            if (createdAisleCount >= VueConstants.CREATE_AISLE_LIMIT_FOR_LOGIN
-                    || commentsCount >= VueConstants.COMMENTS_LIMIT_FOR_LOGIN) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-    
     public void showOtherSourcesGridview(
             ArrayList<OtherSourceImageDetails> imagesList, String sourceUrl) {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
@@ -2297,6 +2294,10 @@ public class DataEntryFragment extends Fragment {
                                 getActivity(), mAisleImagePathList, true));
             } catch (Throwable e) {
                 e.printStackTrace();
+            }
+        } else {
+            if (!mIsUserAisleFlag) {
+                mIncreamentMixpanelPostCount = true;
             }
         }
     }
@@ -2585,6 +2586,7 @@ public class DataEntryFragment extends Fragment {
                 
                 e.printStackTrace();
             }
+            mixpanel.getPeople().increment("no of aisles created", 1);
             mixpanel.track("New Aisle Created", this.createAisleProps);
         }
         
@@ -2630,15 +2632,6 @@ public class DataEntryFragment extends Fragment {
     }
     
     private void showFindAtToastandDialogForNoFindatUrl() {
-        String userId = "";
-        VueUser storedVueUser = null;
-        try {
-            storedVueUser = Utils.readUserObjectFromFile(getActivity(),
-                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            userId = String.valueOf(storedVueUser.getId());
-        } catch (Exception e2) {
-            e2.printStackTrace();
-        }
         AisleWindowContent aisleWindowContent = VueApplication.getInstance()
                 .getPedningAisle();
         if (aisleWindowContent == null) {

@@ -449,4 +449,23 @@ public class VueTrendingAislesDataModel {
             }
         }
     }
+    
+    public ArrayList<String> getImagesForUserAndAisleId(String aisleId,
+            String userId) {
+        AisleWindowContent aisleWindowContent = getAisleAt(aisleId);
+        if (aisleWindowContent != null
+                && aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            ArrayList<String> imageOwnerUserIds = new ArrayList<String>();
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                if (aisleWindowContent.getImageList().get(i).mOwnerUserId
+                        .equals(userId)) {
+                    imageOwnerUserIds.add(aisleWindowContent.getImageList()
+                            .get(i).mOwnerUserId);
+                }
+            }
+            return imageOwnerUserIds;
+        }
+        return null;
+    }
 }

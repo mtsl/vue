@@ -557,6 +557,14 @@ public class Utils {
                 VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION, null);
     }
     
+    public static boolean getDataentryTopAddImageIncreamentMixpanelPostCount(
+            Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        return sharedPreferences.getBoolean(
+                VueConstants.INCREAMENT_MIXPANEL_POSTCOUNT, false);
+    }
+    
     public static String getDataentryTopAddImageAisleCategory(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -589,6 +597,15 @@ public class Utils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION,
                 occasion);
+        editor.commit();
+    }
+    
+    public static void putDataentryTopAddImageIncreamentMixpanelPostCount(
+            Context context, boolean flag) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(VueConstants.INCREAMENT_MIXPANEL_POSTCOUNT, flag);
         editor.commit();
     }
     
