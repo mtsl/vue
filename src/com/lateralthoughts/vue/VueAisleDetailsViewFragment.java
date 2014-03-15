@@ -225,11 +225,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
             }
         }
         if (profileUrl != null && profileUrl.length() > 5) {
-            mVueUserPic.setImageUrl(profileUrl,
-                        VueApplication.getInstance().getImageCacheLoader(),
-                        VueApplication.getInstance().getPixel(32),
-                        VueApplication.getInstance().getPixel(32),
-                        NetworkImageView.BitmapProfile.ProfileLandingView);
+            mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
+                    .getImageCacheLoader(), VueApplication.getInstance()
+                    .getPixel(32), VueApplication.getInstance().getPixel(32),
+                    NetworkImageView.BitmapProfile.ProfileLandingView);
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {
             
@@ -682,6 +681,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
             public void onClick(View v) {
                 mixpanel.track("Find At", null);
                 String url = mFindAtUrl;
+                if (url != null
+                        && (url.startsWith("www") || url.startsWith("WWW"))) {
+                    url = "http://" + url;
+                }
                 if (url != null && url.startsWith("http")) {
                     closeKeyboard();
                     Uri uriUrl = Uri.parse(url.trim());
