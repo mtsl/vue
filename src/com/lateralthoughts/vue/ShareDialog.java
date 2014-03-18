@@ -371,11 +371,11 @@ public class ShareDialog {
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.INSTAGRAM_APP_NAME)) {
                 shareVia = "Instagram";
-                shareSingleImage(position, mCurrentAislePosition);
+                shareSingleImage(position, mCurrentAislePosition, false);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.TWITTER_APP_NAME)) {
                 shareVia = "Twitter";
-                shareSingleImage(position, mCurrentAislePosition);
+                shareSingleImage(position, mCurrentAislePosition, true);
             } else if (mAppNames.get(position)
                     .equalsIgnoreCase(
                             mContext.getApplicationContext()
@@ -391,7 +391,7 @@ public class ShareDialog {
                             mImagePathArray.get(mCurrentAislePosition)
                                     .getImageId());
                 } else {
-                    shareSingleImage(position, mCurrentAislePosition);
+                    shareSingleImage(position, mCurrentAislePosition, false);
                 }
             }
         } catch (Exception e) {
@@ -583,7 +583,7 @@ public class ShareDialog {
     }
     
     private void shareSingleImage(final int position,
-            final int currentAislePosition) {
+            final int currentAislePosition, final boolean fromTwitterApp) {
         mDialog.dismiss();
         mShareIntentCalled = true;
         mShareDialog.show();
@@ -620,36 +620,45 @@ public class ShareDialog {
                     imageUri = Uri.fromFile(f);
                 }
                 String shareText = "";
-                // User Aisle...
-                if (mImagePathArray.get(0).isUserAisle().equals("1")) {
-                    shareText = mImagePathArray.get(0).getAisleOwnerName()
-                            + " would like your opinion in finding "
-                            + mImagePathArray.get(0).getLookingFor()
-                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                if (fromTwitterApp) {
+                    shareText = mImagePathArray.get(0).getLookingFor() + " by "
+                            + mImagePathArray.get(0).getAisleOwnerName() + ". "
                             + APPLINK;
                 } else {
-                    String userName = null;
-                    if (VueApplication.getInstance().getmUserName() != null) {
-                        userName = VueApplication.getInstance().getmUserName();
+                    // User Aisle...
+                    if (mImagePathArray.get(0).isUserAisle().equals("1")) {
+                        shareText = mImagePathArray.get(0).getAisleOwnerName()
+                                + " would like your opinion in finding "
+                                + mImagePathArray.get(0).getLookingFor()
+                                + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                                + APPLINK;
                     } else {
-                        VueUserProfile storedUserProfile = null;
-                        try {
-                            storedUserProfile = Utils
-                                    .readUserProfileObjectFromFile(
-                                            mContext,
-                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        String userName = null;
+                        if (VueApplication.getInstance().getmUserName() != null) {
+                            userName = VueApplication.getInstance()
+                                    .getmUserName();
+                        } else {
+                            VueUserProfile storedUserProfile = null;
+                            try {
+                                storedUserProfile = Utils
+                                        .readUserProfileObjectFromFile(
+                                                mContext,
+                                                VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (storedUserProfile != null) {
+                                userName = storedUserProfile.getUserName();
+                            }
                         }
-                        if (storedUserProfile != null) {
-                            userName = storedUserProfile.getUserName();
-                        }
+                        shareText = userName
+                                + " would like you to check this aisle out on Vue - "
+                                + mImagePathArray.get(0).getLookingFor()
+                                + " by "
+                                + mImagePathArray.get(0).getAisleOwnerName()
+                                + ". Get Vue to create your own aisles! "
+                                + APPLINK;
                     }
-                    shareText = userName
-                            + " would like you to check this aisle out on Vue - "
-                            + mImagePathArray.get(0).getLookingFor() + " by "
-                            + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles! " + APPLINK;
                 }
                 mSendIntent.setAction(Intent.ACTION_SEND);
                 mSendIntent.setType("image/*");
