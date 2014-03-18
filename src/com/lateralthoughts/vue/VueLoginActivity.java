@@ -592,12 +592,6 @@ public class VueLoginActivity extends FragmentActivity implements
             }
         });
         dialog.show();
-        dialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                showAisleSwipeHelp();
-            }
-        });
     }
     
     private void saveFBLoginDetails(final Session session) {
@@ -852,6 +846,15 @@ public class VueLoginActivity extends FragmentActivity implements
         if (fbloggedin) {
             if (mFromDetailsFbShare) {
                 try {
+                    mSharedPreferencesObj = this.getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    SharedPreferences.Editor editor = mSharedPreferencesObj
+                            .edit();
+                    editor.putString(VueConstants.FACEBOOK_ACCESSTOKEN,
+                            session.getAccessToken());
+                    editor.putBoolean(VueConstants.VUE_LOGIN, true);
+                    editor.putBoolean(VueConstants.FACEBOOK_LOGIN, true);
+                    editor.commit();
                     ArrayList<clsShare> filePathList = mBundle
                             .getParcelableArrayList(VueConstants.FBPOST_IMAGEURLS);
                     shareToFacebook(filePathList,
@@ -1191,6 +1194,9 @@ public class VueLoginActivity extends FragmentActivity implements
                         Toast.LENGTH_LONG).show();
             }
         } else {
+            if (mGooglePlusProgressDialog != null)
+                if (mGooglePlusProgressDialog.isShowing())
+                    mGooglePlusProgressDialog.dismiss();
             showAlertMessageForAppInstalation("Google+",
                     VueConstants.GOOGLEPLUS_PACKAGE_NAME);
         }
@@ -1306,9 +1312,8 @@ public class VueLoginActivity extends FragmentActivity implements
         
         mixpanel.identify(userId);
         people.identify(userId);
-        SharedPreferences sharedPreferencesObj = VueApplication
-                .getInstance().getSharedPreferences(
-                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
         people.setPushRegistrationId(sharedPreferencesObj.getString(
                 VueConstants.MIXPANEL_REGISTRATION_ID, null));
         people.set("$first_name", storedUserProfile.getUserName());
