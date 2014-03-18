@@ -175,6 +175,8 @@ public class VueApplication extends Application {
         sInstance = this;
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
                 UrlConstants.CURRENT_SERVER_PROJECT_ID);
+        RegisterGCMClient.registerClient(VueApplication.getInstance(),
+                "501672267768");
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();

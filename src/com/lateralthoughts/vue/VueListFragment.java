@@ -764,8 +764,12 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
         boolean facebookloginflag = mSharedPreferencesObj.getBoolean(
                 VueConstants.FACEBOOK_LOGIN, false);
+        boolean googleplusLoginFlag = mSharedPreferencesObj.getBoolean(
+                VueConstants.GOOGLEPLUS_LOGIN, false);
         if (facebookloginflag) {
             fbFriendsList();
+        } else if (googleplusLoginFlag) {
+            getGPlusFriendsList();
         } else {
             if (mProgress.isShowing()) {
                 mProgress.dismiss();

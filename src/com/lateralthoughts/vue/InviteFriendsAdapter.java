@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,11 @@ public class InviteFriendsAdapter extends BaseAdapter {
             mixpanel.identify(String.valueOf(storedVueUser.getId()));
             people = mixpanel.getPeople();
             people.identify(String.valueOf(storedVueUser.getId()));
+            SharedPreferences sharedPreferencesObj = VueApplication
+                    .getInstance().getSharedPreferences(
+                            VueConstants.SHAREDPREFERENCE_NAME, 0);
+            people.setPushRegistrationId(sharedPreferencesObj.getString(
+                    VueConstants.MIXPANEL_REGISTRATION_ID, null));
         }
         this.mContext = context;
         mItems = objects;

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -35,9 +36,18 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
             SharedPreferences sharedPreferencesObj = VueApplication
                     .getInstance().getSharedPreferences(
                             VueConstants.SHAREDPREFERENCE_NAME, 0);
-            SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-            editor.putString(VueConstants.GCM_REGISTRATION_ID, registrationId);
-            editor.commit();
+            if (sharedPreferencesObj.getString(
+                    VueConstants.GCM_REGISTRATION_ID, null) == null) {
+                SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+                editor.putString(VueConstants.GCM_REGISTRATION_ID,
+                        registrationId);
+                editor.commit();
+            } else {
+                SharedPreferences.Editor editor = sharedPreferencesObj.edit();
+                editor.putString(VueConstants.MIXPANEL_REGISTRATION_ID,
+                        registrationId);
+                editor.commit();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,6 +164,12 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            final String broadcastMessage = intent.getExtras().getString(
+                    "mp_message");
         } catch (Exception e) {
             e.printStackTrace();
         }

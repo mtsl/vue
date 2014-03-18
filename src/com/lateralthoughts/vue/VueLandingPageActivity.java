@@ -1908,6 +1908,8 @@ public class VueLandingPageActivity extends Activity implements
                 mixpanel.identify(String.valueOf(storedVueUser.getId()));
                 people = mixpanel.getPeople();
                 people.identify(String.valueOf(storedVueUser.getId()));
+                people.setPushRegistrationId(sharedPreferencesObj.getString(
+                        VueConstants.MIXPANEL_REGISTRATION_ID, null));
                 people.setOnce("no of aisles created", 0);
                 people.setOnce("no of suggestions posted", 0);
                 people.set("$first_name", storedVueUser.getFirstName());
@@ -1953,6 +1955,8 @@ public class VueLandingPageActivity extends Activity implements
                         mixpanel.identify(String.valueOf(storedVueUser.getId()));
                         people = mixpanel.getPeople();
                         people.identify(String.valueOf(storedVueUser.getId()));
+                        people.setPushRegistrationId(sharedPreferencesObj.getString(
+                                VueConstants.MIXPANEL_REGISTRATION_ID, null));
                         JSONObject nameTag = new JSONObject();
                         try {
                             // Set an "mp_name_tag" super property

@@ -43,6 +43,7 @@ public class VueConstants {
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
     public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
+    public static final String MIXPANEL_REGISTRATION_ID = "MixpanelRegistrationId";
     public static final String LANDING_SCREEN_RECEIVER = "LandingscreenReceiver";
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
     public static final String NOTIFICATION_IMAGE_ID = "notficationImageId";

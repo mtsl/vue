@@ -72,70 +72,6 @@ public class VueUserManager {
                             + "already available. Try the update APIs");
         final VueUser user = parseGraphUserIntoVueUser(graphUser,
                 userProfileImageUrl);
-        final Response.Listener listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String jsonArray) {
-                if (null != jsonArray) {
-                    VueUser vueUser = new Parser().parseUserData(jsonArray);
-                    if (vueUser != null) {
-                        if (VueApplication.getInstance().getmUserInitials() == null) {
-                            VueApplication.getInstance().setmUserInitials(
-                                    vueUser.getFirstName());
-                        }
-                        VueApplication.getInstance()
-                                .setmUserId(vueUser.getId());
-                        VueApplication.getInstance().setmUserEmail(
-                                vueUser.getEmail());
-                        VueApplication.getInstance().setmUserName(
-                                vueUser.getFirstName() + " "
-                                        + vueUser.getLastName());
-                        VueUserManager.this.setCurrentUser(vueUser);
-                        callback.onUserUpdated(vueUser, true);
-                        VueApplication
-                                .getInstance()
-                                .getContentResolver()
-                                .delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
-                                        null, null);
-                        VueApplication
-                                .getInstance()
-                                .getContentResolver()
-                                .delete(VueConstants.BOOKMARKER_AISLES_URI,
-                                        null, null);
-                        VueApplication
-                                .getInstance()
-                                .getContentResolver()
-                                .delete(VueConstants.RATED_IMAGES_URI, null,
-                                        null);
-                        VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getNetworkHandler().getBookmarkAisleByUser();
-                        VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getNetworkHandler().getRatedImageList();
-                    } else {
-                        callback.onUserUpdated(null, false);
-                    }
-                } else {
-                    callback.onUserUpdated(null, false);
-                }
-            }
-        };
-        final Response.ErrorListener fBCreateUserErrorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                writeToSdcard("After server failure login for Facebook create user : "
-                        + new Date());
-                callback.onUserUpdated(null, false);
-            }
-        };
-        final Response.ErrorListener fBUpdateUserErrorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                writeToSdcard("After server failure login for Facebook update user : "
-                        + new Date());
-                callback.onUserUpdated(null, false);
-            }
-        };
         final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {
@@ -188,14 +124,6 @@ public class VueUserManager {
                             userAsString = mapper.writeValueAsString(vueUser);
                         } catch (JsonProcessingException e) {
                         }
-                        /*
-                         * UserCreateOrUpdateRequest request = new
-                         * UserCreateOrUpdateRequest( userAsString,
-                         * UrlConstants.UPDATE_USER_RESTURL, listener,
-                         * fBUpdateUserErrorListener);
-                         * VueApplication.getInstance().getRequestQueue()
-                         * .add(request);
-                         */
                         callUpdateUserThread(userAsString, callback);
                     } else {
                         try {
@@ -210,14 +138,6 @@ public class VueUserManager {
                             ObjectMapper mapper = new ObjectMapper();
                             String userAsString = mapper
                                     .writeValueAsString(user);
-                            /*
-                             * UserCreateOrUpdateRequest request = new
-                             * UserCreateOrUpdateRequest( userAsString,
-                             * UrlConstants.CREATE_USER_RESTURL, listener,
-                             * fBCreateUserErrorListener);
-                             * VueApplication.getInstance().getRequestQueue()
-                             * .add(request);
-                             */
                             callCreateUserThread(userAsString, callback);
                         } catch (Exception e) {
                             
@@ -233,14 +153,6 @@ public class VueUserManager {
                                         null));
                         ObjectMapper mapper = new ObjectMapper();
                         String userAsString = mapper.writeValueAsString(user);
-                        /*
-                         * UserCreateOrUpdateRequest request = new
-                         * UserCreateOrUpdateRequest( userAsString,
-                         * UrlConstants.CREATE_USER_RESTURL, listener,
-                         * fBCreateUserErrorListener);
-                         * VueApplication.getInstance().getRequestQueue()
-                         * .add(request);
-                         */
                         callCreateUserThread(userAsString, callback);
                     } catch (Exception e) {
                         
@@ -272,6 +184,129 @@ public class VueUserManager {
                 UrlConstants.GET_USER_FACEBOOK_ID_RESTURL
                         + user.getFacebookId(), getListener,
                 fBGetUserErrorListener);
+        VueApplication.getInstance().getRequestQueue().add(userGetRequest);
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void googlePlusAuthenticationWithServer(
+            final String userProfileImageUrl, final VueUser user,
+            final UserUpdateCallback callback) {
+        if (null != mCurrentUser)
+            throw new RuntimeException(
+                    "Cannot call createFBIdentifiedUser when User is "
+                            + "already available. Try the update APIs");
+        final Response.Listener getListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String jsonArray) {
+                if (null != jsonArray) {
+                    VueUser vueUser = new Parser().parseUserData(jsonArray);
+                    if (vueUser != null) {
+                        if (VueApplication.getInstance().getmUserInitials() == null) {
+                            VueApplication.getInstance().setmUserInitials(
+                                    vueUser.getFirstName());
+                        }
+                        VueApplication.getInstance()
+                                .setmUserId(vueUser.getId());
+                        VueApplication.getInstance().setmUserEmail(
+                                vueUser.getEmail());
+                        VueApplication.getInstance().setmUserName(
+                                vueUser.getFirstName() + " "
+                                        + vueUser.getLastName());
+                        VueUserManager.this.setCurrentUser(vueUser);
+                        callback.onUserUpdated(vueUser, true);
+                        VueApplication
+                                .getInstance()
+                                .getContentResolver()
+                                .delete(VueConstants.RECENTLY_VIEW_AISLES_URI,
+                                        null, null);
+                        VueApplication
+                                .getInstance()
+                                .getContentResolver()
+                                .delete(VueConstants.BOOKMARKER_AISLES_URI,
+                                        null, null);
+                        VueApplication
+                                .getInstance()
+                                .getContentResolver()
+                                .delete(VueConstants.RATED_IMAGES_URI, null,
+                                        null);
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler().getBookmarkAisleByUser();
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler().getRatedImageList();
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        vueUser.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
+                        ObjectMapper mapper = new ObjectMapper();
+                        String userAsString = null;
+                        try {
+                            userAsString = mapper.writeValueAsString(vueUser);
+                        } catch (JsonProcessingException e) {
+                        }
+                        callUpdateUserThread(userAsString, callback);
+                    } else {
+                        try {
+                            SharedPreferences sharedPreferencesObj = VueApplication
+                                    .getInstance().getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            user.setGcmRegistrationId(sharedPreferencesObj
+                                    .getString(
+                                            VueConstants.GCM_REGISTRATION_ID,
+                                            null));
+                            ObjectMapper mapper = new ObjectMapper();
+                            String userAsString = mapper
+                                    .writeValueAsString(user);
+                            callCreateUserThread(userAsString, callback);
+                        } catch (Exception e) {
+                            
+                        }
+                    }
+                } else {
+                    try {
+                        SharedPreferences sharedPreferencesObj = VueApplication
+                                .getInstance().getSharedPreferences(
+                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
+                        user.setGcmRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
+                        ObjectMapper mapper = new ObjectMapper();
+                        String userAsString = mapper.writeValueAsString(user);
+                        callCreateUserThread(userAsString, callback);
+                    } catch (Exception e) {
+                        
+                    }
+                }
+            }
+        };
+        Response.ErrorListener gPlusGetUserErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String errorMesg = "";
+                if (error != null && error.networkResponse != null) {
+                    errorMesg = "" + error.networkResponse.statusCode;
+                }
+                JSONObject loginprops = new JSONObject();
+                try {
+                    loginprops.put("Failure Reason",
+                            "Unable to Login with Vue Server status code : "
+                                    + errorMesg);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+                writeToSdcard("After server failure login for Google+ get user : "
+                        + new Date());
+                callback.onUserUpdated(null, false);
+            }
+        };
+        UserGetRequest userGetRequest = new UserGetRequest(
+                UrlConstants.GET_USER_GOOGLEPLUS_ID_RESTURL
+                        + user.getGooglePlusId(), getListener,
+                gPlusGetUserErrorListener);
         VueApplication.getInstance().getRequestQueue().add(userGetRequest);
     }
     
