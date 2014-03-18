@@ -27,6 +27,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.parser.Parser;
 
 public class GCMBroadcastReceiver extends BroadcastReceiver {
+    String aisleId = null;
     
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -170,9 +171,75 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         try {
             final String broadcastMessage = intent.getExtras().getString(
                     "mp_message");
+            if (broadcastMessage != null && broadcastMessage.length() > 0) {
+                handleNotificationIntent(broadcastMessage);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         
     }
+    
+    private void handleNotificationIntent(String message) {
+        if (message == null)
+            return;
+        String messageInfo = message;
+        String content[] = message.split(":");
+        for (int i = 0; i < content.length; i++) {
+            String tempString = content[i];
+            if (tempString.contains("aisleId")) {
+                String iD[] = tempString.split("-");
+                aisleId = iD[1];
+            } else if (tempString.contains("message")) {
+                String iD[] = tempString.split("-");
+                messageInfo = iD[1];
+            }
+        }
+        NotificationManager notificationManager = (NotificationManager) VueApplication
+                .getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent notificationIntent = new Intent(VueApplication.getInstance(),
+                VueLandingPageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(VueConstants.NOTIFICATION_IMAGE_ID, "0");
+        bundle.putString(VueConstants.NOTIFICATION_AISLE_ID, aisleId);
+        notificationIntent.putExtras(bundle);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                VueApplication.getInstance(), (int) System.currentTimeMillis(),
+                notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                VueApplication.getInstance())
+                .setContentTitle(
+                        VueApplication.getInstance().getResources()
+                                .getString(R.string.app_name))
+                .setSmallIcon(R.drawable.vue_notification_icon)
+                .setContentText(messageInfo);
+        builder.setContentIntent(contentIntent);
+        builder.setAutoCancel(true);
+        notificationManager.notify(VueConstants.GCM_NOTIFICATION_ID,
+                builder.build());
+        if (aisleId != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AisleWindowContent aisleWindowContent = new Parser()
+                            .getAisleForAisleIdFromServerORDatabase(aisleId,
+                                    true);
+                    if (aisleWindowContent != null) {
+                        List<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
+                        aisleList.add(aisleWindowContent);
+                        DataBaseManager.getInstance(
+                                VueApplication.getInstance())
+                                .addTrentingAislesFromServerToDB(
+                                        VueApplication.getInstance(),
+                                        aisleList,
+                                        VueTrendingAislesDataModel.getInstance(
+                                                VueApplication.getInstance())
+                                                .getNetworkHandler().offset,
+                                        DataBaseManager.AISLE_CREATED);
+                    }
+                }
+            }).start();
+        }
+    }
+    
 }
