@@ -85,6 +85,7 @@ public class NetworkHandler {
     private boolean mUserPointsLoaded = false;
     private boolean mUserBookmarksLoaded = false;
     private boolean mUserRatedImagesLoaded = false;
+    ArrayList<String> sharedList = new ArrayList<String>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -248,6 +249,7 @@ public class NetworkHandler {
     
     public void loadInitialData(boolean loadMore, final Handler mHandler,
             String screenName) {
+        getAllSharedIds();
         getBookmarkAisleByUser();
         getRatedImageList();
         
@@ -1055,6 +1057,20 @@ public class NetworkHandler {
         public VueAislesRequest(String url, Listener<JSONArray> listener,
                 ErrorListener errorListener) {
             super(url, listener, errorListener);
+        }
+    }
+    private void getAllSharedIds(){
+    sharedList =   DataBaseManager.getInstance(VueApplication.getInstance()).getAllSharedValues();
+    }
+    public boolean isAisleShared(String aisleId){
+        if(sharedList.contains(aisleId)){
+            return true;
+        }
+        return false;
+    }
+    public void saveSharedId(String aisleId){
+        if(!sharedList.contains(aisleId)) {
+            sharedList.add(aisleId) ;
         }
     }
 }

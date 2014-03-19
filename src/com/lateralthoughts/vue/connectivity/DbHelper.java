@@ -35,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
 	public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
 	public static final String DATABASE_TABLE_MY_SHARED_AISLES = "mySharedAisles";
-	public static final int DATABASE_VERSION = 11;
+	public static final int DATABASE_VERSION = 12;
 	
 	private String mCreateShareTable = "create table if not exists "+DATABASE_TABLE_MY_SHARED_AISLES+" ("+VueConstants.SHARE_AISLE_ID+" long primary key);";
 
@@ -178,6 +178,8 @@ public class DbHelper extends SQLiteOpenHelper {
 			+ DATABASE_TABLE_BOOKMARKS_AISLES;
 	private String mDropMyBookmarkedAislesTable = "DROP TABLE "
 			+ DATABASE_TABLE_MY_BOOKMARKED_AISLES;
+	   private String mDropMySharedAislesTable = "DROP TABLE "
+	            + DATABASE_TABLE_MY_SHARED_AISLES;  
 
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -224,6 +226,11 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.execSQL(mDropCategoryTable);
 			db.execSQL(mDropRecentlyViewTable);
 			db.execSQL(mDropRatingImagesTable);
+			try{
+			    db.execSQL(mDropMySharedAislesTable);
+			} catch(Exception e){
+			    e.printStackTrace(); 
+			}
 			try {
 				db.execSQL(mDropAllRatingImagesTable);
 			} catch (Exception e) {
@@ -248,6 +255,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.execSQL(mCreateBookmarkAislesTable);
 			db.execSQL(mCreateMyBookmarkedAislesTable);
 			db.execSQL(mCreateAllReatingImagesTable);
+			db.execSQL(mCreateShareTable);
 			// Restore Previous version data...
 			DataBaseManager.getInstance(VueApplication.getInstance())
 					.insertRecentlyViewedAislesOnUpgrade(recentlyViewedAisles,

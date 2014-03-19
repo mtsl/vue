@@ -1814,6 +1814,8 @@ public class VueLandingPageActivity extends Activity implements
                             if(shareImage != null){
                             shareImage.setImageResource(R.drawable.share);
                             }
+                            DataBaseManager.getInstance(VueLandingPageActivity.this).saveShareAisleId(aisleWindowContent.getAisleId());
+                            VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().saveSharedId(aisleWindowContent.getAisleId());
                         }
                     });
             

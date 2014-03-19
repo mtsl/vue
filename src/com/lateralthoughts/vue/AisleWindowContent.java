@@ -97,7 +97,10 @@ public class AisleWindowContent {
         }
         this.mAisleBookmarkIndicator = VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance()).getNetworkHandler()
-                .checkIsAisleBookmarked(mAisleId);
+                .checkIsAisleBookmarked(mAisleId); 
+        this.mShareIndicator = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance()).getNetworkHandler()
+                .isAisleShared(mAisleId);
         if (mAisleImagesList != null) {
             for (int index = 0; index < mAisleImagesList.size(); index++) {
                 boolean status = VueTrendingAislesDataModel

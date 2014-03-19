@@ -971,6 +971,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                         @Override
                         public void onShare(boolean shareIndicator) {
                             mCurrentAisle.setmShareIndicator(true);
+                            DataBaseManager.getInstance(VueApplication.getInstance()).saveShareAisleId(mCurrentAisle.getAisleContext().mAisleId);
+                            VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().saveSharedId(mCurrentAisle.getAisleContext().mAisleId);
                         }
                     });
         }

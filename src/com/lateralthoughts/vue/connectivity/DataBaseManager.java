@@ -1967,7 +1967,6 @@ public class DataBaseManager {
 			mContext.getContentResolver().insert(
 					VueConstants.ALL_RATED_IMAGES_URI, values);
 		}
-
 		cursor.close();
 	}
 	public void saveShareAisleId(String aisleId){
@@ -1977,9 +1976,18 @@ public class DataBaseManager {
                 VueConstants.SHARED_AISLE_URI, values); 
 	}
    public ArrayList<String> getAllSharedValues(){
-       Cursor aislesCursor = mContext.getContentResolver().query(
+       ArrayList<String> sharedAisleList = new ArrayList<String>();
+       Cursor shareCursor = mContext.getContentResolver().query(
                VueConstants.SHARED_AISLE_URI, null, null, null, null);
-    return null;
+        if(shareCursor.moveToFirst()) {
+            do{
+                long id = shareCursor
+                        .getLong(shareCursor.getColumnIndex(VueConstants.SHARE_AISLE_ID)); 
+                String strLong = Long.toString(id);
+                sharedAisleList.add(strLong);
+            } while(shareCursor.moveToNext());
+        }
+    return sharedAisleList;
    }
 	/**
 	 * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS

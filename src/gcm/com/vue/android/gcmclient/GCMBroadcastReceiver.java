@@ -6,6 +6,8 @@ import gcm.com.vue.gcm.notifications.GCMClientNotification.NotificationType;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -161,8 +163,16 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         try {
             final String broadcastMessage = intent.getExtras().getString(
                     "mp_message");
+            String aisleId = null;
+            try {
+                JSONObject jsonObject = new JSONObject(intent.getExtras()
+                        .getString("apps"));
+                aisleId = jsonObject.getString("aisleId");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (broadcastMessage != null && broadcastMessage.length() > 0) {
-                handleNotificationIntent(broadcastMessage);
+                handleNotificationIntent(broadcastMessage, aisleId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,21 +180,9 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         
     }
     
-    private void handleNotificationIntent(String message) {
+    private void handleNotificationIntent(String message, final String aisleId) {
         if (message == null)
             return;
-        String messageInfo = message;
-        String content[] = message.split(":");
-        for (int i = 0; i < content.length; i++) {
-            String tempString = content[i];
-            if (tempString.contains("aisleId")) {
-                String iD[] = tempString.split("-");
-                aisleId = iD[1];
-            } else if (tempString.contains("message")) {
-                String iD[] = tempString.split("-");
-                messageInfo = iD[1];
-            }
-        }
         NotificationManager notificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
         Intent notificationIntent = new Intent(VueApplication.getInstance(),
@@ -202,7 +200,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                         VueApplication.getInstance().getResources()
                                 .getString(R.string.app_name))
                 .setSmallIcon(R.drawable.vue_notification_icon)
-                .setContentText(messageInfo);
+                .setContentText(message);
         builder.setContentIntent(contentIntent);
         builder.setAutoCancel(true);
         notificationManager.notify(VueConstants.GCM_NOTIFICATION_ID,
