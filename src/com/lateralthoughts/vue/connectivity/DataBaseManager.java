@@ -1970,7 +1970,17 @@ public class DataBaseManager {
 
 		cursor.close();
 	}
-
+	public void saveShareAisleId(String aisleId){
+	    ContentValues values = new ContentValues();
+	    values.put(VueConstants.SHARE_AISLE_ID, aisleId);
+	    mContext.getContentResolver().insert(
+                VueConstants.SHARED_AISLE_URI, values); 
+	}
+   public ArrayList<String> getAllSharedValues(){
+       Cursor aislesCursor = mContext.getContentResolver().query(
+               VueConstants.SHARED_AISLE_URI, null, null, null, null);
+    return null;
+   }
 	/**
 	 * FOR TESTING PURPOSE ONLY, SHOULD BE REMOVED OR COMMENTED FROM WHERE IT IS
 	 * CALLING AFTER TESTING, to copy FishWrap.db to sdCard.

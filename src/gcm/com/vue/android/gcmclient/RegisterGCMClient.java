@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.google.android.gcm.GCMRegistrar;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class RegisterGCMClient {
     
@@ -34,23 +33,12 @@ public class RegisterGCMClient {
             
             // Get the registration id
             regId = GCMRegistrar.getRegistrationId(context);
-            if (regId != null && regId.trim().length() > 0
-                    && projectId.equals(UrlConstants.CURRENT_SERVER_PROJECT_ID)) {
+            if (regId != null && regId.trim().length() > 0) {
                 SharedPreferences sharedPreferencesObj = VueApplication
                         .getInstance().getSharedPreferences(
                                 VueConstants.SHAREDPREFERENCE_NAME, 0);
                 SharedPreferences.Editor editor = sharedPreferencesObj.edit();
                 editor.putString(VueConstants.GCM_REGISTRATION_ID, regId);
-                editor.commit();
-            } else if (regId != null
-                    && regId.trim().length() > 0
-                    && projectId
-                            .equals(VueApplication.MIXPANEL_SEREVER_PROJECT_ID)) {
-                SharedPreferences sharedPreferencesObj = VueApplication
-                        .getInstance().getSharedPreferences(
-                                VueConstants.SHAREDPREFERENCE_NAME, 0);
-                SharedPreferences.Editor editor = sharedPreferencesObj.edit();
-                editor.putString(VueConstants.MIXPANEL_REGISTRATION_ID, regId);
                 editor.commit();
             }
         } catch (Exception e) {

@@ -75,6 +75,7 @@ public class ShareDialog {
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
     private FileCache mFileCache = null;
+    VueLandingPageActivity.OnShare shareIndicatorObject;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -103,7 +104,8 @@ public class ShareDialog {
             int currentAislePosition,
             VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
             DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner,
-            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner) {
+            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner,VueLandingPageActivity.OnShare shareIndicatorObj) {  
+        shareIndicatorObject = shareIndicatorObj;
         mShareIntentCalled = false;
         mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
         mDataentryScreenShareViaVueListner = dataentryScreenShareViaVueListner;
@@ -151,6 +153,9 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
+                if(shareIndicatorObject != null){
+                shareIndicatorObject.onShare(true);
+                }
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     if (createAisleSelectionActivity != null) {
@@ -701,4 +706,5 @@ public class ShareDialog {
     public interface ShareViaVueClickedListner {
         public void onAisleShareToVue();
     }
+   
 }

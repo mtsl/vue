@@ -34,7 +34,10 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String DATABASE_TABLE_ALL_RATED_IMAGES = "allRatedImages";
 	public static final String DATABASE_TABLE_BOOKMARKS_AISLES = "bookmarkedAisles";
 	public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
+	public static final String DATABASE_TABLE_MY_SHARED_AISLES = "mySharedAisles";
 	public static final int DATABASE_VERSION = 11;
+	
+	private String mCreateShareTable = "create table if not exists "+DATABASE_TABLE_MY_SHARED_AISLES+" ("+VueConstants.SHARE_AISLE_ID+" long primary key);";
 
 	private String mCreateAislesTable = "create table if not exists "
 			+ DATABASE_TABLE_AISLES + " (" + VueConstants.AISLE_Id
@@ -193,6 +196,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.execSQL(mCreateBookmarkAislesTable);
 		db.execSQL(mCreateMyBookmarkedAislesTable);
 		db.execSQL(mCreateAllReatingImagesTable);
+		db.execSQL(mCreateShareTable);
 	}
 
 	@Override

@@ -54,6 +54,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.VueAisleDetailsViewFragment.ShareViaVueListner;
+import com.lateralthoughts.vue.VueLandingPageActivity.OnShare;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Comment;
@@ -965,7 +966,13 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.getAisleContext().mOccasion,
                     (mCurrentAisle.getAisleContext().mFirstName + " " + mCurrentAisle
                             .getAisleContext().mLastName),
-                    mCurrentDispImageIndex, mShareViaVueListner, null, null);
+                    mCurrentDispImageIndex, mShareViaVueListner, null, null,new OnShare() {
+                        
+                        @Override
+                        public void onShare(boolean shareIndicator) {
+                            mCurrentAisle.setmShareIndicator(true);
+                        }
+                    });
         }
         if (mCurrentAisle.getImageList() != null
                 && mCurrentAisle.getImageList().size() > 0) {

@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue.ui;
 
 import java.util.ArrayList;
+import com.lateralthoughts.vue.ShareDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,14 +85,14 @@ public class AisleContentBrowser extends ViewFlipper {
                     int count = mSpecialNeedsAdapter.getShareCount();
                     count = count + 1;
                     shareCount.setText("" + count);
-                    shareImage.setImageResource(R.drawable.share);
+                    //shareImage.setImageResource(R.drawable.share);
                     mSpecialNeedsAdapter.setShareCount(count);
-                    mSpecialNeedsAdapter.setShareIdicator();
+                   // mSpecialNeedsAdapter.setShareIdicator();
                     if (VueLandingPageActivity.landingPageActivity != null) {
                         VueLandingPageActivity landingPage = (VueLandingPageActivity) VueLandingPageActivity.landingPageActivity;
                         landingPage.share(
                                 mSpecialNeedsAdapter.getWindowContent(),
-                                mCurrentIndex);
+                                mCurrentIndex,shareImage);
                         
                         AisleWindowContent windowContext = mSpecialNeedsAdapter
                                 .getWindowContent();
@@ -1144,4 +1145,5 @@ public class AisleContentBrowser extends ViewFlipper {
         });
         aisleContentBrowser.setDisplayedChild(currentIndex - 1);
     }
+   
 }

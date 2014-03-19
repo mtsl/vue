@@ -816,7 +816,7 @@ public class VueLoginActivity extends FragmentActivity implements
                     .getInstance().getSharedPreferences(
                             VueConstants.SHAREDPREFERENCE_NAME, 0);
             people.setPushRegistrationId(sharedPreferencesObj.getString(
-                    VueConstants.MIXPANEL_REGISTRATION_ID, null));
+                    VueConstants.GCM_REGISTRATION_ID, null));
             people.set("$first_name", user.getFirstName());
             people.set("$last_name", user.getLastName());
             people.set("Gender", vueUserProfile.getUserGender());
@@ -1315,7 +1315,7 @@ public class VueLoginActivity extends FragmentActivity implements
         SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
         people.setPushRegistrationId(sharedPreferencesObj.getString(
-                VueConstants.MIXPANEL_REGISTRATION_ID, null));
+                VueConstants.GCM_REGISTRATION_ID, null));
         people.set("$first_name", storedUserProfile.getUserName());
         people.set("$last_name", "");
         people.set("Gender", storedUserProfile.getUserGender());

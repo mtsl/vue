@@ -43,7 +43,6 @@ public class VueConstants {
     public static final String FACEBOOK_ACCESSTOKEN = "FacebookAccessToken";
     public static final String VUE_LOGIN = "VueLoginFlag";
     public static final String GCM_REGISTRATION_ID = "GCMRegistrationId";
-    public static final String MIXPANEL_REGISTRATION_ID = "MixpanelRegistrationId";
     public static final String LANDING_SCREEN_RECEIVER = "LandingscreenReceiver";
     public static final String LANDING_SCREEN_RECEIVER_KEY = "LandingScreenReceiverKey";
     public static final String NOTIFICATION_IMAGE_ID = "notficationImageId";
@@ -143,6 +142,10 @@ public class VueConstants {
     public static final String DETAILS_URL = "detailsUrl";
     public static final String IMAGE_ID = "imageId";
     public static final String STORE = "store";
+    
+    //Column names for share table
+    public static final String SHARE_AISLE_ID = "aisleId";
+    
     // Column names for dataToSync table.
     public static final String COMMENT = "comment";
     public static final int INVITE_FRIENDS_LOGINACTIVITY_REQUEST_CODE = 24;
@@ -207,6 +210,7 @@ public class VueConstants {
     public static final String ALL_RATED_IMAGES = "allRatedImages";
     public static final String BOOKMARKER_AISLES = "bookmarkedAisles";
     public static final String MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
+    public static final String SHARED_AISLE = "mySharedAisles";
     
     // Define MIME types
     public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
@@ -235,6 +239,9 @@ public class VueConstants {
             + AUTHORITY + "/" + MY_BOOKMARKED_AISLES);
     public static final Uri ALL_RATED_IMAGES_URI = Uri.parse("content://"
             + AUTHORITY + "/" + ALL_RATED_IMAGES);
+    public static final Uri SHARED_AISLE_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + SHARED_AISLE);
+    
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
     public static final String INVITATION_MESG = "Invitation from Vue application.";

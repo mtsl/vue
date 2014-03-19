@@ -176,7 +176,7 @@ public class VueUserManager {
                     e1.printStackTrace();
                 }
                 writeToSdcard("After server failure login for Facebook get user : "
-                        + new Date());
+                        + new Date() + "??" + errorMesg);
                 callback.onUserUpdated(null, false);
             }
         };

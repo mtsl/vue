@@ -57,7 +57,7 @@ public class InviteFriendsAdapter extends BaseAdapter {
                     .getInstance().getSharedPreferences(
                             VueConstants.SHAREDPREFERENCE_NAME, 0);
             people.setPushRegistrationId(sharedPreferencesObj.getString(
-                    VueConstants.MIXPANEL_REGISTRATION_ID, null));
+                    VueConstants.GCM_REGISTRATION_ID, null));
         }
         this.mContext = context;
         mItems = objects;

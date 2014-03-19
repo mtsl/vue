@@ -44,6 +44,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -1770,8 +1771,8 @@ public class VueLandingPageActivity extends Activity implements
         }
     }
     
-    public void share(AisleWindowContent aisleWindowContent,
-            int currentDispImageIndex) {
+    public void share(final AisleWindowContent aisleWindowContent,
+            int currentDispImageIndex,final ImageView shareImage) {
         mShare = new ShareDialog(this, this, null, null);
         FileCache ObjFileCache = new FileCache(this);
         ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
@@ -1803,7 +1804,19 @@ public class VueLandingPageActivity extends Activity implements
                     aisleWindowContent.getAisleContext().mOccasion,
                     (aisleWindowContent.getAisleContext().mFirstName + " " + aisleWindowContent
                             .getAisleContext().mLastName),
-                    currentDispImageIndex, null, null, new ShareViaVueListner());
+                    currentDispImageIndex, null, null, new ShareViaVueListner(),new OnShare() {
+                        
+                        @Override
+                        public void onShare(boolean shareIndicator) {
+                            if(aisleWindowContent != null){
+                            aisleWindowContent.setmShareIndicator(shareIndicator);
+                            }
+                            if(shareImage != null){
+                            shareImage.setImageResource(R.drawable.share);
+                            }
+                        }
+                    });
+            
         }
         if (aisleWindowContent.getImageList() != null
                 && aisleWindowContent.getImageList().size() > 0) {
@@ -1909,7 +1922,7 @@ public class VueLandingPageActivity extends Activity implements
                 people = mixpanel.getPeople();
                 people.identify(String.valueOf(storedVueUser.getId()));
                 people.setPushRegistrationId(sharedPreferencesObj.getString(
-                        VueConstants.MIXPANEL_REGISTRATION_ID, null));
+                        VueConstants.GCM_REGISTRATION_ID, null));
                 people.setOnce("no of aisles created", 0);
                 people.setOnce("no of suggestions posted", 0);
                 people.set("$first_name", storedVueUser.getFirstName());
@@ -1956,7 +1969,7 @@ public class VueLandingPageActivity extends Activity implements
                         people = mixpanel.getPeople();
                         people.identify(String.valueOf(storedVueUser.getId()));
                         people.setPushRegistrationId(sharedPreferencesObj.getString(
-                                VueConstants.MIXPANEL_REGISTRATION_ID, null));
+                                VueConstants.GCM_REGISTRATION_ID, null));
                         JSONObject nameTag = new JSONObject();
                         try {
                             // Set an "mp_name_tag" super property
@@ -2081,5 +2094,11 @@ public class VueLandingPageActivity extends Activity implements
             });
         }
         return mVueLandingActionbarView;
+    }
+    public interface OnShare {
+        public void onShare(boolean shareIndicator);
+    }
+    public interface ShareImage{
+        public void setShareImage(boolean value); 
     }
 }

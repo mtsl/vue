@@ -37,6 +37,8 @@ public class VueContentProvider extends ContentProvider {
     private static final int MY_BOOKMARKED_AISLE_MATCH = 20;
     private static final int ALL_RATED_IMAGES_TABLE_MATCH = 21;
     private static final int ALL_RATED_IMAGES_ROW_MATCH = 22;
+    private static final int ALL_SHARED_AISLE = 23;
+    private static final int ONE_SHARED_AISLE = 24;
     private DbHelper mDbHelper;
     private static final UriMatcher URIMATCHER;
     
@@ -92,6 +94,9 @@ public class VueContentProvider extends ContentProvider {
                 ALL_RATED_IMAGES_TABLE_MATCH);
         URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES + "/#",
                 ALL_RATED_IMAGES_ROW_MATCH);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE, ALL_SHARED_AISLE);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE 
+                + "/#", ONE_SHARED_AISLE);
     }
     
     @Override
@@ -249,6 +254,20 @@ public class VueContentProvider extends ContentProvider {
             rowsDeleted = aislesDB.delete(VueConstants.ALL_RATED_IMAGES,
                     selection, selectionArgs);
             break;
+        case ALL_SHARED_AISLE:
+            rowsDeleted = aislesDB.delete(VueConstants.SHARED_AISLE,
+                    selection, selectionArgs);
+        break;
+        case ONE_SHARED_AISLE:
+            id = uri.getLastPathSegment();
+            rowsDeleted = aislesDB.delete(
+                    VueConstants.SHARED_AISLE,
+                    VueConstants.SHARE_AISLE_ID
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            break;
         default:
             throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -383,6 +402,18 @@ public class VueContentProvider extends ContentProvider {
                 return rowUri;
             }
             break;
+        case ALL_SHARED_AISLE:
+            rowId = aislesDB.insert(VueConstants.SHARED_AISLE, null,
+                    values);
+            if (rowId > 0) {
+                rowUri = ContentUris.appendId(
+                        VueConstants.SHARED_AISLE_URI.buildUpon(),
+                        rowId).build();
+                return rowUri;
+            }
+            break;
+            
+            
         case COMMENTS_ROW_MATCH:
             throw new IllegalArgumentException("Unsupported URI: " + uri);
         case CATEGORY_ROW_MATCH:
@@ -561,6 +592,20 @@ public class VueContentProvider extends ContentProvider {
             qb.setTables(VueConstants.ALL_RATED_IMAGES);
             id = uri.getLastPathSegment();
             cursor = qb.query(aislesDB, projection, VueConstants.ID
+                    + "="
+                    + id
+                    + (!TextUtils.isEmpty(selection) ? " AND (" + selection
+                            + ')' : ""), selectionArgs, null, null, null);
+            break;
+        case ALL_SHARED_AISLE:
+            qb.setTables(VueConstants.SHARED_AISLE);
+            cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+                    null, null, sortOrder);
+            break;
+        case ONE_SHARED_AISLE:
+            qb.setTables(VueConstants.SHARED_AISLE);
+            id = uri.getLastPathSegment();
+            cursor = qb.query(aislesDB, projection, VueConstants.SHARE_AISLE_ID
                     + "="
                     + id
                     + (!TextUtils.isEmpty(selection) ? " AND (" + selection
@@ -746,6 +791,22 @@ public class VueContentProvider extends ContentProvider {
                                     + selection + ')' : ""), selectionArgs);
             
             break;
+        case ALL_SHARED_AISLE:
+            rowsUpdated = aislesDB.update(VueConstants.SHARED_AISLE,
+                    values, selection, selectionArgs);
+            break;
+        case ONE_SHARED_AISLE:
+            id = uri.getLastPathSegment();
+            rowsUpdated = aislesDB.update(
+                    VueConstants.SHARED_AISLE,
+                    values,
+                    VueConstants.ID
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            break;
+            
         }
         return rowsUpdated;
     }
