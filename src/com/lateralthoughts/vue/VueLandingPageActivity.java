@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -1055,36 +1056,32 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     public void showDiscardOtherAppImageDialog() {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(getResources().getString(
-                R.string.discard_othersource_image_mesg));
-        yesButton.setText("Yes");
-        noButton.setText("No");
-        yesButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                mOtherSourceImagePath = null;
-                mOtherSourceImageLookingFor = null;
-                mOtherSourceImageCategory = null;
-                mOtherSourceImageOccasion = null;
-                mOtherSourceImageUrl = null;
-                mOtherSourceImageWidth = 0;
-                mOtherSourceImageHeight = 0;
-                mOtherSourceImageDetailsUrl = null;
-                mOtherSourceImageStore = null;
-                dialog.dismiss();
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLandingPageActivity.this);
+       alertDialogBuilder.setMessage(getResources().getString(
+               R.string.discard_othersource_image_mesg));
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   mOtherSourceImagePath = null;
+                   mOtherSourceImageLookingFor = null;
+                   mOtherSourceImageCategory = null;
+                   mOtherSourceImageOccasion = null;
+                   mOtherSourceImageUrl = null;
+                   mOtherSourceImageWidth = 0;
+                   mOtherSourceImageHeight = 0;
+                   mOtherSourceImageDetailsUrl = null;
+                   mOtherSourceImageStore = null;
+                   dialog.cancel();
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     public void showScreenSelectionForOtherSource(final String imagePath,

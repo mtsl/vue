@@ -568,32 +568,34 @@ public class VueLoginActivity extends FragmentActivity implements
     
     private void showAlertMessageForAppInstalation(String appName,
             final String packageName) {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(getResources().getString(
-                R.string.app_installation_mesg)
-                + " " + appName + "?");
-        okButton.setText("Install " + appName);
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-                        .parse("market://details?id=" + packageName));
-                startActivity(goToMarket);
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLoginActivity.this);
+       alertDialogBuilder.setMessage(getResources().getString(
+               R.string.app_installation_mesg)
+               + " " + appName + "?");
     
+        alertDialogBuilder.setPositiveButton("Install " + appName,new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+                   Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+                           .parse("market://details?id=" + packageName));
+                   startActivity(goToMarket);
+              }
+             });
+       
+        alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+      
+         
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+   
+        }
     private void saveFBLoginDetails(final Session session) {
         writeToSdcard("After Fb succefull login : " + new Date());
         mSharedPreferencesObj = this.getSharedPreferences(
@@ -1412,22 +1414,18 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void showAlertToLoginWithFacebookApp(String message) {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        dialog.findViewById(R.id.networkdialogline).setVisibility(View.GONE);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(message);
-        okButton.setVisibility(View.GONE);
-        noButton.setText(VueApplication.getInstance().getString(R.string.ok));
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLoginActivity.this);
+       alertDialogBuilder.setMessage(message);
+    
+        alertDialogBuilder.setPositiveButton(VueApplication.getInstance().getString(R.string.ok),new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+                  
+              }
+             });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private void writeToSdcard(String message) {

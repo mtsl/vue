@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,6 +52,7 @@ import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.user.VueUserProfile;
 
@@ -735,33 +737,27 @@ public class Utils {
     
     public static void showAlertMessageForBackendNotIntegrated(
             final Activity activity, final boolean finishActivity) {
-        final Dialog dialog = new Dialog(activity,
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText("Sorry, Server side integration is pending.");
-        okButton.setText("OK");
-        noButton.setVisibility(View.GONE);
-        networkdialogline.setVisibility(View.GONE);
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnDismissListener(new OnDismissListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                activity);
+        alertDialogBuilder
+                .setMessage("Sorry, Server side integration is pending.");
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onCancel(DialogInterface dialog) {
                 if (finishActivity) {
                     activity.finish();
                 }
             }
         });
-        dialog.show();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     @SuppressWarnings("unchecked")

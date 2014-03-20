@@ -8,10 +8,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
@@ -989,22 +991,15 @@ public class DataEntryFragment extends Fragment {
     }
     
     private void showAlertForMandatoryFields(String message) {
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(message);
-        okButton.setVisibility(View.GONE);
-        noButton.setText(getResources().getString(R.string.ok));
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+       alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+              }
+             });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     public void lookingForTextClickFunctionality() {
@@ -2215,22 +2210,17 @@ public class DataEntryFragment extends Fragment {
     }
     
     public void showAlertMessageForBackendNotIntegrated(String message) {
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(message);
-        okButton.setText("OK");
-        noButton.setVisibility(View.GONE);
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setMessage(message);
+         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int id) {
+        
+                    dialog.cancel();
+               }
+              });
+        
+         AlertDialog alertDialog = alertDialogBuilder.create();
+         alertDialog.show();
     }
     
     void showDetailsScreenImagesInDataentryScreen() {
@@ -2363,31 +2353,26 @@ public class DataEntryFragment extends Fragment {
     }
     
     public void showAddMoreImagesDialog() {
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText("Do you want to Add more images?");
-        yesButton.setText("Yes");
-        noButton.setText("No");
-        yesButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                Utils.putTouchToChnageImagePosition(getActivity(), -1);
-                Utils.putTouchToChnageImageTempPosition(getActivity(), -1);
-                Utils.putTouchToChnageImageFlag(getActivity(), false);
-                addImageToAisleButtonClickFunctionality(true);
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+       alertDialogBuilder.setMessage("Do you want to Add more images?");
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   Utils.putTouchToChnageImagePosition(getActivity(), -1);
+                   Utils.putTouchToChnageImageTempPosition(getActivity(), -1);
+                   Utils.putTouchToChnageImageFlag(getActivity(), false);
+                   addImageToAisleButtonClickFunctionality(true);
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private void addImageToAisleWindow(String aisleId, String imagePath,

@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -341,36 +343,33 @@ public class CreateAisleSelectionActivity extends Activity {
     
     public void showAlertMessageForAppInstalation(final String packageName,
             final String appName) {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText("Install " + appName + " from Play Store");
-        okButton.setText("OK");
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-                        .parse("market://details?id=" + packageName));
-                startActivity(goToMarket);
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnDismissListener(new OnDismissListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+       alertDialogBuilder.setMessage("Install " + appName + " from Play Store");
+        alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+                           .parse("market://details?id=" + packageName));
+                   startActivity(goToMarket);
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+        alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
             @Override
-            public void onDismiss(DialogInterface arg0) {
-                finish();
+            public void onCancel(DialogInterface dialog) {
+               finish();
+                
             }
         });
-        dialog.show();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private void openHintDialog(final String source, String app,
@@ -546,26 +545,22 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void showDiscardOtherAppImageDialog() {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText("Do you want to cancel addImage?");
-        yesButton.setText("Yes");
-        noButton.setText("No");
-        yesButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+       alertDialogBuilder.setMessage("Do you want to cancel addImage?");
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   finish();
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

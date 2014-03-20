@@ -1,7 +1,9 @@
 package com.lateralthoughts.vue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -110,28 +112,24 @@ public class DecisionScreen extends Activity {
     }
     
     private void showDiscardChangesDialog() {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText(getResources().getString(
-                R.string.discard_dataentry_screen_changes));
-        yesButton.setText("Yes");
-        noButton.setText("No");
-        yesButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+       alertDialogBuilder.setMessage(getResources().getString(
+               R.string.discard_dataentry_screen_changes));
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   finish();
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     public void showDefaultActionbar() {

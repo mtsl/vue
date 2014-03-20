@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -187,7 +188,7 @@ public class ShareDialog {
                     String sharedVia = shareIntent(position);
                     
                     try {
-                        if (aisleSharedProps != null)
+                        if (aisleSharedProps != null && sharedVia != null)
                             aisleSharedProps.put("Shared Via", sharedVia);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -409,26 +410,21 @@ public class ShareDialog {
     }
     
     private void showAlertMessageShareError(String appName, boolean fberror) {
-        final Dialog gplusdialog = new Dialog(mContext,
-                R.style.Theme_Dialog_Translucent);
-        gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        gplusdialog.setContentView(R.layout.vue_popup);
-        TextView messagetext = (TextView) gplusdialog
-                .findViewById(R.id.messagetext);
-        if (!fberror)
-            messagetext.setText("Unable to Share content to " + appName);
-        else
-            messagetext.setText(appName);
-        TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
-        noButton.setVisibility(View.GONE);
-        TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
-        okButton.setText("OK");
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                gplusdialog.dismiss();
-            }
-        });
-        gplusdialog.show();
+        String message = "";
+         if(!fberror){
+             message = "Unable to Share content to " + appName;
+         } else {
+             message = appName;
+         }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+        alertDialogBuilder.setMessage(message);
+         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int id) {
+                    dialog.cancel();
+               }
+              });
+         AlertDialog alertDialog = alertDialogBuilder.create();
+         alertDialog.show();
     }
     
     private void prepareShareIntentData() {

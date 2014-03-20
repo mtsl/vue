@@ -4,6 +4,7 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -381,52 +382,41 @@ public class VueAisleDetailsViewFragment extends Fragment {
                             }, mAdapterNotifyDelay);
                             return;
                         }
-                        
-                        final Dialog dialog = new Dialog(getActivity(),
-                                R.style.Theme_Dialog_Translucent);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.vue_popup);
-                        final TextView noButton = (TextView) dialog
-                                .findViewById(R.id.nobutton);
-                        TextView yesButton = (TextView) dialog
-                                .findViewById(R.id.okbutton);
-                        TextView messagetext = (TextView) dialog
-                                .findViewById(R.id.messagetext);
-                        messagetext.setText(getResources().getString(
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+                        alertDialogBuilder.setMessage(getResources().getString(
                                 R.string.discard_comment));
-                        yesButton.setText("Discard");
-                        noButton.setText("Continue");
-                        yesButton.setOnClickListener(new OnClickListener() {
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                edtCommentView.setText("");
-                                edtCommentFrameLay.setVisibility(View.GONE);
-                                enterComentStaticTextLay
-                                        .setVisibility(View.VISIBLE);
-                                // notify the adapter after keybord gone
-                                new Handler().postDelayed(new Runnable() {
-                                    
-                                    @Override
-                                    public void run() {
-                                        mInputMethodManager.hideSoftInputFromWindow(
-                                                edtCommentView.getWindowToken(),
-                                                0);
-                                        mAisleDetailsAdapter
-                                                .notifyDataSetChanged();
+                         alertDialogBuilder.setPositiveButton("Discard",new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                    edtCommentView.setText("");
+                                    edtCommentFrameLay.setVisibility(View.GONE);
+                                    enterComentStaticTextLay
+                                            .setVisibility(View.VISIBLE);
+                                    // notify the adapter after keybord gone
+                                    new Handler().postDelayed(new Runnable() {
                                         
-                                    }
-                                }, mAdapterNotifyDelay);
-                            }
-                        });
-                        noButton.setOnClickListener(new OnClickListener() {
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                mInputMethodManager.showSoftInput(
-                                        edtCommentView, 0);
-                            }
-                        });
-                        dialog.show();
-                        
+                                        @Override
+                                        public void run() {
+                                            mInputMethodManager.hideSoftInputFromWindow(
+                                                    edtCommentView.getWindowToken(),
+                                                    0);
+                                            mAisleDetailsAdapter
+                                                    .notifyDataSetChanged();
+                                            
+                                        }
+                                    }, mAdapterNotifyDelay);
+                               }
+                              });
+                         alertDialogBuilder.setNegativeButton("Continue",new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                    mInputMethodManager.showSoftInput(
+                                            edtCommentView, 0);
+                            
+                                }
+                            });
+                         AlertDialog alertDialog = alertDialogBuilder.create();
+                         alertDialog.show();
                     }
                     
                     @Override
