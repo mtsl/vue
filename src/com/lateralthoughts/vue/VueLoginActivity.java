@@ -562,8 +562,6 @@ public class VueLoginActivity extends FragmentActivity implements
         if (mGooglePlusProgressDialog != null
                 && mGooglePlusProgressDialog.isShowing())
             mGooglePlusProgressDialog.dismiss();
-        if (!mFacebookFlag)
-            showAisleSwipeHelp();
     }
     
     private void showAlertMessageForAppInstalation(String appName,
@@ -1138,7 +1136,6 @@ public class VueLoginActivity extends FragmentActivity implements
             if (mGooglePlusProgressDialog != null
                     && mGooglePlusProgressDialog.isShowing())
                 mGooglePlusProgressDialog.dismiss();
-            showAisleSwipeHelp();
         }
     }
     
@@ -1212,6 +1209,12 @@ public class VueLoginActivity extends FragmentActivity implements
         if (connectionresult.getErrorCode() == ConnectionResult.SUCCESS) {
             mSharedPreferencesObj = this.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
+            mDialog = new ProgressDialog(VueLoginActivity.this);
+            mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mDialog.setMessage("Authenticating...");
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.setCancelable(false);
+            mDialog.show();
             VueUserManager userManager = VueUserManager.getUserManager();
             String googleplusId = null;
             try {

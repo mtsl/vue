@@ -67,9 +67,7 @@ public class VueUserManager {
             final String userProfileImageUrl, final GraphUser graphUser,
             final UserUpdateCallback callback) {
         if (null != mCurrentUser)
-            throw new RuntimeException(
-                    "Cannot call createFBIdentifiedUser when User is "
-                            + "already available. Try the update APIs");
+            return;
         final VueUser user = parseGraphUserIntoVueUser(graphUser,
                 userProfileImageUrl);
         final Response.Listener getListener = new Response.Listener<String>() {
@@ -192,9 +190,7 @@ public class VueUserManager {
             final String userProfileImageUrl, final VueUser user,
             final UserUpdateCallback callback) {
         if (null != mCurrentUser)
-            throw new RuntimeException(
-                    "Cannot call createFBIdentifiedUser when User is "
-                            + "already available. Try the update APIs");
+            return;
         final Response.Listener getListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonArray) {

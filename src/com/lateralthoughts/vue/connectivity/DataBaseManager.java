@@ -1970,10 +1970,27 @@ public class DataBaseManager {
 		cursor.close();
 	}
 	public void saveShareAisleId(String aisleId){
+	      Cursor shareCursor = mContext.getContentResolver().query(
+	               VueConstants.SHARED_AISLE_URI, null, null, null, null);
+	      boolean isMatched = false;
+	      if(shareCursor.moveToFirst()) {
+	            do{
+	                long id = shareCursor
+	                        .getLong(shareCursor.getColumnIndex(VueConstants.SHARE_AISLE_ID)); 
+	                String strLong = Long.toString(id);
+	                if(strLong.equalsIgnoreCase(aisleId)){
+	                    isMatched = true;
+	                    shareCursor.close();
+	                    break;
+	                }
+	            } while(shareCursor.moveToNext());
+	        }
+	      if(!isMatched){
 	    ContentValues values = new ContentValues();
 	    values.put(VueConstants.SHARE_AISLE_ID, aisleId);
 	    mContext.getContentResolver().insert(
                 VueConstants.SHARED_AISLE_URI, values); 
+	      }
 	}
    public ArrayList<String> getAllSharedValues(){
        ArrayList<String> sharedAisleList = new ArrayList<String>();
@@ -1987,6 +2004,7 @@ public class DataBaseManager {
                 sharedAisleList.add(strLong);
             } while(shareCursor.moveToNext());
         }
+        shareCursor.close();
     return sharedAisleList;
    }
 	/**
