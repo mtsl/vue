@@ -17,13 +17,13 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:text="Share with ..."
-            android:textColor="@color/orange"
+            android:textColor="@android:color/black"
             android:textSize="22sp" />
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@color/orange" />
+        android:layout_height="1dp"
+        android:background="@color/popupbgcolor" />
 
 </LinearLayout>

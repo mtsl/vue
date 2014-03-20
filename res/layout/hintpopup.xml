@@ -12,7 +12,7 @@
         android:background="@drawable/vue_button_selector"
         android:gravity="center_vertical"
         android:text="@string/gmail"
-        android:textColor="@color/share_dailog_text_color"
+        android:textColor="@android:color/black"
         android:textSize="18sp" />
 
     <ImageView
@@ -34,8 +34,7 @@
         android:layout_marginLeft="1dp"
         android:layout_toRightOf="@+id/shareicon"
         android:gravity="center_vertical"
-        android:text="asdfasdfsdf"
-        android:textColor="@color/share_dailog_text_color"
+        android:text=""
         android:textSize="18sp"
         android:visibility="gone" />
 

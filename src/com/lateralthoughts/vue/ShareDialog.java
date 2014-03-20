@@ -133,7 +133,7 @@ public class ShareDialog {
     }
     
     /** to show pop-up */
-    private void openScreenDialog() {
+    private void openScreenDialog() { 
         mShareDialog = ProgressDialog.show(mContext, mContext
                 .getString(R.string.app_name), mContext.getResources()
                 .getString(R.string.sharing_mesg), true);
