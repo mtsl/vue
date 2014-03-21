@@ -422,7 +422,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                         dialog.cancel();
                                         mInputMethodManager.showSoftInput(
                                                 edtCommentView, 0);
- 
                                         
                                     }
                                 });
@@ -1266,7 +1265,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
         ListView listview = new ListView(getActivity());
         ListAdapter adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.select_dialog_item, android.R.id.text1,
-                hint_array_list);
+                hint_array_list) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                return v;
+            }
+        };
         listview.setAdapter(adapter);
         alertDialogBuilder.setView(listview);
         Dialog alertDialog = alertDialogBuilder.create();

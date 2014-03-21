@@ -684,6 +684,7 @@ public class DataEntryActivity extends Activity {
             final String addImageCancelAlertMesg) {
         String message = "";
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Vue");
         if (addImageCancelAlertMesg != null) {
             message = addImageCancelAlertMesg;
         } else {

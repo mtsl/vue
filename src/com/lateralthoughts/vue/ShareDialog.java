@@ -130,15 +130,15 @@ public class ShareDialog {
         if (mFromCreateAislePopupFlag || mLoadAllApplications) {
             mAlertDialogBuilder.setTitle("Open ...");
         }
-        mAlertDialogBuilder.setPositiveButton(VueApplication.getInstance()
-                .getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                InputMethodManager i1pm = (InputMethodManager) mContext
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                i1pm.hideSoftInputFromWindow(null, 0);
-                dialog.cancel();
-            }
-        });
+        mAlertDialogBuilder.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        InputMethodManager i1pm = (InputMethodManager) mContext
+                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        i1pm.hideSoftInputFromWindow(null, 0);
+                        dialog.cancel();
+                    }
+                });
         mListview = new ListView(mContext);
         ListAdapter adapter = new ArrayAdapter<String>(mContext,
                 android.R.layout.select_dialog_item, android.R.id.text1,
@@ -146,6 +146,8 @@ public class ShareDialog {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                
                 try {
                     tv.setCompoundDrawablesWithIntrinsicBounds(
                             mContext.getPackageManager().getApplicationIcon(
@@ -332,14 +334,15 @@ public class ShareDialog {
                 mContext);
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setTitle("Vue");
-         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
-                    dialog.cancel();
-               }
-              });
-         AlertDialog alertDialog = alertDialogBuilder.create();
-         alertDialog.show();
- 
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        
     }
     
     private void prepareShareIntentData() {

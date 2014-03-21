@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -342,22 +343,26 @@ public class CreateAisleSelectionActivity extends Activity {
             final String appName) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Vue");
-       alertDialogBuilder.setMessage("Install " + appName + " from Play Store");
-        alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-                   dialog.cancel();
-                   Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
-                           .parse("market://details?id=" + packageName));
-                   startActivity(goToMarket);
-              }
-             });
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-               
-                   dialog.cancel();
-           
-               }
-           });
+        alertDialogBuilder
+                .setMessage("Install " + appName + " from Play Store");
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        Intent goToMarket = new Intent(Intent.ACTION_VIEW)
+                                .setData(Uri.parse("market://details?id="
+                                        + packageName));
+                        startActivity(goToMarket);
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                        
+                    }
+                });
         alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
             @Override
@@ -434,7 +439,14 @@ public class CreateAisleSelectionActivity extends Activity {
         ListAdapter adapter = new ArrayAdapter<String>(
                 CreateAisleSelectionActivity.this,
                 android.R.layout.select_dialog_item, android.R.id.text1,
-                hint_array_list);
+                hint_array_list) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                return v;
+            }
+        };
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
@@ -458,21 +470,23 @@ public class CreateAisleSelectionActivity extends Activity {
     
     private void showDiscardOtherAppImageDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-       alertDialogBuilder.setMessage("Do you want to cancel addImage?");
-       alertDialogBuilder.setTitle("Vue");
-        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-                   dialog.cancel();
-                   finish();
-              }
-             });
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-               
-                   dialog.cancel();
-           
-               }
-           });
+        alertDialogBuilder.setMessage("Do you want to cancel addImage?");
+        alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        finish();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                        
+                    }
+                });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }

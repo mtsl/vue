@@ -2042,7 +2042,14 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         ListView listview = new ListView(context);
         ListAdapter adapter = new ArrayAdapter<String>(context,
                 android.R.layout.select_dialog_item, android.R.id.text1,
-                userNamesOfImageLikes);
+                userNamesOfImageLikes) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                return v;
+            }
+        };
         listview.setAdapter(adapter);
         alertDialogBuilder.setView(listview);
         Dialog alertDialog = alertDialogBuilder.create();
