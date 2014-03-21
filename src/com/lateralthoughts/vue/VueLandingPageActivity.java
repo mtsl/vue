@@ -49,7 +49,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -1771,8 +1770,9 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     public void share(final AisleWindowContent aisleWindowContent,
-            int currentDispImageIndex,final ImageView shareImage) {
-        mShare = new ShareDialog(this, this, null, null);
+            int currentDispImageIndex, final ImageView shareImage,
+            MixpanelAPI mixPanel, JSONObject aisleSharedProps) {
+        mShare = new ShareDialog(this, this, mixPanel, aisleSharedProps);
         FileCache ObjFileCache = new FileCache(this);
         ArrayList<clsShare> imageUrlList = new ArrayList<clsShare>();
         if (aisleWindowContent.getImageList() != null
@@ -1803,18 +1803,27 @@ public class VueLandingPageActivity extends Activity implements
                     aisleWindowContent.getAisleContext().mOccasion,
                     (aisleWindowContent.getAisleContext().mFirstName + " " + aisleWindowContent
                             .getAisleContext().mLastName),
-                    currentDispImageIndex, null, null, new ShareViaVueListner(),new OnShare() {
+                    currentDispImageIndex, null, null,
+                    new ShareViaVueListner(), new OnShare() {
                         
                         @Override
                         public void onShare(boolean shareIndicator) {
-                            if(aisleWindowContent != null){
-                            aisleWindowContent.setmShareIndicator(shareIndicator);
+                            if (aisleWindowContent != null) {
+                                aisleWindowContent
+                                        .setmShareIndicator(shareIndicator);
                             }
-                            if(shareImage != null){
-                            shareImage.setImageResource(R.drawable.share);
+                            if (shareImage != null) {
+                                shareImage.setImageResource(R.drawable.share);
                             }
-                            DataBaseManager.getInstance(VueLandingPageActivity.this).saveShareAisleId(aisleWindowContent.getAisleId());
-                            VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().saveSharedId(aisleWindowContent.getAisleId());
+                            DataBaseManager.getInstance(
+                                    VueLandingPageActivity.this)
+                                    .saveShareAisleId(
+                                            aisleWindowContent.getAisleId());
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getNetworkHandler()
+                                    .saveSharedId(
+                                            aisleWindowContent.getAisleId());
                         }
                     });
             
@@ -1969,8 +1978,9 @@ public class VueLandingPageActivity extends Activity implements
                         mixpanel.identify(String.valueOf(storedVueUser.getId()));
                         people = mixpanel.getPeople();
                         people.identify(String.valueOf(storedVueUser.getId()));
-                        people.setPushRegistrationId(sharedPreferencesObj.getString(
-                                VueConstants.GCM_REGISTRATION_ID, null));
+                        people.setPushRegistrationId(sharedPreferencesObj
+                                .getString(VueConstants.GCM_REGISTRATION_ID,
+                                        null));
                         JSONObject nameTag = new JSONObject();
                         try {
                             // Set an "mp_name_tag" super property
@@ -2096,10 +2106,12 @@ public class VueLandingPageActivity extends Activity implements
         }
         return mVueLandingActionbarView;
     }
+    
     public interface OnShare {
         public void onShare(boolean shareIndicator);
     }
-    public interface ShareImage{
-        public void setShareImage(boolean value); 
+    
+    public interface ShareImage {
+        public void setShareImage(boolean value);
     }
 }
