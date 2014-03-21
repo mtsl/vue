@@ -341,26 +341,23 @@ public class CreateAisleSelectionActivity extends Activity {
     public void showAlertMessageForAppInstalation(final String packageName,
             final String appName) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder
-                .setMessage("Install " + appName + " from Play Store");
-        alertDialogBuilder.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        Intent goToMarket = new Intent(Intent.ACTION_VIEW)
-                                .setData(Uri.parse("market://details?id="
-                                        + packageName));
-                        startActivity(goToMarket);
-                    }
-                });
-        alertDialogBuilder.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        
-                        dialog.cancel();
-                        
-                    }
-                });
+        alertDialogBuilder.setTitle("Vue");
+       alertDialogBuilder.setMessage("Install " + appName + " from Play Store");
+        alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   Intent goToMarket = new Intent(Intent.ACTION_VIEW).setData(Uri
+                           .parse("market://details?id=" + packageName));
+                   startActivity(goToMarket);
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
         alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
             @Override
@@ -461,22 +458,21 @@ public class CreateAisleSelectionActivity extends Activity {
     
     private void showDiscardOtherAppImageDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Do you want to cancel addImage?");
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        finish();
-                    }
-                });
-        alertDialogBuilder.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        
-                        dialog.cancel();
-                        
-                    }
-                });
+       alertDialogBuilder.setMessage("Do you want to cancel addImage?");
+       alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   finish();
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }

@@ -20,6 +20,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -1055,33 +1056,31 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     public void showDiscardOtherAppImageDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                VueLandingPageActivity.this);
-        alertDialogBuilder.setMessage(getResources().getString(
-                R.string.discard_othersource_image_mesg));
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mOtherSourceImagePath = null;
-                        mOtherSourceImageLookingFor = null;
-                        mOtherSourceImageCategory = null;
-                        mOtherSourceImageOccasion = null;
-                        mOtherSourceImageUrl = null;
-                        mOtherSourceImageWidth = 0;
-                        mOtherSourceImageHeight = 0;
-                        mOtherSourceImageDetailsUrl = null;
-                        mOtherSourceImageStore = null;
-                        dialog.cancel();
-                    }
-                });
-        alertDialogBuilder.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        
-                        dialog.cancel();
-                        
-                    }
-                });
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLandingPageActivity.this);
+       alertDialogBuilder.setMessage(getResources().getString(
+               R.string.discard_othersource_image_mesg));
+       alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   mOtherSourceImagePath = null;
+                   mOtherSourceImageLookingFor = null;
+                   mOtherSourceImageCategory = null;
+                   mOtherSourceImageOccasion = null;
+                   mOtherSourceImageUrl = null;
+                   mOtherSourceImageWidth = 0;
+                   mOtherSourceImageHeight = 0;
+                   mOtherSourceImageDetailsUrl = null;
+                   mOtherSourceImageStore = null;
+                   dialog.cancel();
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+               
+                   dialog.cancel();
+           
+               }
+           });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }

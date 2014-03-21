@@ -386,6 +386,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                 mContext);
                         alertDialogBuilder.setMessage(getResources().getString(
                                 R.string.discard_comment));
+                        alertDialogBuilder.setTitle("Discad message");
                         alertDialogBuilder.setPositiveButton("Discard",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
@@ -421,6 +422,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
                                         dialog.cancel();
                                         mInputMethodManager.showSoftInput(
                                                 edtCommentView, 0);
+ 
                                         
                                     }
                                 });

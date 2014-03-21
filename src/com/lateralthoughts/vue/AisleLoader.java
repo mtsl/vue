@@ -3,7 +3,10 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -215,13 +218,16 @@ public class AisleLoader {
                             itemDetails.mImageUrl, contentBrowser, imageView,
                             bestHeight, windowContent.getAisleId(),
                             itemDetails, listener);
-                    if (profleUrl != null && profleUrl.length() > 5) {
+                try{
                         ((NetworkImageView) holder.profileThumbnail).setImageUrl(profleUrl,
                                 VueApplication.getInstance().getImageCacheLoader(),
                                 VueApplication.getInstance().getPixel(36),
                                 VueApplication.getInstance().getPixel(36),
                                 NetworkImageView.BitmapProfile.ProfileLandingView);
-                    }
+                } catch(Exception e){
+                    ((NetworkImageView) holder.profileThumbnail).setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.profile_light));
+                }
+    
                     
                 }
             }

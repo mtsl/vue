@@ -236,6 +236,7 @@ public class VueLandingAislesFragment extends Fragment {
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
+            String profileUrl = windowItem.getAisleContext().mProfileThumbnail;
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -256,6 +257,7 @@ public class VueLandingAislesFragment extends Fragment {
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
                     + " started***********************\n";
+            writeSdCard = writeSdCard + "\n ProfileImageUrl: "+profileUrl;
             writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
                     + "\n" + "Smallest Image Height: "
                     + windowItem.getImageList().get(0).mTrendingImageHeight

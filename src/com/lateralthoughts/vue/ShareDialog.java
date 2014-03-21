@@ -331,14 +331,15 @@ public class ShareDialog {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 mContext);
         alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialogBuilder.setTitle("Vue");
+         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int id) {
+                    dialog.cancel();
+               }
+              });
+         AlertDialog alertDialog = alertDialogBuilder.create();
+         alertDialog.show();
+ 
     }
     
     private void prepareShareIntentData() {
