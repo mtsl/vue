@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -66,7 +67,18 @@ public class GetOtherSourceImagesTask extends
         ArrayList<OtherSourceImageDetails> imageDetails = new ArrayList<OtherSourceImageDetails>();
         OtherSourceImageDetails OtherSourceImageDetails = null;
         Document doc = null;
-        doc = Jsoup.parse(getData(url), url);
+        try {
+            doc = Jsoup.parse(getData(url), url);
+        } catch (Exception e1) {
+            try {
+                Connection conn = Jsoup.connect(url).ignoreHttpErrors(true);
+                conn.timeout(1500000);
+                doc = conn.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            e1.printStackTrace();
+        }
         Elements elements = doc.select("img");
         if (elements.size() == 0) {
             for (int i = 0; i < 3; i++) {
@@ -199,6 +211,8 @@ public class GetOtherSourceImagesTask extends
         } catch (NullPointerException e) {
             e.printStackTrace();
             return null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         String st = html.toString();
         return st;
