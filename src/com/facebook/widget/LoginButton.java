@@ -30,19 +30,14 @@ import java.util.List;
 import android.R.color;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookException;
@@ -738,82 +733,6 @@ public class LoginButton extends Button {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    void showAlertToChangeLocalSettings(final String message) {
-        final Dialog dialog = new Dialog(getContext(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.networkdialogue);
-        TextView titleview = (TextView) dialog.findViewById(R.id.dialogtitle);
-        
-        TextView messageview = (TextView) dialog.findViewById(R.id.messagetext);
-        titleview.setText(Html.fromHtml("<b>fashion</b>wrap"));
-        titleview.setTextSize(16 + 4);
-        messageview.setTextSize(16);
-        messageview.setText(message);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        okButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                
-                dialog.dismiss();
-                
-                Session currentSession = sessionTracker.getSession();
-                if (currentSession == null
-                        || currentSession.getState().isClosed()) {
-                    sessionTracker.setSession(null);
-                    Session session = new Session.Builder(getContext())
-                            .setApplicationId(applicationId).build();
-                    Session.setActiveSession(session);
-                    currentSession = session;
-                }
-                if (!currentSession.isOpened()) {
-                    Session.OpenRequest openRequest = null;
-                    if (parentFragment != null) {
-                        openRequest = new Session.OpenRequest(parentFragment);
-                    } else if (getContext() instanceof Activity) {
-                        openRequest = new Session.OpenRequest(
-                                (Activity) getContext());
-                    }
-                    
-                    if (openRequest != null) {
-                        openRequest
-                                .setDefaultAudience(properties.defaultAudience);
-                        openRequest.setPermissions(properties.permissions);
-                        openRequest.setLoginBehavior(properties.loginBehavior);
-                        
-                        if (SessionAuthorizationType.PUBLISH
-                                .equals(properties.authorizationType)) {
-                            currentSession.openForPublish(openRequest);
-                        } else {
-                            currentSession.openForRead(openRequest);
-                        }
-                    }
-                }
-                
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        
-        dialog.setOnCancelListener(new OnCancelListener() {
-            
-            public void onCancel(DialogInterface dialog) {
-                if (!message.equalsIgnoreCase(getResources().getString(
-                        R.string.alert_Dialog_Network))) {
-                }
-                
-            }
-        });
-        dialog.show();
-        return;
-        
     }
     
     private class LoginButtonCallback implements Session.StatusCallback {

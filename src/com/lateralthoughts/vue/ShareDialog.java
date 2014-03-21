@@ -8,25 +8,23 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,8 +47,6 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
  */
 public class ShareDialog {
     
-    private LayoutInflater mLayoutInflater;
-    private AlertDialog.Builder mScreenDialog;
     private ArrayList<String> mAppNames = new ArrayList<String>();
     private ArrayList<String> mActivityNames = new ArrayList<String>();
     private ArrayList<String> mPackageNames = new ArrayList<String>();
@@ -60,7 +56,7 @@ public class ShareDialog {
     private Activity mActivity;
     private InstalledPackageRetriever mShareIntentObj;
     public boolean mShareIntentCalled = false;
-    private Dialog mDialog;
+    private AlertDialog.Builder mAlertDialogBuilder;
     private int mCurrentAislePosition;
     private ArrayList<clsShare> mImagePathArray;
     private ProgressDialog mShareDialog;
@@ -74,6 +70,7 @@ public class ShareDialog {
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
     VueLandingPageActivity.OnShare shareIndicatorObject;
+    private AlertDialog mAlertDialog;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -90,8 +87,6 @@ public class ShareDialog {
         this.mContext = context;
         this.mActivity = activity;
         this.aisleSharedProps = aisleSharedProps;
-        mLayoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
     public void share(
@@ -114,12 +109,6 @@ public class ShareDialog {
         openScreenDialog();
     }
     
-    private void showAllInstalledApplications() {
-        mLoadAllApplications = true;
-        prepareDisplayData(VueApplication.getInstance().mMoreInstalledApplicationDetailsList);
-        mListview.setAdapter(new CustomAdapter());
-    }
-    
     public void loadShareApplications(
             ArrayList<ShoppingApplicationDetails> dataEntryShoppingApplicationsList) {
         mFromCreateAislePopupFlag = true;
@@ -135,19 +124,44 @@ public class ShareDialog {
                 .getString(R.string.app_name), mContext.getResources()
                 .getString(R.string.sharing_mesg), true);
         mShareDialog.dismiss();
-        mDialog = new Dialog(mContext, R.style.Theme_Dialog_Translucent);
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(R.layout.sharedialogue);
-        TextView dialogtitle = (TextView) mDialog
-                .findViewById(R.id.dialogtitle);
-        mListview = (ListView) mDialog.findViewById(R.id.networklist);
-        TextView okbuton = (TextView) mDialog.findViewById(R.id.shownetworkok);
+        mAlertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(
+                mContext, R.style.AppBaseTheme));
+        mAlertDialogBuilder.setTitle("Share with ...");
         if (mFromCreateAislePopupFlag || mLoadAllApplications) {
-            dialogtitle.setText("Open ...");
+            mAlertDialogBuilder.setTitle("Open ...");
         }
-        mListview.setAdapter(new CustomAdapter());
-        mListview.setDivider(mContext.getResources().getDrawable(
-                R.drawable.share_dialog_divider));
+        mAlertDialogBuilder.setPositiveButton(VueApplication.getInstance()
+                .getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                InputMethodManager i1pm = (InputMethodManager) mContext
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                i1pm.hideSoftInputFromWindow(null, 0);
+                dialog.cancel();
+            }
+        });
+        mListview = new ListView(mContext);
+        ListAdapter adapter = new ArrayAdapter<String>(mContext,
+                android.R.layout.select_dialog_item, android.R.id.text1,
+                mAppNames) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                try {
+                    tv.setCompoundDrawablesWithIntrinsicBounds(
+                            mContext.getPackageManager().getApplicationIcon(
+                                    mPackageNames.get(position)), null, null,
+                            null);
+                } catch (NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                int dp5 = (int) (5 * mContext.getResources()
+                        .getDisplayMetrics().density + 0.5f);
+                tv.setCompoundDrawablePadding(dp5);
+                tv.setText(mAppNames.get(position));
+                return v;
+            }
+        };
+        mListview.setAdapter(adapter);
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
@@ -161,12 +175,10 @@ public class ShareDialog {
                             if (mAppNames.get(position).equals(
                                     mContext.getResources().getString(
                                             R.string.more))) {
-                                // show another dialog for displaying installed
-                                // apps...
-                                showAllInstalledApplications();
+                                // Nothing...
                             }
                         } else {
-                            mDialog.dismiss();
+                            mAlertDialog.dismiss();
                             createAisleSelectionActivity
                                     .loadShoppingApplication(
                                             mActivityNames.get(position),
@@ -175,7 +187,7 @@ public class ShareDialog {
                         }
                     }
                 } else if (mLoadAllApplications) {
-                    mDialog.dismiss();
+                    mAlertDialog.dismiss();
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     createAisleSelectionActivity.loadShoppingApplication(
                             mActivityNames.get(position),
@@ -195,7 +207,10 @@ public class ShareDialog {
                 }
             }
         });
-        mDialog.setOnDismissListener(new OnDismissListener() {
+        mAlertDialogBuilder.setView(mListview);
+        mAlertDialog = mAlertDialogBuilder.create();
+        mAlertDialog.show();
+        mAlertDialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
                 try {
@@ -208,106 +223,6 @@ public class ShareDialog {
                 mShareIntentObj = null;
             }
         });
-        mDialog.show();
-        okbuton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialog.dismiss();
-                InputMethodManager i1pm = (InputMethodManager) mContext
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                i1pm.hideSoftInputFromWindow(null, 0);
-            }
-        });
-        mScreenDialog = new AlertDialog.Builder(mContext);
-        mScreenDialog.setTitle(mContext.getResources().getString(
-                R.string.share_via_mesg));
-    }
-    
-    /**
-     * Adapter to set on popup dialogue
-     * 
-     * */
-    private class CustomAdapter extends BaseAdapter {
-        /**
-         * returns the count
-         * 
-         * @return int
-         */
-        public int getCount() {
-            return mAppNames.size();
-        }
-        
-        /**
-         * @param arg0
-         *            int
-         * @return Object
-         */
-        public Object getItem(int arg0) {
-            return arg0;
-        }
-        
-        /**
-         * @param arg0
-         *            int
-         * @return long
-         */
-        public long getItemId(int arg0) {
-            return arg0;
-        }
-        
-        /**
-         * @param position
-         *            int
-         * 
-         * @param convertView
-         *            View
-         * @param parent
-         *            ViewGroup
-         * @return View
-         */
-        public View getView(final int position, View convertView,
-                ViewGroup parent) {
-            Holder holderView = null;
-            if (convertView == null) {
-                holderView = new Holder();
-                convertView = mLayoutInflater.inflate(R.layout.sharedialog_row,
-                        null);
-                holderView.network = (TextView) convertView
-                        .findViewById(R.id.gmail);
-                holderView.launcheicon = (ImageView) convertView
-                        .findViewById(R.id.launchericon);
-                convertView.setTag(holderView);
-            } else {
-                holderView = (Holder) convertView.getTag();
-            }
-            if (mAppIconsPath.get(position) != null) {
-                try {
-                    holderView.launcheicon.setImageDrawable(mContext
-                            .getPackageManager().getApplicationIcon(
-                                    mPackageNames.get(position)));
-                } catch (Exception e) {
-                }
-            } else {
-                if (mAppNames.get(position).equals(
-                        mContext.getResources().getString(R.string.more))) {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.more_icon);
-                } else if (mAppNames.get(position).equals(
-                        mContext.getResources().getString(R.string.browser))) {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.browser_icon);
-                } else {
-                    try {
-                        holderView.launcheicon.setImageDrawable(mContext
-                                .getPackageManager().getApplicationIcon(
-                                        mPackageNames.get(position)));
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            holderView.network.setText(mAppNames.get(position));
-            return convertView;
-        }
     }
     
     private String shareIntent(final int position) {
@@ -317,7 +232,7 @@ public class ShareDialog {
             if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.FACEBOOK_APP_NAME)) {
                 shareVia = "Facebook";
-                mDialog.dismiss();
+                mAlertDialog.dismiss();
                 mShareDialog.dismiss();
                 String shareText = "";
                 // User Aisle...
@@ -399,7 +314,7 @@ public class ShareDialog {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mDialog.dismiss();
+            mAlertDialog.dismiss();
             mShareDialog.dismiss();
             showAlertMessageShareError(mAppNames.get(position), false);
         }
@@ -459,16 +374,11 @@ public class ShareDialog {
         }
     }
     
-    private class Holder {
-        TextView network;
-        ImageView launcheicon;
-    }
-    
     private void shareToVue(String aisleId, String imageId) {
         VueApplication.getInstance().mShareViaVueClickedFlag = true;
         VueApplication.getInstance().mShareViaVueClickedAisleId = aisleId;
         VueApplication.getInstance().mShareViaVueClickedImageId = imageId;
-        mDialog.dismiss();
+        mAlertDialog.dismiss();
         if (mDataentryScreenShareViaVueListner != null) {
             mDataentryScreenShareViaVueListner.onAisleShareToVue();
         } else if (mDetailsScreenShareViaVueListner != null) {
@@ -479,7 +389,7 @@ public class ShareDialog {
     }
     
     private void shareImageAndText(final int position) {
-        mDialog.dismiss();
+        mAlertDialog.dismiss();
         mShareIntentCalled = true;
         mShareDialog.show();
         Thread t = new Thread(new Runnable() {
@@ -572,7 +482,6 @@ public class ShareDialog {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mScreenDialog.setCancelable(true);
                         mActivity.startActivityForResult(mSendIntent,
                                 VueConstants.SHARE_INTENT_REQUEST_CODE);
                     }
@@ -584,7 +493,7 @@ public class ShareDialog {
     
     private void shareSingleImage(final int position,
             final int currentAislePosition, final boolean fromTwitterApp) {
-        mDialog.dismiss();
+        mAlertDialog.dismiss();
         mShareIntentCalled = true;
         mShareDialog.show();
         Thread t = new Thread(new Runnable() {
@@ -688,7 +597,6 @@ public class ShareDialog {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mScreenDialog.setCancelable(true);
                         mActivity.startActivityForResult(mSendIntent,
                                 VueConstants.SHARE_INTENT_REQUEST_CODE);
                     }

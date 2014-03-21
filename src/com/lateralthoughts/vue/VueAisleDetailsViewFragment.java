@@ -9,7 +9,6 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -20,6 +19,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,18 +30,18 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -382,41 +382,50 @@ public class VueAisleDetailsViewFragment extends Fragment {
                             }, mAdapterNotifyDelay);
                             return;
                         }
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                mContext);
                         alertDialogBuilder.setMessage(getResources().getString(
                                 R.string.discard_comment));
-                         alertDialogBuilder.setPositiveButton("Discard",new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    dialog.cancel();
-                                    edtCommentView.setText("");
-                                    edtCommentFrameLay.setVisibility(View.GONE);
-                                    enterComentStaticTextLay
-                                            .setVisibility(View.VISIBLE);
-                                    // notify the adapter after keybord gone
-                                    new Handler().postDelayed(new Runnable() {
+                        alertDialogBuilder.setPositiveButton("Discard",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                            int id) {
+                                        dialog.cancel();
+                                        edtCommentView.setText("");
+                                        edtCommentFrameLay
+                                                .setVisibility(View.GONE);
+                                        enterComentStaticTextLay
+                                                .setVisibility(View.VISIBLE);
+                                        // notify the adapter after keybord gone
+                                        new Handler().postDelayed(
+                                                new Runnable() {
+                                                    
+                                                    @Override
+                                                    public void run() {
+                                                        mInputMethodManager
+                                                                .hideSoftInputFromWindow(
+                                                                        edtCommentView
+                                                                                .getWindowToken(),
+                                                                        0);
+                                                        mAisleDetailsAdapter
+                                                                .notifyDataSetChanged();
+                                                        
+                                                    }
+                                                }, mAdapterNotifyDelay);
+                                    }
+                                });
+                        alertDialogBuilder.setNegativeButton("Continue",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                            int id) {
+                                        dialog.cancel();
+                                        mInputMethodManager.showSoftInput(
+                                                edtCommentView, 0);
                                         
-                                        @Override
-                                        public void run() {
-                                            mInputMethodManager.hideSoftInputFromWindow(
-                                                    edtCommentView.getWindowToken(),
-                                                    0);
-                                            mAisleDetailsAdapter
-                                                    .notifyDataSetChanged();
-                                            
-                                        }
-                                    }, mAdapterNotifyDelay);
-                               }
-                              });
-                         alertDialogBuilder.setNegativeButton("Continue",new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    dialog.cancel();
-                                    mInputMethodManager.showSoftInput(
-                                            edtCommentView, 0);
-                            
-                                }
-                            });
-                         AlertDialog alertDialog = alertDialogBuilder.create();
-                         alertDialog.show();
+                                    }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
                     }
                     
                     @Override
@@ -1225,114 +1234,44 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 System.currentTimeMillis());
         edit.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
         edit.commit();
-        final Dialog dialog = new Dialog(getActivity(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.hintdialog);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
-        ListView listview = (ListView) dialog.findViewById(R.id.networklist);
-        listview.setDivider(getResources().getDrawable(
-                R.drawable.share_dialog_divider));
-        TextView dontshow = (TextView) dialog.findViewById(R.id.dontshow);
-        TextView proceed = (TextView) dialog.findViewById(R.id.proceed);
+        
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                new ContextThemeWrapper(getActivity(), R.style.AppBaseTheme));
+        alertDialogBuilder
+                .setTitle(getResources().getString(R.string.app_name));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Skip for now",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("Invite Friends",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        if (mAisleDetailsActivity == null) {
+                            mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
+                        }
+                        mAisleDetailsActivity.mDrawerLayout
+                                .openDrawer(mAisleDetailsActivity.mDrawerLeft);
+                    }
+                });
         ArrayList<String> hint_array_list = new ArrayList<String>();
-        dialogtitle.setText(getResources().getString(R.string.app_name));
         hint_array_list.add("1. Help Friends make their shopping decisions");
         hint_array_list.add("2. Invite them to join Vue");
         hint_array_list.add("3. Earn $$ rewards");
-        dialog.show();
-        
+        ListView listview = new ListView(getActivity());
+        ListAdapter adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.select_dialog_item, android.R.id.text1,
+                hint_array_list);
+        listview.setAdapter(adapter);
+        alertDialogBuilder.setView(listview);
+        Dialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
         Editor edit2 = sharedPreferencesObj.edit();
         edit2.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
         edit2.commit();
-        proceed.setText("Invite Friends");
-        dontshow.setText("Skip for now");
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-            }
-        });
-        dontshow.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        proceed.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View arg0) {
-                dialog.dismiss();
-                if (mAisleDetailsActivity == null) {
-                    mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
-                }
-                mAisleDetailsActivity.mDrawerLayout
-                        .openDrawer(mAisleDetailsActivity.mDrawerLeft);
-            }
-        });
-        listview.setAdapter(new HintAdapter(hint_array_list));
-    }
-    
-    private class HintAdapter extends BaseAdapter {
-        ArrayList<String> mHintList;
-        
-        public HintAdapter(ArrayList<String> hintList) {
-            mHintList = hintList;
-        }
-        
-        @Override
-        public int getCount() {
-            return mHintList.size();
-        }
-        
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-        
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-        
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            
-            Holder holder = null;
-            if (convertView == null) {
-                
-                holder = new Holder();
-                LayoutInflater mLayoutInflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
-                holder.textone = (TextView) convertView
-                        .findViewById(R.id.gmail);
-                holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
-                holder.imageone = (ImageView) convertView
-                        .findViewById(R.id.shareicon);
-                holder.imagetwo = (ImageView) convertView
-                        .findViewById(R.id.shareicon2);
-                convertView.setTag(holder);
-            } else {
-                holder = (Holder) convertView.getTag();
-            }
-            holder.textone.setTextSize(16);
-            String text = mHintList.get(position);
-            holder.imageone.setVisibility(View.GONE);
-            holder.imagetwo.setVisibility(View.GONE);
-            holder.texttwo.setVisibility(View.GONE);
-            holder.textone.setText(text);
-            return convertView;
-        }
-    }
-    
-    private class Holder {
-        TextView textone, texttwo;
-        ImageView imageone, imagetwo;
     }
     
     private boolean loginChcecking() {

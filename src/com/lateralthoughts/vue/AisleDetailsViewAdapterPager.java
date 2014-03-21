@@ -18,8 +18,10 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,6 +30,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
+import android.view.ContextThemeWrapper;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,13 +39,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -966,13 +970,21 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                     mCurrentAisle.getAisleContext().mOccasion,
                     (mCurrentAisle.getAisleContext().mFirstName + " " + mCurrentAisle
                             .getAisleContext().mLastName),
-                    mCurrentDispImageIndex, mShareViaVueListner, null, null,new OnShare() {
+                    mCurrentDispImageIndex, mShareViaVueListner, null, null,
+                    new OnShare() {
                         
                         @Override
                         public void onShare(boolean shareIndicator) {
                             mCurrentAisle.setmShareIndicator(true);
-                            DataBaseManager.getInstance(VueApplication.getInstance()).saveShareAisleId(mCurrentAisle.getAisleContext().mAisleId);
-                            VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().saveSharedId(mCurrentAisle.getAisleContext().mAisleId);
+                            DataBaseManager
+                                    .getInstance(VueApplication.getInstance())
+                                    .saveShareAisleId(
+                                            mCurrentAisle.getAisleContext().mAisleId);
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getNetworkHandler()
+                                    .saveSharedId(
+                                            mCurrentAisle.getAisleContext().mAisleId);
                         }
                     });
         }
@@ -1571,7 +1583,8 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 try {
                     VueTrendingAislesDataModel
                             .getInstance(VueApplication.getInstance())
-                            .getNetworkHandler().createImageComment(imgComment,0);
+                            .getNetworkHandler()
+                            .createImageComment(imgComment, 0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2017,83 +2030,23 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
     
     private void showUserNamesOfImageLikes(Context context,
             ArrayList<String> userNamesOfImageLikes) {
-        final Dialog dialog = new Dialog(context,
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.sharedialogue);
-        ListView listview = (ListView) dialog.findViewById(R.id.networklist);
-        TextView okbuton = (TextView) dialog.findViewById(R.id.shownetworkok);
-        TextView dialogtitle = (TextView) dialog.findViewById(R.id.dialogtitle);
-        dialogtitle.setText("People Who Like This");
-        okbuton.setText("OK");
-        okbuton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        listview.setAdapter(new UserNamesAdapter(userNamesOfImageLikes, context));
-        listview.setDivider(mContext.getResources().getDrawable(
-                R.drawable.share_dialog_divider));
-        dialog.show();
-    }
-    
-    private class UserNamesAdapter extends BaseAdapter {
-        ArrayList<String> mUserNameList;
-        Context mContext = null;
-        
-        public UserNamesAdapter(ArrayList<String> userNameList, Context context) {
-            mUserNameList = userNameList;
-            mContext = context;
-        }
-        
-        @Override
-        public int getCount() {
-            return mUserNameList.size();
-        }
-        
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-        
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-        
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            
-            Holder holder = null;
-            if (convertView == null) {
-                
-                holder = new Holder();
-                LayoutInflater mLayoutInflater = (LayoutInflater) mContext
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = mLayoutInflater.inflate(R.layout.hintpopup, null);
-                holder.textone = (TextView) convertView
-                        .findViewById(R.id.gmail);
-                holder.texttwo = (TextView) convertView.findViewById(R.id.vue);
-                holder.imageone = (ImageView) convertView
-                        .findViewById(R.id.shareicon);
-                holder.imagetwo = (ImageView) convertView
-                        .findViewById(R.id.shareicon2);
-                convertView.setTag(holder);
-            } else {
-                holder = (Holder) convertView.getTag();
-            }
-            holder.imageone.setVisibility(View.GONE);
-            holder.imagetwo.setVisibility(View.GONE);
-            holder.texttwo.setVisibility(View.GONE);
-            holder.textone.setText(mUserNameList.get(position));
-            return convertView;
-        }
-    }
-    
-    private class Holder {
-        TextView textone, texttwo;
-        ImageView imageone, imagetwo;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                new ContextThemeWrapper(context, R.style.AppBaseTheme));
+        alertDialogBuilder.setTitle("People Who Like This");
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        ListView listview = new ListView(context);
+        ListAdapter adapter = new ArrayAdapter<String>(context,
+                android.R.layout.select_dialog_item, android.R.id.text1,
+                userNamesOfImageLikes);
+        listview.setAdapter(adapter);
+        alertDialogBuilder.setView(listview);
+        Dialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private boolean loginChcecking() {
