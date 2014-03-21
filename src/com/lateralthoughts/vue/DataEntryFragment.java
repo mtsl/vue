@@ -992,6 +992,7 @@ public class DataEntryFragment extends Fragment {
     
     private void showAlertForMandatoryFields(String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("Vue");
        alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
@@ -2212,6 +2213,7 @@ public class DataEntryFragment extends Fragment {
     public void showAlertMessageForBackendNotIntegrated(String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setTitle("Vue");
          alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
         
@@ -2355,6 +2357,7 @@ public class DataEntryFragment extends Fragment {
     public void showAddMoreImagesDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
        alertDialogBuilder.setMessage("Do you want to Add more images?");
+       alertDialogBuilder.setTitle("Add image");
         alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
                    dialog.cancel();

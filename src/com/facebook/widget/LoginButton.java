@@ -740,7 +740,7 @@ public class LoginButton extends Button {
         }
     }
     
-    void showAlertToChangeLocalSettings(final String message) {
+    void showAlertToChangeLocalSettings(final String message) {/*
         final Dialog dialog = new Dialog(getContext(),
                 R.style.Theme_Dialog_Translucent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -814,7 +814,7 @@ public class LoginButton extends Button {
         dialog.show();
         return;
         
-    }
+    */}
     
     private class LoginButtonCallback implements Session.StatusCallback {
         @Override

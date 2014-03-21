@@ -344,6 +344,7 @@ public class CreateAisleSelectionActivity extends Activity {
     public void showAlertMessageForAppInstalation(final String packageName,
             final String appName) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Vue");
        alertDialogBuilder.setMessage("Install " + appName + " from Play Store");
         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
@@ -547,6 +548,7 @@ public class CreateAisleSelectionActivity extends Activity {
     private void showDiscardOtherAppImageDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
        alertDialogBuilder.setMessage("Do you want to cancel addImage?");
+       alertDialogBuilder.setTitle("Vue");
         alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
                    dialog.cancel();

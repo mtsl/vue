@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,6 +43,7 @@ import android.provider.MediaStore;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -55,6 +58,7 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.user.VueUserProfile;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class Utils {
     private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -739,6 +743,7 @@ public class Utils {
             final Activity activity, final boolean finishActivity) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 activity);
+        alertDialogBuilder.setTitle("Vue");
         alertDialogBuilder
                 .setMessage("Sorry, Server side integration is pending.");
         alertDialogBuilder.setPositiveButton("OK",
@@ -922,7 +927,9 @@ public class Utils {
     
     private static void showRewardsDialog(String userType, int pointsEarned,
             final Context context) {
-        
+        if(context == null){
+            return;
+        }
         if (pointsEarned < 100) {
             userType = "bronze";
         } else {
@@ -931,45 +938,58 @@ public class Utils {
         if (userType.equals("silver")) {
             StringBuilder sb = new StringBuilder(
                     "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
-            
-            final Dialog dialog = new Dialog(context,
-                    R.style.Theme_Dialog_Translucent);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.networkdialogue);
-            TextView messagetext = (TextView) dialog
-                    .findViewById(R.id.messagetext);
-            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-            nobutton.setText(context.getResources().getString(
-                    R.string.continue_earning));
-            okbutton.setText(context.getResources().getString(
-                    R.string.redeem_it_now));
-            messagetext.setText(sb);
-            nobutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            okbutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    // TODO: mix panel log.
-                    Toast.makeText(
-                            context,
-                            "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
-                            Toast.LENGTH_LONG).show();
-                    dialog.dismiss();
-                }
-            });
-            dialog.setOnCancelListener(new OnCancelListener() {
-                public void onCancel(DialogInterface dialog) {
-                }
-            });
-            dialog.show();
-            dialog.setOnDismissListener(new OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                }
-            });
+            //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(context,R.style.AppBaseTheme));
+            alertDialogBuilder.setTitle("Vue");
+           alertDialogBuilder.setMessage(sb.toString());
+            alertDialogBuilder.setPositiveButton(context.getResources().getString(
+                    R.string.redeem_it_now),new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog,int id) {
+                       VueUser storedVueUser = null;
+                       try {
+                           storedVueUser = Utils
+                                   .readUserObjectFromFile(
+                                          context,
+                                           VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                           if (storedVueUser != null) {
+                               JSONObject nameTag = new JSONObject();
+                               nameTag.put("Redeem", "RedeemItNow");
+                               nameTag.put("Id", storedVueUser.getId());
+                               nameTag.put("Email",
+                                       storedVueUser.getEmail());
+                               SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                                       .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+                               Editor editor = sharedPreferencesObj
+                                       .edit();
+                               editor.putBoolean(
+                                       VueConstants.USER_POINTS_DIALOG_SHOWN,
+                                       true);
+                               editor.commit();
+                                MixpanelAPI mixpanel = MixpanelAPI.getInstance(context,
+                                       VueApplication.getInstance().MIXPANEL_TOKEN);
+                               mixpanel.track("Coupon", nameTag);
+                           }
+                       } catch (Exception e1) {
+                           e1.printStackTrace();
+                       }
+                       
+                       Toast.makeText(
+                               context,
+                               "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                               Toast.LENGTH_LONG).show();
+                      
+                  }
+                 });
+            alertDialogBuilder.setNegativeButton(context.getResources().getString(
+                    R.string.continue_earning),new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog,int id) {
+                   
+                       dialog.cancel();
+                      
+                  }
+                 });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         }
     }
 }

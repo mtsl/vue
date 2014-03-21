@@ -31,6 +31,7 @@ public class CrashActivity extends Activity {
     void showAlert(String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setTitle("Vue");
         alertDialogBuilder.setPositiveButton(
                 getResources().getString(R.string.ok),
                 new DialogInterface.OnClickListener() {

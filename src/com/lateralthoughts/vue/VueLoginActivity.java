@@ -47,6 +47,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -566,11 +567,13 @@ public class VueLoginActivity extends FragmentActivity implements
     
     private void showAlertMessageForAppInstalation(String appName,
             final String packageName) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLoginActivity.this);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(this,R.style.AppBaseTheme));
+        //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLoginActivity.this);
+        alertDialogBuilder.setTitle(getResources().getString(R.string.app_name));
        alertDialogBuilder.setMessage(getResources().getString(
                R.string.app_installation_mesg)
                + " " + appName + "?");
-    
+        
         alertDialogBuilder.setPositiveButton("Install " + appName,new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
                
@@ -1035,34 +1038,25 @@ public class VueLoginActivity extends FragmentActivity implements
                 alertMessage = error.getErrorMessage();
             }
         }
-        final Dialog dialog = new Dialog(VueLoginActivity.this,
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.networkdialogue);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-        okbutton.setVisibility(View.GONE);
-        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-        networkdialogline.setVisibility(View.GONE);
-        TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-        nobutton.setText(getResources().getString(R.string.ok));
-        messagetext.setText(alertMessage);
-        nobutton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnCancelListener(new OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-            }
-        });
-        dialog.show();
-        dialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                showAisleSwipeHelp();
-            }
-        });
+        // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new
+        // ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                new ContextThemeWrapper(this, R.style.AppBaseTheme));
+        alertDialogBuilder
+                .setTitle(getResources().getString(R.string.app_name));
+        alertDialogBuilder.setMessage(alertMessage);
+        alertDialogBuilder.setPositiveButton(
+                getResources().getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                        
+                    }
+                });
+        
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private void publishFeedDialog(String friend_uid, String friendname) {
@@ -1417,9 +1411,10 @@ public class VueLoginActivity extends FragmentActivity implements
     }
     
     private void showAlertToLoginWithFacebookApp(String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLoginActivity.this);
+        //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(this,R.style.AppBaseTheme));
+        alertDialogBuilder.setTitle(getResources().getString(R.string.app_name));
        alertDialogBuilder.setMessage(message);
-    
         alertDialogBuilder.setPositiveButton(VueApplication.getInstance().getString(R.string.ok),new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog,int id) {
                

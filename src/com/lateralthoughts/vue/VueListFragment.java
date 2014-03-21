@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -1172,7 +1173,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
             userType = "silver";
         }
         if (userType.endsWith("bronze")) {
-            
+            // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
             StringBuilder sb = new StringBuilder("You are a ");
             sb.append(userType);
             sb.append(" user with ");
@@ -1182,112 +1183,98 @@ public class VueListFragment extends Fragment implements TextWatcher {
             sb.append(" points to go to become a ");
             sb.append(nextUserType);
             sb.append(" user");
-            final Dialog dialog = new Dialog(getActivity(),
-                    R.style.Theme_Dialog_Translucent);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.networkdialogue);
-            TextView messagetext = (TextView) dialog
-                    .findViewById(R.id.messagetext);
-            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-            View networkdialogline = dialog
-                    .findViewById(R.id.networkdialogline);
-            networkdialogline.setVisibility(View.GONE);
-            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-            nobutton.setVisibility(View.GONE);
-            okbutton.setText(getResources().getString(R.string.ok));
-            messagetext.setText(sb);
-            okbutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.setOnCancelListener(new OnCancelListener() {
-                public void onCancel(DialogInterface dialog) {
-                }
-            });
-            dialog.show();
-            dialog.setOnDismissListener(new OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                }
-            });
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setMessage(sb);
+            alertDialogBuilder.setTitle("Vue");
+             alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+             dialog.cancel();
+                   }
+                  });
+             AlertDialog alertDialog = alertDialogBuilder.create();
+             alertDialog.show();
         } else if (userType.equals("silver")) {
+            String popupMessage = "";
             StringBuilder sb = new StringBuilder(
                     "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
             final SharedPreferences sharedPreferencesObj = VueApplication
                     .getInstance().getSharedPreferences(
                             VueConstants.SHAREDPREFERENCE_NAME, 0);
-            final Dialog dialog = new Dialog(getActivity(),
-                    R.style.Theme_Dialog_Translucent);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.networkdialogue);
-            TextView messagetext = (TextView) dialog
-                    .findViewById(R.id.messagetext);
-            TextView okbutton = (TextView) dialog.findViewById(R.id.okbutton);
-            View networkdialogline = dialog
-                    .findViewById(R.id.networkdialogline);
-            TextView nobutton = (TextView) dialog.findViewById(R.id.nobutton);
-            nobutton.setText(getResources()
-                    .getString(R.string.continue_earning));
-            okbutton.setText(getResources().getString(R.string.redeem_it_now));
-            
             boolean isRedeemCoupon = sharedPreferencesObj.getBoolean(
                     VueConstants.USER_POINTS_DIALOG_SHOWN, false);
-            messagetext.setText(sb);
+            popupMessage = sb.toString();
             if (isRedeemCoupon) {
-                okbutton.setVisibility(View.GONE);
                 String message = "Thank you for being an awesome Silver Vuer. Keep up the good work and expect more surprises!";
-                String ok = "Okay, continue Vueing!";
-                okbutton.setText(ok);
-                messagetext.setText(message);
+                popupMessage = message;
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        getActivity());
+                alertDialogBuilder.setMessage(popupMessage);
+                alertDialogBuilder.setTitle("Vue");
+                alertDialogBuilder.setNegativeButton(
+                        getResources().getString(R.string.continue_earning),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            } else {
+                
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        getActivity());
+                alertDialogBuilder.setMessage(popupMessage);
+                alertDialogBuilder.setTitle("Vue");
+                alertDialogBuilder.setPositiveButton(
+                        getResources().getString(R.string.redeem_it_now),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                
+                                VueUser storedVueUser = null;
+                                try {
+                                    storedVueUser = Utils
+                                            .readUserObjectFromFile(
+                                                    getActivity(),
+                                                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                    if (storedVueUser != null) {
+                                        JSONObject nameTag = new JSONObject();
+                                        nameTag.put("Redeem", "RedeemItNow");
+                                        nameTag.put("Id", storedVueUser.getId());
+                                        nameTag.put("Email",
+                                                storedVueUser.getEmail());
+                                        
+                                        Editor editor = sharedPreferencesObj
+                                                .edit();
+                                        editor.putBoolean(
+                                                VueConstants.USER_POINTS_DIALOG_SHOWN,
+                                                true);
+                                        editor.commit();
+                                        mixpanel.track("Coupon", nameTag);
+                                    }
+                                } catch (Exception e1) {
+                                    e1.printStackTrace();
+                                }
+                                
+                                Toast.makeText(
+                                        getActivity(),
+                                        "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                                        Toast.LENGTH_LONG).show();
+                                dialog.cancel();
+                                
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton(
+                        getResources().getString(R.string.continue_earning),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                
             }
-            
-            nobutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            okbutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    VueUser storedVueUser = null;
-                    try {
-                        storedVueUser = Utils.readUserObjectFromFile(
-                                getActivity(),
-                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                        if (storedVueUser != null) {
-                            JSONObject nameTag = new JSONObject();
-                            nameTag.put("Redeem", "RedeemItNow");
-                            nameTag.put("Id", storedVueUser.getId());
-                            nameTag.put("Email", storedVueUser.getEmail());
-                            
-                            Editor editor = sharedPreferencesObj.edit();
-                            editor.putBoolean(
-                                    VueConstants.USER_POINTS_DIALOG_SHOWN, true);
-                            editor.commit();
-                            // TODO: mix panel log.
-                            mixpanel.track("Coupon", nameTag);
-                        }
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                    
-                    Toast.makeText(
-                            getActivity(),
-                            "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
-                            Toast.LENGTH_LONG).show();
-                    dialog.dismiss();
-                }
-            });
-            dialog.setOnCancelListener(new OnCancelListener() {
-                public void onCancel(DialogInterface dialog) {
-                }
-            });
-            dialog.show();
-            dialog.setOnDismissListener(new OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                }
-            });
         }
     }
     
