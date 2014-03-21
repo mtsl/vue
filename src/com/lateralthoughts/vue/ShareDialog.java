@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +34,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.lateralthoughts.vue.user.VueUserProfile;
-import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -75,7 +73,6 @@ public class ShareDialog {
     private MixpanelAPI mixpanel;
     private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
     private JSONObject aisleSharedProps;
-    private FileCache mFileCache = null;
     VueLandingPageActivity.OnShare shareIndicatorObject;
     
     public void dismisDialog() {
@@ -89,7 +86,6 @@ public class ShareDialog {
      */
     public ShareDialog(Context context, Activity activity,
             MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
-        mFileCache = new FileCache(context);
         this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
@@ -105,7 +101,8 @@ public class ShareDialog {
             int currentAislePosition,
             VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
             DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner,
-            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner,VueLandingPageActivity.OnShare shareIndicatorObj) {  
+            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner,
+            VueLandingPageActivity.OnShare shareIndicatorObj) {
         shareIndicatorObject = shareIndicatorObj;
         mShareIntentCalled = false;
         mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
@@ -133,7 +130,7 @@ public class ShareDialog {
     }
     
     /** to show pop-up */
-    private void openScreenDialog() { 
+    private void openScreenDialog() {
         mShareDialog = ProgressDialog.show(mContext, mContext
                 .getString(R.string.app_name), mContext.getResources()
                 .getString(R.string.sharing_mesg), true);
@@ -154,8 +151,8 @@ public class ShareDialog {
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
-                if(shareIndicatorObject != null){
-                shareIndicatorObject.onShare(true);
+                if (shareIndicatorObject != null) {
+                    shareIndicatorObject.onShare(true);
                 }
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
@@ -189,7 +186,7 @@ public class ShareDialog {
                     
                     try {
                         if (aisleSharedProps != null && sharedVia != null)
-                            aisleSharedProps.put("Shared Via", sharedVia);
+                            aisleSharedProps.put("shared to", sharedVia);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -411,20 +408,22 @@ public class ShareDialog {
     
     private void showAlertMessageShareError(String appName, boolean fberror) {
         String message = "";
-         if(!fberror){
-             message = "Unable to Share content to " + appName;
-         } else {
-             message = appName;
-         }
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+        if (!fberror) {
+            message = "Unable to Share content to " + appName;
+        } else {
+            message = appName;
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                mContext);
         alertDialogBuilder.setMessage(message);
-         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
-                    dialog.cancel();
-               }
-              });
-         AlertDialog alertDialog = alertDialogBuilder.create();
-         alertDialog.show();
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     private void prepareShareIntentData() {
@@ -702,5 +701,5 @@ public class ShareDialog {
     public interface ShareViaVueClickedListner {
         public void onAisleShareToVue();
     }
-   
+    
 }
