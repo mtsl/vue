@@ -481,7 +481,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("Added Comment", null);
+                if (mAisleDetailsAdapter != null) {
+                    mAisleDetailsAdapter.trackMixpanelEvent(mixpanel, true);
+                }
                 String etText = edtCommentView.getText().toString();
                 
                 if (etText != null && etText.length() >= 1) {
@@ -679,7 +681,9 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("Find At", null);
+                if (mAisleDetailsAdapter != null) {
+                    mAisleDetailsAdapter.trackMixpanelEvent(mixpanel, false);
+                }
                 String url = mFindAtUrl;
                 if (url != null
                         && (url.startsWith("www") || url.startsWith("WWW"))) {

@@ -2087,4 +2087,52 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
         }
         return false;
     }
+    
+    public void trackMixpanelEvent(MixpanelAPI mixpanel, boolean fromAddComment) {
+        JSONObject aisleProps = new JSONObject();
+        try {
+            String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+            String userId = VueTrendingAislesDataModel.getInstance(mContext)
+                    .getNetworkHandler().getUserId();
+            boolean isOwner = false;
+            if (imgOwnerId == userId) {
+                isOwner = true;
+            }
+            VueUser storedVueUser = null;
+            storedVueUser = Utils.readUserObjectFromFile(
+                    VueApplication.getInstance(),
+                    VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            String userName = storedVueUser.getFirstName() + " "
+                    + storedVueUser.getLastName();
+            aisleProps
+                    .put("Image Id",
+                            mCurrentAisle.getImageList().get(
+                                    mCurrentDispImageIndex).mId);
+            aisleProps.put("Aisle Id", mCurrentAisle.getAisleId());
+            aisleProps.put("Image Position", mCurrentDispImageIndex);
+            aisleProps.put("Is Aisle Owner", isOwner);
+            aisleProps.put("Owner Name",
+                    mCurrentAisle.getAisleContext().mFirstName);
+            aisleProps.put("Category",
+                    mCurrentAisle.getAisleContext().mCategory);
+            aisleProps.put("Looking For",
+                    mCurrentAisle.getAisleContext().mLookingForItem);
+            aisleProps.put("Occasion",
+                    mCurrentAisle.getAisleContext().mOccasion);
+            if (fromAddComment) {
+                aisleProps.put("Commented By", userName);
+            } else {
+                aisleProps.put("Find At Clicked By", userName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (mixpanel != null) {
+            if (fromAddComment) {
+                mixpanel.track("Added Comment", aisleProps);
+            } else {
+                mixpanel.track("Find At", aisleProps);
+            }
+        }
+    }
 }
