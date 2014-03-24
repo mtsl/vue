@@ -133,7 +133,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+       // setRetainInstance(true);
     }
     
     @Override

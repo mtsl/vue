@@ -31,6 +31,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -127,6 +128,7 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mHelpDialogShown = false;
     private int mTrendingRequstCount = 0;
     public static boolean mLandingScreenActive = false;
+    private boolean mIsMyPointsDownLoadDone = false;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -409,11 +411,13 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i("cachecleartime", "cachecleartime onStart");
     }
     
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i("cachecleartime", "cachecleartime onStop");
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
     }
@@ -681,6 +685,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.i("cachecleartime", "cachecleartime onResume");
         mLandingScreenActive = true;
         mSlidListFrag.setEditTextVisible(false);
         // ShareViaVue...
@@ -777,6 +782,7 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onPause() {
         super.onPause();
+        Log.i("cachecleartime", "cachecleartime onPause");
         mLandingScreenActive = false;
     }
     
@@ -1665,6 +1671,20 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
                     invalidateOptionsMenu();
+                    if (!mIsMyPointsDownLoadDone) {
+                        // load lazily after completion of all trending initial data
+                        // loading
+                        int waitTime = 1000;
+                        new Handler().postDelayed(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                MyPoints points = new MyPoints();
+                                points.execute();
+                            }
+                        }, waitTime);
+                        
+                    }
                 }
             }
         }
@@ -2113,5 +2133,28 @@ public class VueLandingPageActivity extends Activity implements
     
     public interface ShareImage {
         public void setShareImage(boolean value);
+    }
+    private class MyPoints extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            VueLandingPageActivity.sMyPointsAvailable = false;
+        }
+        
+        @Override
+        protected Void doInBackground(Void... params) {
+            mIsMyPointsDownLoadDone = true;
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler().getMyAislesPoints();
+            VueLandingPageActivity.sMyPointsAvailable = true;
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
     }
 }

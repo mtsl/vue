@@ -58,9 +58,8 @@ public class VueLandingAislesFragment extends Fragment {
     public boolean mIsFlingCalled;
     
     public boolean mIsIdleState;
-    private ProgressBar mTrendingLoad;
     private boolean mHelpDialogShown = false;
-    private boolean mIsMyPointsDownLoadDone = false;
+    //private boolean mIsMyPointsDownLoadDone = false;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -107,7 +106,6 @@ public class VueLandingAislesFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
-        mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         mStaggeredView.setItemMargin(margin); // set the GridView margin
         SharedPreferences sharedPreferencesObj = getActivity()
@@ -156,10 +154,6 @@ public class VueLandingAislesFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
-                /*
-                 * if (totalItemCount > 0 && mTrendingLoad.getVisibility() ==
-                 * View.VISIBLE) { mTrendingLoad.setVisibility(View.GONE); }
-                 */
                 AisleLoader.isScrolling = true;
                 if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
                         && VueLandingPageActivity.mLandingScreenName != null
@@ -300,35 +294,12 @@ public class VueLandingAislesFragment extends Fragment {
         
         @Override
         public void hideProgressBar(int count) {
-            if (mTrendingLoad.getVisibility() == View.VISIBLE) {
-                mTrendingLoad.setVisibility(View.GONE);
-                notifyAdapters();
-                if (!mIsMyPointsDownLoadDone) {
-                    // load lazily after completion of all trending initial data
-                    // loading
-                    int waitTime = 10000;
-                    new Handler().postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            MyPoints points = new MyPoints();
-                            points.execute();
-                        }
-                    }, waitTime);
-                    
-                }
-            }
+    
         }
         
         @Override
         public void showProgressBar(int count) {
-            if (mTrendingLoad.getVisibility() == View.GONE) {
-                if (VueLandingPageActivity.mLandingScreenActive) {
-                    mTrendingLoad.setVisibility(View.VISIBLE);
-                } else {
-                    mTrendingLoad.setVisibility(View.GONE);
-                }
-            }
+    
         }
     }
     
@@ -387,31 +358,6 @@ public class VueLandingAislesFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    
-    private class MyPoints extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            VueLandingPageActivity.sMyPointsAvailable = false;
-        }
-        
-        @Override
-        protected Void doInBackground(Void... params) {
-            mIsMyPointsDownLoadDone = true;
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            VueTrendingAislesDataModel
-                    .getInstance(VueApplication.getInstance())
-                    .getNetworkHandler().getMyAislesPoints();
-            VueLandingPageActivity.sMyPointsAvailable = true;
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }
-    
     private void saveAisleSwip(int count) {
         SharedPreferences sharedPreferencesObj = getActivity()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);

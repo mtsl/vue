@@ -32,13 +32,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     
     @Override
     public int getCount() {
-        int count = mVueTrendingAislesDataModel.getAisleCount();
-        if (count == 0) {
-            mClickListener.showProgressBar(count);
-        } else {
-            mClickListener.hideProgressBar(count);
-        }
-        return count;
+        return mVueTrendingAislesDataModel.getAisleCount();
     }
     
     @Override
@@ -208,8 +202,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.shareImage.setImageResource(R.drawable.share_gray);
         }
-/*        holder.share_count.setText(String.valueOf(holder.mWindowContent
-                .getAisleContext().mShareCount));*/
         holder.share_count.setVisibility(View.GONE);
         holder.likeCount.setVisibility(View.GONE);
         holder.bookMarkCount.setVisibility(View.GONE);
