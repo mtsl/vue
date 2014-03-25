@@ -33,7 +33,6 @@ public class Parser {
     // the following strings are pre-defined to help with JSON parsing
     // the tags defined here should be in sync the API documentation for the
     // backend
-    
     // AisleImageObjects but re-uses the
     // imageItemsArray. Instead the called function clones and keeps a copy.
     // This is pretty inconsistent.

@@ -20,12 +20,12 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -136,6 +136,27 @@ public class VueLandingPageActivity extends Activity implements
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
+        
+        try {
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            long versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+         long currentVersion = sharedPreferencesObj.getLong(
+                    VueConstants.VERSION_CODE_CHANGE, 0);
+            if(versionCode != currentVersion){
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putLong(VueConstants.VERSION_CODE_CHANGE,
+                    versionCode);
+            editor.commit();
+            finish();
+            
+            Intent i = new Intent(this,VueLandingPageActivity.class);
+            startActivity(i);
+            }
+        } catch (NameNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        
         if (VueConnectivityManager.isNetworkConnected(this)) {
             try {
                 trimCache(this);
@@ -168,7 +189,6 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("cachecleartime", "cachecleartime ondestory");
         mLandingScreenActive = false;
         VueApplication.getInstance().saveTrendingRefreshTime(0);
         try {
@@ -411,13 +431,11 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("cachecleartime", "cachecleartime onStart");
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("cachecleartime", "cachecleartime onStop");
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
     }
@@ -685,7 +703,6 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("cachecleartime", "cachecleartime onResume");
         mLandingScreenActive = true;
         mSlidListFrag.setEditTextVisible(false);
         // ShareViaVue...
@@ -782,7 +799,6 @@ public class VueLandingPageActivity extends Activity implements
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("cachecleartime", "cachecleartime onPause");
         mLandingScreenActive = false;
     }
     

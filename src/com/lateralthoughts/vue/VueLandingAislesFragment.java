@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -131,7 +132,7 @@ public class VueLandingAislesFragment extends Fragment {
                 switch (i) {
                 case SCROLL_STATE_FLING:
                 case SCROLL_STATE_TOUCH_SCROLL:
-                    mStaggeredAdapter.setIsScrolling(true);
+                     mStaggeredAdapter.setIsScrolling(true);
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.LOAD_IMAGES_REQUEST_TAG);
                     break;
@@ -141,12 +142,33 @@ public class VueLandingAislesFragment extends Fragment {
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
                     AisleLoader.isScrolling = false;
-                    if (!AisleLoader.trendingSwipeBlock) {
-                        mStaggeredAdapter.swipeFromAdapterImage();
-                        if (AisleLoader.sTrendingSwipeCount > 3) {
-                            saveAisleSwip(4);
+                   if(!AisleLoader.trendingSwipeBlock) {
+                       //help swipe it should only display for 3 times.
+                       int waitTimeForNotifyAdapter = 400;
+                       final int waitTimeForCalingAnim = 200;
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            if (null != mStaggeredAdapter) {
+                                mStaggeredAdapter.notifyDataSetChanged();
+                                new Handler().postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() { 
+                                        mStaggeredAdapter.swipeFromAdapterImage();
+                                        if (AisleLoader.sTrendingSwipeCount > 3) {
+                                            saveAisleSwip(4);
+                                        }
+                                        
+                                    }
+                                }, waitTimeForCalingAnim);
+                               
+                                
+                            }                            
                         }
-                    }
+                    }, waitTimeForNotifyAdapter);
+                   }
                     break;
                 }
             }

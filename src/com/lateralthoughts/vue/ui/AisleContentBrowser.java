@@ -600,7 +600,7 @@ public class AisleContentBrowser extends ViewFlipper {
                                     
                                 }
                             });
-                    
+                    AisleLoader.trendingSwipeBlock = true;
                     aisleContentBrowser.setDisplayedChild(currentIndex + 1);
                     // aisleContentBrowser.invalidate();
                     return super.onTouchEvent(event);
@@ -725,6 +725,7 @@ public class AisleContentBrowser extends ViewFlipper {
                                     
                                 }
                             });
+                    AisleLoader.trendingSwipeBlock = true;
                     aisleContentBrowser.setDisplayedChild(currentIndex - 1);
                     return super.onTouchEvent(event);
                 }
@@ -1004,9 +1005,9 @@ public class AisleContentBrowser extends ViewFlipper {
             AisleLoader.trendingSwipeBlock = true;
         }
         Animation currentGoLeft = AnimationUtils.loadAnimation(mContext,
-                R.anim.right_out);
+                R.anim.right_out_help);
         final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext,
-                R.anim.fade_in);
+                R.anim.fade_in_help);
         mAnimationInProgress = true;
         aisleContentBrowser.setInAnimation(nextFadeIn);
         aisleContentBrowser.setOutAnimation(currentGoLeft);
@@ -1079,9 +1080,9 @@ public class AisleContentBrowser extends ViewFlipper {
         nextView = (ScaleImageView) aisleContentBrowser
                 .getChildAt(currentIndex - 1);
         Animation currentGoRight = AnimationUtils.loadAnimation(mContext,
-                R.anim.left_in);
+                R.anim.left_in_help);
         final Animation nextFadeIn = AnimationUtils.loadAnimation(mContext,
-                R.anim.fade_in);
+                R.anim.fade_in_help);
         aisleContentBrowser.setInAnimation(nextFadeIn);
         aisleContentBrowser.setOutAnimation(currentGoRight);
         
@@ -1144,5 +1145,10 @@ public class AisleContentBrowser extends ViewFlipper {
         });
         aisleContentBrowser.setDisplayedChild(currentIndex - 1);
     }
-    
+    public int getImageCount(){
+        if(mSpecialNeedsAdapter != null && mSpecialNeedsAdapter.getWindowContent().getImageList() != null){
+          return  mSpecialNeedsAdapter.getWindowContent().getImageList().size();
+        }
+        return 0;
+    }
 }

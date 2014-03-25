@@ -29,7 +29,7 @@ public class AisleLoader {
     private static AisleLoader sAisleLoaderInstance = null;
     private ScaledImageViewFactory mViewFactory = null;
     AisleContentClickListener mListener;
-    AisleContentBrowser aisleContentBrowserHelp;
+    //AisleContentBrowser aisleContentBrowserHelp;
     public static int  sTrendingSwipeCount = 0;
     
     // private HashMap<String, ViewHolder> mContentViewMap = new HashMap<String,
@@ -201,13 +201,6 @@ public class AisleLoader {
             contentBrowser.setLayoutParams(mShowpieceParams2);
             String profleUrl = windowContent.getAisleContext().mAisleOwnerImageURL;
             contentBrowser.addView(imageView);
-            if(!AisleLoader.trendingSwipeBlock) {
-            if(imageDetailsArr.size() > 1){
-                aisleContentBrowserHelp = holder.aisleContentBrowser;
-            }
-            } else {
-                aisleContentBrowserHelp = null;
-            }
             if (itemDetails.mImageUrl
                     .equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
                 imageView.setImageResource(R.drawable.about);
@@ -247,16 +240,4 @@ public class AisleLoader {
         }
         
     }
-   public void swipeImage(){
-       new Handler().postDelayed(new Runnable() {
-        
-        @Override
-        public void run() {
-            if(!AisleLoader.isScrolling && aisleContentBrowserHelp != null) {
-            aisleContentBrowserHelp.moveToNextChild();
-            }
-        }
-    }, 500);
-       
-   }
 }

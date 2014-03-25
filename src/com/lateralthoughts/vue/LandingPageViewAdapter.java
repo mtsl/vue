@@ -2,6 +2,7 @@ package com.lateralthoughts.vue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +22,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
     AisleContentClickListener mClickListener;
     private static final String AISLE_STAGE_FOUR = "completed";
+    AisleContentBrowser aisleContentBrowserHelp;
     
     public LandingPageViewAdapter(Context context,
             AisleContentClickListener clickListener) {
@@ -93,6 +95,14 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
         
+        if (!AisleLoader.isScrolling && !AisleLoader.trendingSwipeBlock) {
+            if (holder.aisleContentBrowser.getImageCount() > 1
+                    && aisleContentBrowserHelp == null) {
+                aisleContentBrowserHelp = holder.aisleContentBrowser;
+            }  
+        } else {
+            aisleContentBrowserHelp = null;
+        }
         AisleContext context = holder.mWindowContent.getAisleContext();
         if (context.mIsEmptyAisle) {
             final AisleWindowContent mWindowContent = holder.mWindowContent;
@@ -209,6 +219,12 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     }
     
     public void swipeFromAdapterImage() {
-        mLoader.swipeImage();
+        if (!AisleLoader.isScrolling && aisleContentBrowserHelp != null) {
+            try {
+                aisleContentBrowserHelp.moveToNextChild();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
