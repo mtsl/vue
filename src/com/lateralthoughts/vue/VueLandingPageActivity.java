@@ -129,6 +129,7 @@ public class VueLandingPageActivity extends Activity implements
     private int mTrendingRequstCount = 0;
     public static boolean mLandingScreenActive = false;
     private boolean mIsMyPointsDownLoadDone = false;
+    private boolean mIsAppUpGrade = false;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -136,22 +137,25 @@ public class VueLandingPageActivity extends Activity implements
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
+        // One bad solution for empty screen issue, simply restarting the
+        // activity when upgrade app.
         
         try {
             SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
                     VueConstants.SHAREDPREFERENCE_NAME, 0);
-            long versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-         long currentVersion = sharedPreferencesObj.getLong(
+            long versionCode = getPackageManager().getPackageInfo(
+                    getPackageName(), 0).versionCode;
+            long currentVersion = sharedPreferencesObj.getLong(
                     VueConstants.VERSION_CODE_CHANGE, 0);
-            if(versionCode != currentVersion){
-            Editor editor = sharedPreferencesObj.edit();
-            editor.putLong(VueConstants.VERSION_CODE_CHANGE,
-                    versionCode);
-            editor.commit();
-            finish();
-            
-            Intent i = new Intent(this,VueLandingPageActivity.class);
-            startActivity(i);
+            if (versionCode != currentVersion) {
+                mIsAppUpGrade = true;
+                Editor editor = sharedPreferencesObj.edit();
+                editor.putLong(VueConstants.VERSION_CODE_CHANGE, versionCode);
+                editor.commit();
+                Intent i = new Intent(this, OnUpGrade.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.fade_in_activity,
+                        R.anim.fade_out_activity);
             }
         } catch (NameNotFoundException e1) {
             e1.printStackTrace();
@@ -438,6 +442,9 @@ public class VueLandingPageActivity extends Activity implements
         super.onStop();
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
+        if (mIsAppUpGrade) {
+            finish();
+        }
     }
     
     @Override
@@ -1078,31 +1085,34 @@ public class VueLandingPageActivity extends Activity implements
     }
     
     public void showDiscardOtherAppImageDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VueLandingPageActivity.this);
-       alertDialogBuilder.setMessage(getResources().getString(
-               R.string.discard_othersource_image_mesg));
-       alertDialogBuilder.setTitle("Vue");
-        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-                   mOtherSourceImagePath = null;
-                   mOtherSourceImageLookingFor = null;
-                   mOtherSourceImageCategory = null;
-                   mOtherSourceImageOccasion = null;
-                   mOtherSourceImageUrl = null;
-                   mOtherSourceImageWidth = 0;
-                   mOtherSourceImageHeight = 0;
-                   mOtherSourceImageDetailsUrl = null;
-                   mOtherSourceImageStore = null;
-                   dialog.cancel();
-              }
-             });
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-               
-                   dialog.cancel();
-           
-               }
-           });
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                VueLandingPageActivity.this);
+        alertDialogBuilder.setMessage(getResources().getString(
+                R.string.discard_othersource_image_mesg));
+        alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mOtherSourceImagePath = null;
+                        mOtherSourceImageLookingFor = null;
+                        mOtherSourceImageCategory = null;
+                        mOtherSourceImageOccasion = null;
+                        mOtherSourceImageUrl = null;
+                        mOtherSourceImageWidth = 0;
+                        mOtherSourceImageHeight = 0;
+                        mOtherSourceImageDetailsUrl = null;
+                        mOtherSourceImageStore = null;
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                        
+                    }
+                });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -1687,20 +1697,6 @@ public class VueLandingPageActivity extends Activity implements
                     mLandingScreenName = intent
                             .getStringExtra(VueConstants.LANDING_SCREEN_RECEIVER_KEY);
                     invalidateOptionsMenu();
-                    if (!mIsMyPointsDownLoadDone) {
-                        // load lazily after completion of all trending initial data
-                        // loading
-                        int waitTime = 1000;
-                        new Handler().postDelayed(new Runnable() {
-                            
-                            @Override
-                            public void run() {
-                                MyPoints points = new MyPoints();
-                                points.execute();
-                            }
-                        }, waitTime);
-                        
-                    }
                 }
             }
         }
@@ -2149,28 +2145,5 @@ public class VueLandingPageActivity extends Activity implements
     
     public interface ShareImage {
         public void setShareImage(boolean value);
-    }
-    private class MyPoints extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            VueLandingPageActivity.sMyPointsAvailable = false;
-        }
-        
-        @Override
-        protected Void doInBackground(Void... params) {
-            mIsMyPointsDownLoadDone = true;
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            VueTrendingAislesDataModel
-                    .getInstance(VueApplication.getInstance())
-                    .getNetworkHandler().getMyAislesPoints();
-            VueLandingPageActivity.sMyPointsAvailable = true;
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
     }
 }

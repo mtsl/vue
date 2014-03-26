@@ -18,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,8 +58,9 @@ public class VueLandingAislesFragment extends Fragment {
     public boolean mIsFlingCalled;
     
     public boolean mIsIdleState;
+    private ProgressBar mTrendingLoad;
     private boolean mHelpDialogShown = false;
-    //private boolean mIsMyPointsDownLoadDone = false;
+    private boolean mIsMyPointsDownLoadDone = false;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -74,7 +74,6 @@ public class VueLandingAislesFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
-        
         // without much ado lets get started with retrieving the trending aisles
         // list
         mVueContentGateway = VueContentGateway.getInstance();
@@ -107,6 +106,7 @@ public class VueLandingAislesFragment extends Fragment {
         View v = inflater.inflate(R.layout.aisles_view_fragment, container,
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
+        mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         mStaggeredView.setItemMargin(margin); // set the GridView margin
         SharedPreferences sharedPreferencesObj = getActivity()
@@ -132,7 +132,7 @@ public class VueLandingAislesFragment extends Fragment {
                 switch (i) {
                 case SCROLL_STATE_FLING:
                 case SCROLL_STATE_TOUCH_SCROLL:
-                     mStaggeredAdapter.setIsScrolling(true);
+                    mStaggeredAdapter.setIsScrolling(true);
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.LOAD_IMAGES_REQUEST_TAG);
                     break;
@@ -142,33 +142,33 @@ public class VueLandingAislesFragment extends Fragment {
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
                     AisleLoader.isScrolling = false;
-                   if(!AisleLoader.trendingSwipeBlock) {
-                       //help swipe it should only display for 3 times.
-                       int waitTimeForNotifyAdapter = 400;
-                       final int waitTimeForCalingAnim = 200;
-                    new Handler().postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            if (null != mStaggeredAdapter) {
-                                mStaggeredAdapter.notifyDataSetChanged();
-                                new Handler().postDelayed(new Runnable() {
-                                    
-                                    @Override
-                                    public void run() { 
-                                        mStaggeredAdapter.swipeFromAdapterImage();
-                                        if (AisleLoader.sTrendingSwipeCount > 3) {
-                                            saveAisleSwip(4);
-                                        }
+                    if (!AisleLoader.trendingSwipeBlock) {
+                        // help swipe it should only display for 3 times.
+                        int waitTimeForNotifyAdapter = 400;
+                        final int waitTimeForCalingAnim = 200;
+                        new Handler().postDelayed(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                if (null != mStaggeredAdapter) {
+                                    mStaggeredAdapter.notifyDataSetChanged();
+                                    new Handler().postDelayed(new Runnable() {
                                         
-                                    }
-                                }, waitTimeForCalingAnim);
-                               
-                                
-                            }                            
-                        }
-                    }, waitTimeForNotifyAdapter);
-                   }
+                                        @Override
+                                        public void run() {
+                                            mStaggeredAdapter
+                                                    .swipeFromAdapterImage();
+                                            if (AisleLoader.sTrendingSwipeCount > 3) {
+                                                saveAisleSwip(4);
+                                            }
+                                            
+                                        }
+                                    }, waitTimeForCalingAnim);
+                                    
+                                }
+                            }
+                        }, waitTimeForNotifyAdapter);
+                    }
                     break;
                 }
             }
@@ -201,6 +201,9 @@ public class VueLandingAislesFragment extends Fragment {
             }
         });
         mStaggeredView.setAdapter(mStaggeredAdapter);
+        // TODO: examine this code whether empty space is getting or not in
+        // trending list view.
+        mStaggeredAdapter.notifyDataSetChanged();
         return v;
     }
     
@@ -273,7 +276,7 @@ public class VueLandingAislesFragment extends Fragment {
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
                     + " started***********************\n";
-            writeSdCard = writeSdCard + "\n ProfileImageUrl: "+profileUrl;
+            writeSdCard = writeSdCard + "\n ProfileImageUrl: " + profileUrl;
             writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
                     + "\n" + "Smallest Image Height: "
                     + windowItem.getImageList().get(0).mTrendingImageHeight
@@ -316,12 +319,35 @@ public class VueLandingAislesFragment extends Fragment {
         
         @Override
         public void hideProgressBar(int count) {
-    
+            if (mTrendingLoad.getVisibility() == View.VISIBLE) {
+                mTrendingLoad.setVisibility(View.GONE);
+                notifyAdapters();
+                if (!mIsMyPointsDownLoadDone) {
+                    // load lazily after completion of all trending initial data
+                    // loading
+                    int waitTime = 10000;
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            MyPoints points = new MyPoints();
+                            points.execute();
+                        }
+                    }, waitTime);
+                    
+                }
+            }
         }
         
         @Override
         public void showProgressBar(int count) {
-    
+            if (mTrendingLoad.getVisibility() == View.GONE) {
+                if (VueLandingPageActivity.mLandingScreenActive) {
+                    mTrendingLoad.setVisibility(View.VISIBLE);
+                } else {
+                    mTrendingLoad.setVisibility(View.GONE);
+                }
+            }
         }
     }
     
@@ -380,6 +406,31 @@ public class VueLandingAislesFragment extends Fragment {
             e.printStackTrace();
         }
     }
+    
+    private class MyPoints extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            VueLandingPageActivity.sMyPointsAvailable = false;
+        }
+        
+        @Override
+        protected Void doInBackground(Void... params) {
+            mIsMyPointsDownLoadDone = true;
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler().getMyAislesPoints();
+            VueLandingPageActivity.sMyPointsAvailable = true;
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+    
     private void saveAisleSwip(int count) {
         SharedPreferences sharedPreferencesObj = getActivity()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);

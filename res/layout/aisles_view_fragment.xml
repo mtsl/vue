@@ -10,4 +10,12 @@
         android:id="@+id/aisles_grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
+
+    <ProgressBar
+        android:id="@+id/trending_load"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>
