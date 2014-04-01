@@ -30,7 +30,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.READ_OWNER_DATA" />
-
     <!-- wake the processor if a GCM message is received -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
