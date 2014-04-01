@@ -267,6 +267,7 @@ public class ArcMenu extends RelativeLayout {
             break;
         // Browser
         case 2:
+            createAisleSelectionActivity.trackBrowserClickEvent();
             Utils.setLoadDataentryScreenFlag(context, true);
             // Load Browser...
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri

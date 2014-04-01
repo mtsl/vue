@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,8 +19,8 @@ import android.provider.MediaStore;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -76,6 +79,14 @@ public class CreateAisleSelectionActivity extends Activity {
             @Override
             public void onClick(View arg0) {
                 if (!mIsClickedFlag) {
+                    JSONObject createAisleSelectionProps = new JSONObject();
+                    try {
+                        createAisleSelectionProps.put("next action",
+                                "canceling the operation");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("source selected", createAisleSelectionProps);
                     mIsClickedFlag = true;
                     mDataentryArcMenu.arcLayout.switchState(true);
                 }
@@ -134,6 +145,14 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void galleryIntent() {
+        JSONObject createAisleSelectionProps = new JSONObject();
+        try {
+            createAisleSelectionProps
+                    .put("next action", "Gallery was selected");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("source selected", createAisleSelectionProps);
         mixpanel.track("Selected Gallery", null);
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -142,6 +161,13 @@ public class CreateAisleSelectionActivity extends Activity {
     }
     
     private void cameraIntent() {
+        JSONObject createAisleSelectionProps = new JSONObject();
+        try {
+            createAisleSelectionProps.put("next action", "Camera was selected");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("source selected", createAisleSelectionProps);
         mixpanel.track("Selected Camera", null);
         mCameraImageName = Utils
                 .vueAppCameraImageFileName(CreateAisleSelectionActivity.this);
@@ -190,14 +216,23 @@ public class CreateAisleSelectionActivity extends Activity {
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
         boolean flag = sharedPreferences.getBoolean("dontshowpopup", false);
         if (flag) {
-            otherSourceIntent(activityName, packageName);
+            otherSourceIntent(activityName, packageName, appName);
         } else {
             openHintDialog("OtherSource", appName, activityName, packageName);
         }
     }
     
-    private void otherSourceIntent(String activityName, String packageName) {
+    private void otherSourceIntent(String activityName, String packageName,
+            String appName) {
         if (Utils.appInstalledOrNot(packageName, this)) {
+            JSONObject createAisleSelectionProps = new JSONObject();
+            try {
+                createAisleSelectionProps.put("next action", appName
+                        + " was selected");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mixpanel.track("source selected", createAisleSelectionProps);
             Intent shoppingAppIntent = new Intent(
                     android.content.Intent.ACTION_VIEW);
             shoppingAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -320,6 +355,14 @@ public class CreateAisleSelectionActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!mFromCreateAilseScreenFlag) {
                 if (!mIsClickedFlag) {
+                    JSONObject createAisleSelectionProps = new JSONObject();
+                    try {
+                        createAisleSelectionProps.put("next action",
+                                "back button was pressed");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mixpanel.track("source selected", createAisleSelectionProps);
                     mIsClickedFlag = true;
                     mDataentryArcMenu.arcLayout.switchState(true);
                 }
@@ -375,7 +418,7 @@ public class CreateAisleSelectionActivity extends Activity {
         alertDialog.show();
     }
     
-    private void openHintDialog(final String source, String app,
+    private void openHintDialog(final String source, final String app,
             final String activityName, final String packageName) {
         mAlertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(
                 CreateAisleSelectionActivity.this, R.style.AppBaseTheme));
@@ -398,7 +441,7 @@ public class CreateAisleSelectionActivity extends Activity {
                         } else if (source.equalsIgnoreCase("Camera")) {
                             cameraIntent();
                         } else {
-                            otherSourceIntent(activityName, packageName);
+                            otherSourceIntent(activityName, packageName, app);
                         }
                     }
                 });
@@ -411,7 +454,7 @@ public class CreateAisleSelectionActivity extends Activity {
                         } else if (source.equalsIgnoreCase("Camera")) {
                             cameraIntent();
                         } else {
-                            otherSourceIntent(activityName, packageName);
+                            otherSourceIntent(activityName, packageName, app);
                         }
                     }
                 });
@@ -458,7 +501,7 @@ public class CreateAisleSelectionActivity extends Activity {
                     } else if (source.equals("Gallery")) {
                         galleryIntent();
                     } else {
-                        otherSourceIntent(activityName, packageName);
+                        otherSourceIntent(activityName, packageName, app);
                     }
                 }
             }
@@ -489,5 +532,16 @@ public class CreateAisleSelectionActivity extends Activity {
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+    
+    public void trackBrowserClickEvent() {
+        JSONObject createAisleSelectionProps = new JSONObject();
+        try {
+            createAisleSelectionProps
+                    .put("next action", "Browser was selected");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.track("source selected", createAisleSelectionProps);
     }
 }
