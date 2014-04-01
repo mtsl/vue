@@ -25,19 +25,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -121,7 +118,7 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean sMyPointsAvailable = false;
     
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
-    public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60 ;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
     private boolean mShowSwipeHelp = false;
@@ -130,6 +127,7 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean mLandingScreenActive = false;
     private boolean mIsMyPointsDownLoadDone = false;
     private boolean mIsAppUpGrade = false;
+    private boolean mIsClearDataExcuted = false;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -140,26 +138,20 @@ public class VueLandingPageActivity extends Activity implements
         // One bad solution for empty screen issue, simply restarting the
         // activity when upgrade app.
         
-        try {
-            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
-                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-            long versionCode = getPackageManager().getPackageInfo(
-                    getPackageName(), 0).versionCode;
-            long currentVersion = sharedPreferencesObj.getLong(
-                    VueConstants.VERSION_CODE_CHANGE, 0);
-            if (versionCode != currentVersion) {
-                mIsAppUpGrade = true;
-                Editor editor = sharedPreferencesObj.edit();
-                editor.putLong(VueConstants.VERSION_CODE_CHANGE, versionCode);
-                editor.commit();
-                Intent i = new Intent(this, OnUpGrade.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.fade_in_activity,
-                        R.anim.fade_out_activity);
-            }
-        } catch (NameNotFoundException e1) {
-            e1.printStackTrace();
-        }
+        /*
+         * try { SharedPreferences sharedPreferencesObj =
+         * this.getSharedPreferences( VueConstants.SHAREDPREFERENCE_NAME, 0);
+         * long versionCode = getPackageManager().getPackageInfo(
+         * getPackageName(), 0).versionCode; long currentVersion =
+         * sharedPreferencesObj.getLong( VueConstants.VERSION_CODE_CHANGE, 0);
+         * if (versionCode != currentVersion) { mIsAppUpGrade = true; Editor
+         * editor = sharedPreferencesObj.edit();
+         * editor.putLong(VueConstants.VERSION_CODE_CHANGE, versionCode);
+         * editor.commit(); Intent i = new Intent(this, OnUpGrade.class);
+         * startActivity(i); overridePendingTransition(R.anim.fade_in_activity,
+         * R.anim.fade_out_activity); } } catch (NameNotFoundException e1) {
+         * e1.printStackTrace(); }
+         */
         
         if (VueConnectivityManager.isNetworkConnected(this)) {
             try {
@@ -442,6 +434,7 @@ public class VueLandingPageActivity extends Activity implements
         super.onStop();
         long time_in_mins = Utils.getMins(System.currentTimeMillis());
         VueApplication.getInstance().saveTrendingRefreshTime(time_in_mins);
+        mIsClearDataExcuted = false;
         if (mIsAppUpGrade) {
             finish();
         }
@@ -751,45 +744,42 @@ public class VueLandingPageActivity extends Activity implements
                     fromDialog);
             
         }
-        new Handler().postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                Rect rect = new Rect();
-                Window window = VueLandingPageActivity.this.getWindow();
-                window.getDecorView().getWindowVisibleDisplayFrame(rect);
-                int statusBarHeight = rect.top;
-                VueApplication.getInstance().setmStatusBarHeight(
-                        statusBarHeight);
-                if (VueConnectivityManager
-                        .isNetworkConnected(VueLandingPageActivity.this)) {
-                    SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this
-                            .getSharedPreferences(
-                                    VueConstants.SHAREDPREFERENCE_NAME, 0);
-                    mLastRefreshTime = sharedPreferencesObj.getLong(
-                            VueConstants.SCREEN_REFRESH_TIME, 0);
-                    if (mLastRefreshTime != 0) {
-                        long currentTime = System.currentTimeMillis();
-                        long currentMins = Utils.getMins(currentTime);
-                        long difMins = currentMins - mLastRefreshTime;
-                        if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
-                            // Clean the data and fetch from server again.
-                            Toast.makeText(VueLandingPageActivity.this,
-                                    "Syncing with server", Toast.LENGTH_SHORT)
-                                    .show();
-                            StackViews.getInstance().clearStack();
-                            VueTrendingAislesDataModel
-                                    .getInstance(VueApplication.getInstance())
-                                    .getNetworkHandler().clearList(null);
-                            VueTrendingAislesDataModel.getInstance(
-                                    VueApplication.getInstance())
-                                    .getFreshDataFromServer();
-                            mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
-                        }
+        
+        Rect rect = new Rect();
+        Window window = VueLandingPageActivity.this.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rect);
+        int statusBarHeight = rect.top;
+        VueApplication.getInstance().setmStatusBarHeight(statusBarHeight);
+        if (!mIsClearDataExcuted) {
+            if (VueConnectivityManager
+                    .isNetworkConnected(VueLandingPageActivity.this)) {
+                SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this
+                        .getSharedPreferences(
+                                VueConstants.SHAREDPREFERENCE_NAME, 0);
+                mLastRefreshTime = sharedPreferencesObj.getLong(
+                        VueConstants.SCREEN_REFRESH_TIME, 0);
+                if (mLastRefreshTime != 0) {
+                    long currentTime = System.currentTimeMillis();
+                    long currentMins = Utils.getMins(currentTime);
+                    long difMins = currentMins - mLastRefreshTime;
+                    if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                        mIsClearDataExcuted = true;
+                        // Clean the data and fetch from server again.
+                        Toast.makeText(VueLandingPageActivity.this,
+                                "Syncing with server", Toast.LENGTH_SHORT)
+                                .show();
+                        StackViews.getInstance().clearStack();
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler().clearList(null);
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance())
+                                .getFreshDataFromServer();
+                        mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
                     }
                 }
             }
-        }, DELAY_TIME);
+        }
         getActionBar().setDisplayHomeAsUpEnabled(true);
         VueUser storedVueUser = null;
         try {
@@ -828,6 +818,36 @@ public class VueLandingPageActivity extends Activity implements
                                                          // images
             }
         } else {
+            if (!mIsClearDataExcuted) {
+                if (VueConnectivityManager
+                        .isNetworkConnected(VueLandingPageActivity.this)) {
+                    SharedPreferences sharedPreferencesObj = VueLandingPageActivity.this
+                            .getSharedPreferences(
+                                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+                    mLastRefreshTime = sharedPreferencesObj.getLong(
+                            VueConstants.SCREEN_REFRESH_TIME, 0);
+                    if (mLastRefreshTime != 0) {
+                        long currentTime = System.currentTimeMillis();
+                        long currentMins = Utils.getMins(currentTime);
+                        long difMins = currentMins - mLastRefreshTime;
+                        if (difMins > VueLandingPageActivity.SCREEN_REFRESH_TIME) {
+                            mIsClearDataExcuted = true;
+                            // Clean the data and fetch from server again.
+                            Toast.makeText(VueLandingPageActivity.this,
+                                    "Syncing with server", Toast.LENGTH_SHORT)
+                                    .show();
+                            StackViews.getInstance().clearStack();
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getNetworkHandler().clearList(null);
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .getFreshDataFromServer();
+                            mLandingScreenName = getString(R.string.sidemenu_option_Trending_Aisles);
+                        }
+                    }
+                }
+            }
             loadDetailsScreenForNotificationClick(intent.getExtras());
         }
     }
