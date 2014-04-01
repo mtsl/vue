@@ -1,6 +1,7 @@
 package com.lateralthoughts.vue.connectivity;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -249,8 +251,9 @@ public class NetworkHandler {
     
     public void loadInitialData(boolean loadMore, final Handler mHandler,
             String screenName) {
-        getAllSharedIds();
-        getBookmarkAisleByUser();
+        getAllSharedIds(); 
+        //getBookmarkAisleByUser();
+        getBookMarkAisleByUserRequest();
         getRatedImageList();
         
         offset = 0;
@@ -625,7 +628,49 @@ public class NetworkHandler {
         }).start();
         
     }
-    
+    public void getBookMarkAisleByUserRequest(){
+        String userId = getUserId();
+        if (userId == null || mUserBookmarksLoaded) {
+            return;
+        }
+        
+        JsonArrayRequest vueRequest = new JsonArrayRequest(
+                UrlConstants.GET_BOOKMARK_Aisles + "/" + userId + "/" + "0",
+                new Response.Listener<JSONArray>() {
+                    
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (null != response) { 
+                            ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
+                        .parseBookmarkedAisles(response.toString());
+                            Log.i("BookmardedList", "BookmardedList: "+bookmarkedAisles.size());
+                mUserBookmarksLoaded = true;
+                bookmarkedList.clear();
+                boolean isDirty = false;
+                for (AisleBookmark aB : bookmarkedAisles) {
+                    DataBaseManager.getInstance(mContext)
+                            .updateBookmarkAisles(aB.getId(),
+                                    Long.toString(aB.getAisleId()),
+                                    aB.getBookmarked(), isDirty);
+                    
+                    if (aB.getBookmarked()) {
+                        bookmarkedList.add(String.valueOf(aB
+                                .getAisleId()));
+                    }
+                }
+                VueTrendingAislesDataModel.getInstance(
+                        VueApplication.getInstance())
+                        .updateBookmarkAisleStatus(bookmarkedList);}
+                        
+                    }
+                }, new Response.ErrorListener() {
+                    
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+    }
     public boolean isAisleBookmarked(String aisleId) {
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.BOOKMARKER_AISLES_URI, null,
@@ -752,7 +797,7 @@ public class NetworkHandler {
         String userId = getUserId();
         if (userId == null || mUserRatedImagesLoaded) {
             return;
-        }  
+        }   
         JsonArrayRequest vueRequest = new JsonArrayRequest(
                 UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
                 new Response.Listener<JSONArray>() {

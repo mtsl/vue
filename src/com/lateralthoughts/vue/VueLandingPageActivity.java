@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -154,7 +155,7 @@ public class VueLandingPageActivity extends Activity implements
          */
         
         if (VueConnectivityManager.isNetworkConnected(this)) {
-            try {
+            try { 
                 trimCache(this);
             } catch (Exception e) {
                 e.printStackTrace();
