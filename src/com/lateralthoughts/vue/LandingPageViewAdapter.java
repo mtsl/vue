@@ -35,11 +35,6 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     @Override
     public int getCount() {
         int count = mVueTrendingAislesDataModel.getAisleCount();
-        if (count == 0) {
-            mClickListener.showProgressBar(count);
-        } else {
-            mClickListener.hideProgressBar(count);
-        }
         return count;
     }
     

@@ -66,8 +66,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
             ArrayList<AisleWindowContent> content) {
         mContext = c;
         
-        mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-                .getInstance(mContext);
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
         mLoader = AisleLoader.getInstance(mContext);
         mIsScrolling = false;
