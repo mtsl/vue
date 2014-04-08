@@ -1799,6 +1799,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 
             }
             if (mCurrentAisle.getImageList().get(position).mIsFromLocalSystem) {
+                //to show the image immediately added when added image from sd card or camera
                 String url = mCurrentAisle.getImageList().get(position).mImageUrl;
                 Bitmap bmp = BitmapLoaderUtils
                         .getInstance()
@@ -1987,7 +1988,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
             public void run() {
                 // to make sure the pager is not refresh when like and dislike
                 // the image and when bookmarked the aislse.
-                mSetPager = true;
+                mSetPager = true; 
             }
         }, mLikePageDelay);
     }
