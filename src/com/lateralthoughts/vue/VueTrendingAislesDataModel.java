@@ -59,6 +59,7 @@ public class VueTrendingAislesDataModel {
     private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
     public DataBaseManager mDbManager;
     NetworkHandler mNetworkHandler;
+    ArrayList<NotifyAislesLoadedFromNetwork> mAislesLoadNotificationListeners;
     
     private VueTrendingAislesDataModel(Context context) {
         mContext = context;
@@ -76,8 +77,8 @@ public class VueTrendingAislesDataModel {
                 - VueApplication.getInstance().mLastRecordedTime;
         VueApplication.getInstance().mLastRecordedTime = System
                 .currentTimeMillis();
-        mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
-                .getResources().getString(R.string.trending));
+        mNetworkHandler.loadInitialData(loadMore, mHandler, mContext.getResources().getString(R.string.trending));
+        mAislesLoadNotificationListeners = new ArrayList<NotifyAislesLoadedFromNetwork>();
     }
     
     public NetworkHandler getNetworkHandler() {
@@ -217,8 +218,7 @@ public class VueTrendingAislesDataModel {
     
     public static VueTrendingAislesDataModel getInstance(Context context) {
         if (null == sVueTrendingAislesDataModel) {
-            sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(
-                    context);
+            sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(context);
         }
         return sVueTrendingAislesDataModel;
     }
@@ -406,10 +406,18 @@ public class VueTrendingAislesDataModel {
         }
         return userImageList;
     }
-    
+
+    public void registerAisleLoadNotificationListeners(NotifyAislesLoadedFromNetwork listener){
+        if(null != listener)
+            mAislesLoadNotificationListeners.add(listener);
+    }
+
     public void dismissProgress() {
         if (mNotifyProgress != null) {
             mNotifyProgress.dismissProgress(mRequestToServer);
+        }
+        for(int i=0;i<mAislesLoadNotificationListeners.size();i++){
+            mAislesLoadNotificationListeners.get(i).aislesLoadedFromNetwork();
         }
     }
     
