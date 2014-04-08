@@ -95,7 +95,7 @@ public class VueContentGateway {
                      if (null != jsonArray) {
                         if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
                             mNomoreTrendingAilse = true;
-                        }
+                         } 
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
