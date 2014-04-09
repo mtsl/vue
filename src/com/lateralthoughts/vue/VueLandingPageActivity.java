@@ -118,7 +118,7 @@ public class VueLandingPageActivity extends Activity implements
     public static boolean sMyPointsAvailable = false;
     
     // SCREEN REFRESH TIME THRESHOLD IN MINUTES.
-    public static final long SCREEN_REFRESH_TIME = 2 * 60 ;// 120 mins.
+    public static final long SCREEN_REFRESH_TIME = 2 * 60;// 120 mins.
     public static long mLastRefreshTime;
     private ShareDialog mShare = null;
     private boolean mShowSwipeHelp = false;
@@ -135,26 +135,8 @@ public class VueLandingPageActivity extends Activity implements
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.vue_landing_main);
-        // One bad solution for empty screen issue, simply restarting the
-        // activity when upgrade app.
-        
-        /*
-         * try { SharedPreferences sharedPreferencesObj =
-         * this.getSharedPreferences( VueConstants.SHAREDPREFERENCE_NAME, 0);
-         * long versionCode = getPackageManager().getPackageInfo(
-         * getPackageName(), 0).versionCode; long currentVersion =
-         * sharedPreferencesObj.getLong( VueConstants.VERSION_CODE_CHANGE, 0);
-         * if (versionCode != currentVersion) { mIsAppUpGrade = true; Editor
-         * editor = sharedPreferencesObj.edit();
-         * editor.putLong(VueConstants.VERSION_CODE_CHANGE, versionCode);
-         * editor.commit(); Intent i = new Intent(this, OnUpGrade.class);
-         * startActivity(i); overridePendingTransition(R.anim.fade_in_activity,
-         * R.anim.fade_out_activity); } } catch (NameNotFoundException e1) {
-         * e1.printStackTrace(); }
-         */
-        
         if (VueConnectivityManager.isNetworkConnected(this)) {
-            try { 
+            try {
                 trimCache(this);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -180,6 +162,7 @@ public class VueLandingPageActivity extends Activity implements
         VueApplication.getInstance().mLastRecordedTime = System
                 .currentTimeMillis();
         invalidateOptionsMenu();
+        clearHelpImages();
     }
     
     @Override
@@ -361,9 +344,9 @@ public class VueLandingPageActivity extends Activity implements
                             .setActionView(R.layout.actionbar_indeterminate_progress);
                 } else {
                     refreshItem.setActionView(null);
-                } 
+                }
             }
-        } 
+        }
     }
     
     @Override
@@ -2157,6 +2140,19 @@ public class VueLandingPageActivity extends Activity implements
             });
         }
         return mVueLandingActionbarView;
+    }
+    
+    public void clearHelpImages() {
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+                FileCache fileCache = new FileCache(VueLandingPageActivity.this);
+                fileCache.clearHelpImages();
+            }
+        }).start();
+        
     }
     
     public interface OnShare {

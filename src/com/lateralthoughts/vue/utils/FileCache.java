@@ -147,7 +147,13 @@ public class FileCache {
         for (File f : files)
             f.delete();
     }
-    
+    public void clearHelpImages() { 
+        File[] files = mHelpPicDir.listFiles();
+        if (files == null)
+            return;
+        for (File f : files)
+            f.delete();
+    }
     public void clearTwoDaysOldPictures() {
         File[] files = mCacheDir.listFiles();
         if (files == null) {
