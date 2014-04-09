@@ -130,8 +130,8 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsAppUpGrade = false;
     private boolean mIsClearDataExcuted = false;
     
-    @Override
-    public void onCreate(Bundle icicle) {
+    @Override 
+    public void onCreate(Bundle icicle) { 
         super.onCreate(icicle);
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);

@@ -92,6 +92,7 @@ public class VueContentGateway {
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
+                    Log.e("VueContentGateWay", "on Response called : ");  
                      if (null != jsonArray) {
                         if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
                             mNomoreTrendingAilse = true;

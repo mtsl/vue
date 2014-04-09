@@ -183,7 +183,7 @@ public class DataBaseManager {
 	private void addAislesToDB(Context context,
 			List<AisleWindowContent> contentList, int offsetValue,
 			int whichScreen, boolean isBookmarkedAisle) {
-		if (contentList.size() == 0) {
+		if (contentList == null || contentList.size() == 0) {
 			return;
 		}
 		mAislesOrderMap = new HashMap<String, Integer>();
