@@ -3,6 +3,8 @@ package com.lateralthoughts.vue;
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
@@ -15,6 +17,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -29,6 +33,7 @@ import com.crittercism.app.Crittercism;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
+import com.lateralthoughts.vue.utils.SortResolveInfoBasedOnAppName;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -158,11 +163,6 @@ public class VueApplication extends Application {
     private RequestQueue mVolleyRequestQueue;
     public static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Etsy", "Fancy",
             "Wanelo", "Amazon", "Pinterest" };
-    public static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
-            "com.etsy.android.ui.HomeActivity", "com.thefancy.app.common.Main",
-            "com.wanelo.android.ui.activity.LoginActivity",
-            "com.amazon.mShop.home.HomeActivity",
-            "com.pinterest.activity.PinterestActivity" };
     public static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
             "com.etsy.android", "com.thefancy.app", "com.wanelo.android",
             "com.amazon.mShop.android", "com.pinterest" };
@@ -336,21 +336,48 @@ public class VueApplication extends Application {
     public void getInstalledApplications(final Context context) {
         new Thread(new Runnable() {
             
+            @SuppressWarnings("unchecked")
             @Override
             public void run() {
                 mInstalledAppsLoadStatus = false;
                 mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
-                for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
-                    if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i],
-                            context)) {
+                Intent intent = new Intent("android.intent.action.MAIN", null);
+                intent.addCategory("android.intent.category.LAUNCHER");
+                List<ResolveInfo> activities = context.getPackageManager()
+                        .queryIntentActivities(intent, 0);
+                if (activities != null) {
+                    Collections.sort(activities,
+                            new SortResolveInfoBasedOnAppName());
+                }
+                PackageManager pm = context.getPackageManager();
+                final Object a[] = activities.toArray();
+                for (int i = 0; i < activities.size(); i++) {
+                    boolean isSystemApp = false;
+                    try {
+                        isSystemApp = Utils.isSystemPackage(pm
+                                .getPackageInfo(
+                                        ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName,
+                                        PackageManager.GET_ACTIVITIES));
+                    } catch (NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    String packageName = ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName;
+                    if (!isSystemApp
+                            && !(packageName.equals("com.lateralthoughts.vue"))
+                            && (Arrays
+                                    .asList(VueApplication.SHOPPINGAPP_PACKAGES_ARRAY)
+                                    .contains(packageName))) {
                         ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
-                                SHOPPINGAPP_NAMES_ARRAY[i],
-                                SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-                                SHOPPINGAPP_PACKAGES_ARRAY[i], null);
+                                ((ResolveInfo) a[i]).activityInfo.applicationInfo
+                                        .loadLabel(context.getPackageManager())
+                                        .toString(),
+                                ((ResolveInfo) a[i]).activityInfo.name,
+                                packageName, null);
                         mShoppingApplicationDetailsList
                                 .add(shoppingApplicationDetails);
                     }
                 }
+                orderAppList();
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
@@ -371,5 +398,23 @@ public class VueApplication extends Application {
             }
         }).start();
         
+    }
+    
+    private void orderAppList() {
+        if (mShoppingApplicationDetailsList != null) {
+            for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
+                for (ShoppingApplicationDetails shoppingApplicationDetails : mShoppingApplicationDetailsList) {
+                    if (shoppingApplicationDetails.getAppName()
+                            .equalsIgnoreCase(SHOPPINGAPP_NAMES_ARRAY[i])) {
+                        mShoppingApplicationDetailsList
+                                .remove(shoppingApplicationDetails);
+                        mShoppingApplicationDetailsList.add(i,
+                                shoppingApplicationDetails);
+                        break;
+                    }
+                }
+                
+            }
+        }
     }
 }

@@ -36,6 +36,7 @@ import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
 import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -47,7 +48,7 @@ import com.origamilabs.library.views.StaggeredGridView;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends Fragment {
+public class VueLandingAislesFragment extends Fragment implements NotifyAislesLoadedFromNetwork {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
     private LandingPageViewAdapter mStaggeredAdapter;
@@ -61,6 +62,8 @@ public class VueLandingAislesFragment extends Fragment {
     private ProgressBar mTrendingLoad;
     private boolean mHelpDialogShown = false;
     private boolean mIsMyPointsDownLoadDone = false;
+    private int mGridDynamicMargins;
+    private boolean mShowProgressBarWhenAppropriate;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -82,8 +85,8 @@ public class VueLandingAislesFragment extends Fragment {
         }
         
         mAisleClickListener = new AisleClickListener();
-        mStaggeredAdapter = new LandingPageViewAdapter(mContext,
-                mAisleClickListener);
+        mStaggeredAdapter = new LandingPageViewAdapter(mContext, mAisleClickListener);
+        VueTrendingAislesDataModel.getInstance(mContext).registerAisleLoadNotificationListeners(this);
     }
     
     @Override
@@ -107,8 +110,16 @@ public class VueLandingAislesFragment extends Fragment {
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
         mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
-        int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-        mStaggeredView.setItemMargin(margin); // set the GridView margin
+
+        /*if(null != mAisleClickListener){
+            //Assert here? this can't be happening!
+            mAisleClickListener.hideProgressBar(0);
+        }else{
+            Logging.e("LandingAislesFragment","mAisleClickListener is not initialized but we are trying to hide progress bar!");
+        }*/
+
+        mGridDynamicMargins = getResources().getDimensionPixelSize(R.dimen.margin);
+        mStaggeredView.setItemMargin(mGridDynamicMargins); // set the GridView margin
         SharedPreferences sharedPreferencesObj = getActivity()
                 .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
         int trendingSwipeCountMaxReached = sharedPreferencesObj.getInt(
@@ -116,7 +127,7 @@ public class VueLandingAislesFragment extends Fragment {
         if (trendingSwipeCountMaxReached > 3) {
             AisleLoader.trendingSwipeBlock = true;
         }
-        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on
+        mStaggeredView.setPadding(mGridDynamicMargins, 0, mGridDynamicMargins, 0); // have the margin on
                                                          // the sides as well
         mStaggeredView.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -139,8 +150,14 @@ public class VueLandingAislesFragment extends Fragment {
                 
                 case SCROLL_STATE_IDLE:
                     mStaggeredAdapter.setIsScrolling(false);
+
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
+                    if(mShowProgressBarWhenAppropriate){
+
+                        mStaggeredView.invalidate();
+                        mAisleClickListener.showProgressBar(0);
+                    }
                     AisleLoader.isScrolling = false;
                     if (!AisleLoader.trendingSwipeBlock) {
                         // help swipe it should only display for 3 times.
@@ -187,13 +204,14 @@ public class VueLandingAislesFragment extends Fragment {
                             + visibleItemCount;
                     if ((totalItemCount - lastVisiblePosition) < 5) {
                         if (!VueContentGateway.mNomoreTrendingAilse) {
+                            mShowProgressBarWhenAppropriate = true;
+                            mStaggeredView.setPadding(mGridDynamicMargins, 0, mGridDynamicMargins, 50);
                             VueTrendingAislesDataModel
                                     .getInstance(mContext)
                                     .getNetworkHandler()
-                                    .requestMoreAisle(
-                                            true,
-                                            getResources().getString(
-                                                    R.string.trending));
+                                    .requestMoreAisle(true,getResources().getString(R.string.trending));
+                        }else{
+                            mAisleClickListener.hideProgressBar(0);
                         }
                     }
                 }
@@ -206,7 +224,12 @@ public class VueLandingAislesFragment extends Fragment {
         mStaggeredAdapter.notifyDataSetChanged();
         return v;
     }
-    
+
+    @Override
+    public void aislesLoadedFromNetwork() {
+        mAisleClickListener.hideProgressBar(0);
+    }
+
     private class AisleClickListener implements AisleContentClickListener {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
@@ -321,7 +344,7 @@ public class VueLandingAislesFragment extends Fragment {
         public void hideProgressBar(int count) {
             if (mTrendingLoad.getVisibility() == View.VISIBLE) {
                 mTrendingLoad.setVisibility(View.GONE);
-                notifyAdapters();
+                //notifyAdapters();
                 if (!mIsMyPointsDownLoadDone) {
                     // load lazily after completion of all trending initial data
                     // loading
@@ -336,6 +359,9 @@ public class VueLandingAislesFragment extends Fragment {
                     }, waitTime);
                     
                 }
+                mStaggeredView.setPadding(mGridDynamicMargins,0,mGridDynamicMargins,0);
+                mShowProgressBarWhenAppropriate = false;
+                //mStaggeredView.invalidate();
             }
         }
         

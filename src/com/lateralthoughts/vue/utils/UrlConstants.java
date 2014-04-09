@@ -12,7 +12,7 @@ public class UrlConstants {
     public static final String CURRENT_SERVER_PROJECT_ID = DEVELOPMENT_SERVER_PROJECT_ID;
     
     /**
-     * (C)reate routine URL's
+     * (C)reate routine URL's 
      */
     public static final String CREATE_USER_RESTURL = SERVER_BASE_URL
             + "api/usercreate";

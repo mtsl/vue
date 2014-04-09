@@ -63,7 +63,7 @@ public class AisleWindowContent {
         if (createPlaceHolders) {
             mContext = new AisleContext();
             mAisleImagesList = new ArrayList<AisleImageDetails>();
-        }
+        } 
     }
     
     public AisleWindowContent(AisleContext context,
@@ -72,7 +72,7 @@ public class AisleWindowContent {
     
     public void setAisleId(String aisleId) {
         mAisleId = aisleId;
-    }
+    } 
     
     @SuppressWarnings("unchecked")
     public void addAisleContent(AisleContext context,
