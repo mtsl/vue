@@ -228,7 +228,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
                 if (groupPosition == 1) {
                     try{
                     refreshBezelMenu();
-                    }catch(ArrayIndexOutOfBoundsException e){
+                    }catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    } catch(Exception e){
                         e.printStackTrace();
                     }
                 }
