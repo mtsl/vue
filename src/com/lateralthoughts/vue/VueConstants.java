@@ -184,6 +184,7 @@ public class VueConstants {
     public static final String VUE_APP_RESIZED_PICTURES_FOLDER = "VueAppResizedPictures";
     public static final String VUE_APP_USER_PROFILE_PICTURES_FOLDER = "VueAppProfilePicture";
     public static final String VUE_INSTALLED_APP_ICONS_FILENAME = "VueInstalledAppIcons";
+    public static final String VUE_COMPARE_IMAGE_FILENAME = "VueCompareScreenImages";
     public static final String VUE_APP_USEROBJECT__FILENAME = "vueuser.ser";
     public static final String VUE_APP_USERPROFILEOBJECT__FILENAME = "vueuserprofile.ser";
     public static final String DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG = "DATA_ENTRY_FACEBOOK_INVITE_FRIENDS_BUNDLE_FLAG";

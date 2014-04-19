@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -128,7 +129,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        setRetainInstance(true);
+       // setRetainInstance(true);
         mixpanel = mixpanel = MixpanelAPI.getInstance(getActivity(),
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         if (getActivity() instanceof VueLandingPageActivity) {
@@ -171,7 +172,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+       
+        //setRetainInstance(true);
     }
     
     public void onActivityCreated(Bundle savedInstanceState) {

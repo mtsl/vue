@@ -166,7 +166,7 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                 } else {
                     isFromPendingScreen = true;
                 }
-            }
+            } 
             
         } else {
             for (int i = 0; i < mVueTrendingAislesDataModel.getAisleCount(); i++) {

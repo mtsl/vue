@@ -126,7 +126,7 @@ public class Parser {
             }
         }
         aisleImageDetails.mRatingsList = ratingList;
-        aisleImageDetails.mLikesCount = ratingLikeCount;
+        aisleImageDetails.mLikesCount = ratingLikeCount; 
         
         // get the image comment data.
         JSONArray jsonArray = jsonObject
