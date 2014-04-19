@@ -253,8 +253,8 @@ public class NetworkHandler {
     
     public void loadInitialData(boolean loadMore, final Handler mHandler,
             String screenName) {
-        getAllSharedIds(); 
-        //getBookmarkAisleByUser();
+        getAllSharedIds();
+        // getBookmarkAisleByUser();
         getBookMarkAisleByUserRequest();
         getRatedImageList();
         
@@ -630,7 +630,8 @@ public class NetworkHandler {
         }).start();
         
     }
-    public void getBookMarkAisleByUserRequest(){
+    
+    public void getBookMarkAisleByUserRequest() {
         String userId = getUserId();
         if (userId == null || mUserBookmarksLoaded) {
             return;
@@ -642,27 +643,29 @@ public class NetworkHandler {
                     
                     @Override
                     public void onResponse(JSONArray response) {
-                        if (null != response) { 
+                        if (null != response) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
-                        .parseBookmarkedAisles(response.toString());
-                            Log.i("BookmardedList", "BookmardedList: "+bookmarkedAisles.size());
-                mUserBookmarksLoaded = true;
-                bookmarkedList.clear();
-                boolean isDirty = false;
-                for (AisleBookmark aB : bookmarkedAisles) {
-                    DataBaseManager.getInstance(mContext)
-                            .updateBookmarkAisles(aB.getId(),
-                                    Long.toString(aB.getAisleId()),
-                                    aB.getBookmarked(), isDirty);
-                    
-                    if (aB.getBookmarked()) {
-                        bookmarkedList.add(String.valueOf(aB
-                                .getAisleId()));
-                    }
-                }
-                VueTrendingAislesDataModel.getInstance(
-                        VueApplication.getInstance())
-                        .updateBookmarkAisleStatus(bookmarkedList);}
+                                    .parseBookmarkedAisles(response.toString());
+                            Log.i("BookmardedList", "BookmardedList: "
+                                    + bookmarkedAisles.size());
+                            mUserBookmarksLoaded = true;
+                            bookmarkedList.clear();
+                            boolean isDirty = false;
+                            for (AisleBookmark aB : bookmarkedAisles) {
+                                DataBaseManager.getInstance(mContext)
+                                        .updateBookmarkAisles(aB.getId(),
+                                                Long.toString(aB.getAisleId()),
+                                                aB.getBookmarked(), isDirty);
+                                
+                                if (aB.getBookmarked()) {
+                                    bookmarkedList.add(String.valueOf(aB
+                                            .getAisleId()));
+                                }
+                            }
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .updateBookmarkAisleStatus(bookmarkedList);
+                        }
                         
                     }
                 }, new Response.ErrorListener() {
@@ -673,6 +676,7 @@ public class NetworkHandler {
                 });
         VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
+    
     public boolean isAisleBookmarked(String aisleId) {
         Cursor cursor = mContext.getContentResolver().query(
                 VueConstants.BOOKMARKER_AISLES_URI, null,
@@ -799,7 +803,7 @@ public class NetworkHandler {
         String userId = getUserId();
         if (userId == null || mUserRatedImagesLoaded) {
             return;
-        }   
+        }
         JsonArrayRequest vueRequest = new JsonArrayRequest(
                 UrlConstants.GET_RATINGS_RESTURL + "/" + userId + "/" + 0L,
                 new Response.Listener<JSONArray>() {
@@ -1106,31 +1110,37 @@ public class NetworkHandler {
             super(url, listener, errorListener);
         }
     }
-    private void getAllSharedIds(){
-    sharedList =   DataBaseManager.getInstance(VueApplication.getInstance()).getAllSharedValues();
+    
+    private void getAllSharedIds() {
+        sharedList = DataBaseManager.getInstance(VueApplication.getInstance())
+                .getAllSharedValues();
     }
-    public boolean isAisleShared(String aisleId){
-        if(sharedList.contains(aisleId)){
+    
+    public boolean isAisleShared(String aisleId) {
+        if (sharedList.contains(aisleId)) {
             return true;
         }
         return false;
     }
-    public void saveSharedId(String aisleId){
-        if(!sharedList.contains(aisleId)) {
-            sharedList.add(aisleId) ;
+    
+    public void saveSharedId(String aisleId) {
+        if (!sharedList.contains(aisleId)) {
+            sharedList.add(aisleId);
         }
     }
+    
     /*
-     * if it is the first rating object come again dont issue second netowrk call
-     * just save the latest rating object in the queue. After receiving the first rating
-     * response based on the liked status issue the request again.
+     * if it is the first rating object come again dont issue second netowrk
+     * call just save the latest rating object in the queue. After receiving the
+     * first rating response based on the liked status issue the request again.
      */
-    public boolean addImageRatingObject(ImageRatingQueue imageRatingQueueObj){
+    public boolean addImageRatingObject(ImageRatingQueue imageRatingQueueObj) {
         boolean isImageRatingQueueObjExist = false;
         long imageId = imageRatingQueueObj.imageRating.mImageId;
-        for(int i = 0;i<imageRatingQueueList.size();i++){
-            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList.get(i);
-            if(imageId == temImageRatingQueueObj.imageRating.mImageId){
+        for (int i = 0; i < imageRatingQueueList.size(); i++) {
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList
+                    .get(i);
+            if (imageId == temImageRatingQueueObj.imageRating.mImageId) {
                 imageRatingQueueList.remove(temImageRatingQueueObj);
                 isImageRatingQueueObjExist = true;
                 break;
@@ -1139,25 +1149,30 @@ public class NetworkHandler {
         imageRatingQueueList.add(imageRatingQueueObj);
         return isImageRatingQueueObjExist;
     }
-    public boolean isRatingObjectWaitingtoUpload(long imageId,boolean isLiked){
-        for(int i = 0;i<imageRatingQueueList.size();i++){
-            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList.get(i);
-            if(imageId == temImageRatingQueueObj.imageRating.mImageId){
+    
+    public boolean isRatingObjectWaitingtoUpload(long imageId, boolean isLiked,
+            Long id) {
+        for (int i = 0; i < imageRatingQueueList.size(); i++) {
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList
+                    .get(i);
+            if (imageId == temImageRatingQueueObj.imageRating.mImageId) {
                 imageRatingQueueList.remove(temImageRatingQueueObj);
-                if(temImageRatingQueueObj.imageRating.mLiked != isLiked) {
-                  //start the request here to upload imageRating.
+                if (temImageRatingQueueObj.imageRating.mLiked != isLiked) {
+                    // start the request here to upload imageRating.
                     try {
-                        AisleManager.getAisleManager().updateRating(temImageRatingQueueObj.imageRating,
+                        temImageRatingQueueObj.imageRating.mId = id;
+                        AisleManager.getAisleManager().updateRating(
+                                temImageRatingQueueObj.imageRating,
                                 temImageRatingQueueObj.likeCount);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return true;
                 } else {
-                   // do nothing. 
+                    // do nothing.
                 }
                 return false;
-               
+                
             }
         }
         return false;

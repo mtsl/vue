@@ -554,7 +554,8 @@ public class AisleManager {
                                 .getInstance(VueApplication.getInstance())
                                 .getNetworkHandler()
                                 .isRatingObjectWaitingtoUpload(
-                                        imgRating.mImageId, imgRating.mLiked);
+                                        imgRating.mImageId, imgRating.mLiked,
+                                        imgRating.mId);
                         updateImageRatingToDb(imgRating, likeCount, false);
                     } catch (Exception e) {
                         e.printStackTrace();
