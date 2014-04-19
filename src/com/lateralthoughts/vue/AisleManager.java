@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -218,14 +219,17 @@ public class AisleManager {
         // updateImageRatingVolley( imageRating, likeCount);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
-            if(imageRating.mId == null){
+            if (imageRating.mId == null) {
                 ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
                 imageRatingQueueObj.imageRating = imageRating;
                 imageRatingQueueObj.likeCount = likeCount;
-              boolean isObjectExistAlready =  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addImageRatingObject(imageRatingQueueObj);
-              if(isObjectExistAlready){
-                  return;
-              }
+                boolean isObjectExistAlready = VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .addImageRatingObject(imageRatingQueueObj);
+                if (isObjectExistAlready) {
+                    return;
+                }
             }
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
@@ -514,7 +518,12 @@ public class AisleManager {
                                 aisleImageDetails.mRatingsList.add(imgRating);
                             }
                         }
-                       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isRatingObjectWaitingtoUpload(imgRating.mImageId,imgRating.mLiked);
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler()
+                                .isRatingObjectWaitingtoUpload(
+                                        imgRating.mImageId, imgRating.mLiked,
+                                        imgRating.mId);
                         updateImageRatingToDb(imgRating, likeCount, false);
                     } catch (Exception e) {
                         e.printStackTrace();
