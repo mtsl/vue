@@ -380,10 +380,12 @@ public class AisleDetailsViewActivity extends Activity {
                         .findViewById(R.id.vue_compareimg);
                 mViewHolder.likeImage = (ImageView) convertView
                         .findViewById(R.id.compare_like_dislike);
-               /* mViewHolder.pb = (ProgressBar) convertView
-                        .findViewById(R.id.progressBar1);*/
+                /*
+                 * mViewHolder.pb = (ProgressBar) convertView
+                 * .findViewById(R.id.progressBar1);
+                 */
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        mComparisionScreenHeight / 2, 
+                        mComparisionScreenHeight / 2,
                         mComparisionScreenHeight / 2);
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 params.setMargins(VueApplication.getInstance().getPixel(10), 0,
@@ -401,15 +403,28 @@ public class AisleDetailsViewActivity extends Activity {
             mViewHolder.likeImage.setVisibility(View.INVISIBLE);
             mViewHolder.likeImage.setImageResource(R.drawable.thumb_up);
             mViewHolder.compareImage.setImageResource(R.drawable.no_image);
-    /*        BitmapWorkerTask task = new BitmapWorkerTask(null,
-                    mViewHolder.compareImage, mComparisionScreenHeight / 2,
-                    mViewHolder.pb,
-                    mImageDetailsArr.get(position).mIsFromLocalSystem);
-            String[] imagesArray = {
-                    mImageDetailsArr.get(position).mCustomImageUrl,
-                    mImageDetailsArr.get(position).mImageUrl };
-            task.execute(imagesArray);*/
-            loadBitmap(mImageDetailsArr.get(position).mImageUrl, mComparisionScreenHeight / 2, mViewHolder.compareImage);
+            /*
+             * BitmapWorkerTask task = new BitmapWorkerTask(null,
+             * mViewHolder.compareImage, mComparisionScreenHeight / 2,
+             * mViewHolder.pb,
+             * mImageDetailsArr.get(position).mIsFromLocalSystem); String[]
+             * imagesArray = { mImageDetailsArr.get(position).mCustomImageUrl,
+             * mImageDetailsArr.get(position).mImageUrl };
+             * task.execute(imagesArray);
+             */
+            if (!mImageDetailsArr.get(position).mIsFromLocalSystem) {
+                loadBitmap(mImageDetailsArr.get(position).mImageUrl,
+                        mComparisionScreenHeight / 2, mViewHolder.compareImage);
+            } else {
+                BitmapWorkerTask task = new BitmapWorkerTask(null,
+                        mViewHolder.compareImage, mComparisionScreenHeight / 2,
+                        mViewHolder.pb,
+                        mImageDetailsArr.get(position).mIsFromLocalSystem);
+                String[] imagesArray = {
+                        mImageDetailsArr.get(position).mCustomImageUrl,
+                        mImageDetailsArr.get(position).mImageUrl };
+                task.execute(imagesArray);
+            }
             return convertView;
         }
         
@@ -753,8 +768,8 @@ public class AisleDetailsViewActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(progressBar != null)
-            progressBar.setVisibility(View.VISIBLE);
+            if (progressBar != null)
+                progressBar.setVisibility(View.VISIBLE);
         }
         
         // Decode image in background.
@@ -776,8 +791,8 @@ public class AisleDetailsViewActivity extends Activity {
         @SuppressWarnings("null")
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if(progressBar != null){
-            progressBar.setVisibility(View.GONE);
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
             }
             if (imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
@@ -995,15 +1010,12 @@ public class AisleDetailsViewActivity extends Activity {
         return false;
     }
     
-    public void loadBitmap(String url,int height, ImageView imageView) {
-      int width =  VueApplication.getInstance()
-        .getVueDetailsCardWidth()/2  ;
+    public void loadBitmap(String url, int height, ImageView imageView) {
+        int width = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
         if (!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL) && url != null) {
             Log.i("LoadingfromVolley", "LoadingfromVolley");
-            ((NetworkImageView) imageView).setImageUrl(url,
-                    VueApplication.getInstance().getImageCacheLoader(),
-                    width,
-                    height,
+            ((NetworkImageView) imageView).setImageUrl(url, VueApplication
+                    .getInstance().getImageCacheLoader(), width, height,
                     NetworkImageView.BitmapProfile.ProfileDetailsView);
         }
         

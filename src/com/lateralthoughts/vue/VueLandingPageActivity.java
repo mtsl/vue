@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.json.JSONException;
@@ -31,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -129,8 +131,8 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsAppUpGrade = false;
     private boolean mIsClearDataExcuted = false;
     
-    @Override 
-    public void onCreate(Bundle icicle) { 
+    @Override
+    public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mixpanel = MixpanelAPI.getInstance(this,
                 VueApplication.getInstance().MIXPANEL_TOKEN);
@@ -328,6 +330,33 @@ public class VueLandingPageActivity extends Activity implements
                             return false;
                         }
                     });
+        } else if (item.getItemId() == R.id.menu_report_bug) {
+            ArrayList<Uri> imageUris = new ArrayList<Uri>();
+            Uri screenShotUri = Utils.takeScreenshot(this);
+            imageUris.add(screenShotUri);
+            String path = Environment.getExternalStorageDirectory().toString();
+            File dir = new File(path + "/vueExceptions/");
+            File file = new File(dir, "/" + "vueExceptions"
+                    + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                    + Calendar.getInstance().get(Calendar.DATE) + "_"
+                    + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+            if (file.exists()) {
+                imageUris.add(Uri.fromFile(file));
+            }
+            Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sendIntent.setType("image/*");
+            sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
+            sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+            sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+                    new String[] { "vvkrishna1989@gmail.com" });
+            sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                    "Bug Report");
+            sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                    imageUris);
+            sendIntent.setClassName(VueConstants.GMAIL_PACKAGE_NAME,
+                    VueConstants.GMAIL_ACTIVITY_NAME);
+            startActivityForResult(sendIntent, 0);
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);

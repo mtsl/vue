@@ -214,6 +214,23 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
+        AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance())
+                .getAisleImageForImageId(String.valueOf(imageRating.mImageId),
+                        String.valueOf(imageRating.mAisleId), false);
+        if (aisleImageDetails.mRatingsList != null) {
+            if (imageRating.mId != null) {
+                for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+                    if (listImageRating != null
+                            && listImageRating.getId() == imageRating.mId) {
+                        listImageRating.mLiked = imageRating.mLiked;
+                        break;
+                    }
+                }
+            } else {
+                aisleImageDetails.mRatingsList.add(imageRating);
+            }
+        }
         // updateImageRatingVolley( imageRating, likeCount);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
@@ -493,15 +510,21 @@ public class AisleManager {
                         Editor editor = mSharedPreferencesObj.edit();
                         editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
                         editor.commit();
-                        AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getAisleImageForImageId(
-                                        String.valueOf(imgRating.mImageId),
-                                        String.valueOf(imgRating.mAisleId),
-                                        false);
-                        if (aisleImageDetails != null) {
-                            if (imageRating.mId == null) {
-                                aisleImageDetails.mRatingsList.add(imgRating);
+                        if (imageRating.getId() == null) {
+                            AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleImageForImageId(
+                                            String.valueOf(imgRating.mImageId),
+                                            String.valueOf(imgRating.mAisleId),
+                                            false);
+                            if (aisleImageDetails != null) {
+                                for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+                                    if (listImageRating != null
+                                            && listImageRating.getId() == null) {
+                                        listImageRating.mId = imageRating.mId;
+                                        break;
+                                    }
+                                }
                             }
                         }
                         updateImageRatingToDb(imgRating, likeCount, false);

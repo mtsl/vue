@@ -4,12 +4,12 @@ public class UrlConstants {
     // Uncomment this to point to production content server
     // public static final String SERVER_BASE_URL =
     // "http://2dot12-restlet.vueapi-canary-development.appspot.com/";
-    public static final String SERVER_BASE_URL = "http://2dot12-restlet.vueapi-canary-development.appspot.com/";
+    public static final String SERVER_BASE_URL = "http://2dot12-restlet.vueapi-canary.appspot.com/";
     
     private static final String CANARY_SERVER_PROJECT_ID = "876955216873";
     private static final String DEVELOPMENT_SERVER_PROJECT_ID = "477960328185";
     private static final String DEVELOPMENT1_SERVER_PROJECT_ID = "341676083313";
-    public static final String CURRENT_SERVER_PROJECT_ID = DEVELOPMENT_SERVER_PROJECT_ID;
+    public static final String CURRENT_SERVER_PROJECT_ID = CANARY_SERVER_PROJECT_ID;
     
     /**
      * (C)reate routine URL's 

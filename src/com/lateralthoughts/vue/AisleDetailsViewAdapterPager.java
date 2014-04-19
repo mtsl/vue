@@ -1097,11 +1097,11 @@ public class AisleDetailsViewAdapterPager extends BaseAdapter {
                             .getImageList().get(mCurrentDispImageIndex).mLikesCount - 1;
                     sendDataToDb(mCurrentDispImageIndex, CHANGE_LIKES, false);
                 }
-                String imgOwnerId = mCurrentAisle.getAisleContext().mAisleOwnerImageURL;
+                String aisleOwnerId = mCurrentAisle.getAisleContext().mUserId;
                 String userId = VueTrendingAislesDataModel
                         .getInstance(mContext).getNetworkHandler().getUserId();
                 boolean isOwner = false;
-                if (imgOwnerId == userId) {
+                if (aisleOwnerId == userId) {
                     isOwner = true;
                 }
                 
