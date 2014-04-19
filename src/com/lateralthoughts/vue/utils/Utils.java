@@ -21,11 +21,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -45,9 +43,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -55,7 +50,6 @@ import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.user.VueUserProfile;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -927,7 +921,7 @@ public class Utils {
     
     private static void showRewardsDialog(String userType, int pointsEarned,
             final Context context) {
-        if(context == null){
+        if (context == null) {
             return;
         }
         if (pointsEarned < 100) {
@@ -938,58 +932,79 @@ public class Utils {
         if (userType.equals("silver")) {
             StringBuilder sb = new StringBuilder(
                     "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
-            //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(context,R.style.AppBaseTheme));
+            // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+            // new
+            // ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    new ContextThemeWrapper(context, R.style.AppBaseTheme));
             alertDialogBuilder.setTitle("Vue");
-           alertDialogBuilder.setMessage(sb.toString());
-            alertDialogBuilder.setPositiveButton(context.getResources().getString(
-                    R.string.redeem_it_now),new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog,int id) {
-                       VueUser storedVueUser = null;
-                       try {
-                           storedVueUser = Utils
-                                   .readUserObjectFromFile(
-                                          context,
-                                           VueConstants.VUE_APP_USEROBJECT__FILENAME);
-                           if (storedVueUser != null) {
-                               JSONObject nameTag = new JSONObject();
-                               nameTag.put("Redeem", "RedeemItNow");
-                               nameTag.put("Id", storedVueUser.getId());
-                               nameTag.put("Email",
-                                       storedVueUser.getEmail());
-                               SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
-                                       .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
-                               Editor editor = sharedPreferencesObj
-                                       .edit();
-                               editor.putBoolean(
-                                       VueConstants.USER_POINTS_DIALOG_SHOWN,
-                                       true);
-                               editor.commit();
-                                MixpanelAPI mixpanel = MixpanelAPI.getInstance(context,
-                                       VueApplication.getInstance().MIXPANEL_TOKEN);
-                               mixpanel.track("Coupon", nameTag);
-                           }
-                       } catch (Exception e1) {
-                           e1.printStackTrace();
-                       }
-                       
-                       Toast.makeText(
-                               context,
-                               "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
-                               Toast.LENGTH_LONG).show();
-                      
-                  }
-                 });
-            alertDialogBuilder.setNegativeButton(context.getResources().getString(
-                    R.string.continue_earning),new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog,int id) {
-                   
-                       dialog.cancel();
-                      
-                  }
-                 });
+            alertDialogBuilder.setMessage(sb.toString());
+            alertDialogBuilder.setPositiveButton(context.getResources()
+                    .getString(R.string.redeem_it_now),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            VueUser storedVueUser = null;
+                            try {
+                                storedVueUser = Utils
+                                        .readUserObjectFromFile(
+                                                context,
+                                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                if (storedVueUser != null) {
+                                    JSONObject nameTag = new JSONObject();
+                                    nameTag.put("Redeem", "RedeemItNow");
+                                    nameTag.put("Id", storedVueUser.getId());
+                                    nameTag.put("Email",
+                                            storedVueUser.getEmail());
+                                    SharedPreferences sharedPreferencesObj = VueApplication
+                                            .getInstance()
+                                            .getSharedPreferences(
+                                                    VueConstants.SHAREDPREFERENCE_NAME,
+                                                    0);
+                                    Editor editor = sharedPreferencesObj.edit();
+                                    editor.putBoolean(
+                                            VueConstants.USER_POINTS_DIALOG_SHOWN,
+                                            true);
+                                    editor.commit();
+                                    MixpanelAPI mixpanel = MixpanelAPI
+                                            .getInstance(
+                                                    context,
+                                                    VueApplication
+                                                            .getInstance().MIXPANEL_TOKEN);
+                                    mixpanel.track("Coupon", nameTag);
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            
+                            Toast.makeText(
+                                    context,
+                                    "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                                    Toast.LENGTH_LONG).show();
+                            
+                        }
+                    });
+            alertDialogBuilder.setNegativeButton(context.getResources()
+                    .getString(R.string.continue_earning),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            
+                            dialog.cancel();
+                            
+                        }
+                    });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
+    }
+    
+    public static Uri takeScreenshot(Activity activity) {
+        View rootView = activity.findViewById(android.R.id.content)
+                .getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = rootView.getDrawingCache();
+        File file = new FileCache(activity)
+                .getVueAppUserProfilePictureFile(VueConstants.BUG_REPORT_SCREENSHOT);
+        saveBitmap(bitmap, file);
+        return Uri.fromFile(file);
     }
 }

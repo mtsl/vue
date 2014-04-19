@@ -117,6 +117,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                     refreshListFlag = true;
                                 }
                             } 
+                            if(VueLandingPageActivity.landingPageActivity != null){
                             VueLandingPageActivity.landingPageActivity
                                     .runOnUiThread(new Runnable() {
                                         @Override
@@ -129,6 +130,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                             
                                         }
                                     });
+                            }
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null) {
                                 if (VueLandingPageActivity.mLandingScreenName
@@ -145,7 +147,7 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 }
                             }
                             
-                            if (refreshListFlag) {
+                            if (refreshListFlag && VueLandingPageActivity.landingPageActivity != null) {
                                 VueLandingPageActivity.landingPageActivity
                                         .runOnUiThread(new Runnable() {
                                             @Override

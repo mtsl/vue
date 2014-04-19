@@ -115,6 +115,7 @@ public class VueConstants {
     public static final String LOAD_DATAENTRY_SCREEN_FLAG = "LoadDataentryScreenFlag";
     public static final String AISLE_IMAGE_PATH_LIST_FILE_NAME = "AisleImagePathListFileName";
     public static final String USER_PROFILE_IMAGE_FILE_NAME = "VueUserProfileImage";
+    public static final String BUG_REPORT_SCREENSHOT = "vueScreenShot";
     public static final String AISLE_ORDER = "aisleOrder";
     // Column names for aisles table.
     public static final String SERIAL_NO = "serialNo";
@@ -143,7 +144,7 @@ public class VueConstants {
     public static final String IMAGE_ID = "imageId";
     public static final String STORE = "store";
     
-    //Column names for share table
+    // Column names for share table
     public static final String SHARE_AISLE_ID = "aisleId";
     
     // Column names for dataToSync table.
@@ -242,7 +243,6 @@ public class VueConstants {
             + AUTHORITY + "/" + ALL_RATED_IMAGES);
     public static final Uri SHARED_AISLE_URI = Uri.parse("content://"
             + AUTHORITY + "/" + SHARED_AISLE);
-    
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
     public static final String INVITATION_MESG = "Invitation from Vue application.";
