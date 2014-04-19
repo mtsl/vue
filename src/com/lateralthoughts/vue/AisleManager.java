@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Queue;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -219,8 +218,23 @@ public class AisleManager {
                 .getInstance(VueApplication.getInstance())
                 .getAisleImageForImageId(String.valueOf(imageRating.mImageId),
                         String.valueOf(imageRating.mAisleId), false);
-        if (aisleImageDetails.mRatingsList != null) {
-            if (imageRating.mId != null) {
+        
+        // updateImageRatingVolley( imageRating, likeCount);
+        if (VueConnectivityManager.isNetworkConnected(VueApplication
+                .getInstance())) {
+            if (imageRating.mId == null) {
+                ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
+                imageRatingQueueObj.imageRating = imageRating;
+                imageRatingQueueObj.likeCount = likeCount;
+                boolean isObjectExistAlready = VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .addImageRatingObject(imageRatingQueueObj);
+                if (isObjectExistAlready) {
+                    return;
+                }
+                aisleImageDetails.mRatingsList.add(imageRating);
+            } else {
                 for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
                     if (listImageRating != null
                             && listImageRating.getId() == imageRating.mId) {
@@ -228,21 +242,6 @@ public class AisleManager {
                         break;
                     }
                 }
-            } else {
-                aisleImageDetails.mRatingsList.add(imageRating);
-            }
-        }
-        // updateImageRatingVolley( imageRating, likeCount);
-        if (VueConnectivityManager.isNetworkConnected(VueApplication
-                .getInstance())) {
-            if(imageRating.mId == null){
-                ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
-                imageRatingQueueObj.imageRating = imageRating;
-                imageRatingQueueObj.likeCount = likeCount;
-              boolean isObjectExistAlready =  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addImageRatingObject(imageRatingQueueObj);
-              if(isObjectExistAlready){
-                  return;
-              }
             }
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
@@ -269,13 +268,27 @@ public class AisleManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {/*
-                 * if (imageRating.getId() == null) { imageRating.mId = 0001L; }
-                 * updateImageRatingToDb(imageRating, likeCount, true); Editor
-                 * editor = mSharedPreferencesObj.edit();
-                 * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
-                 * editor.commit();
-                 */
+        } else {
+            if (aisleImageDetails.mRatingsList != null) {
+                if (imageRating.mId != null) {
+                    for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+                        if (listImageRating != null
+                                && listImageRating.getId() == imageRating.mId) {
+                            listImageRating.mLiked = imageRating.mLiked;
+                            break;
+                        }
+                    }
+                } else {
+                    aisleImageDetails.mRatingsList.add(imageRating);
+                }
+            }
+            /*
+             * if (imageRating.getId() == null) { imageRating.mId = 0001L; }
+             * updateImageRatingToDb(imageRating, likeCount, true); Editor
+             * editor = mSharedPreferencesObj.edit();
+             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+             * editor.commit();
+             */
         }
     }
     
@@ -537,7 +550,11 @@ public class AisleManager {
                                 }
                             }
                         }
-                       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isRatingObjectWaitingtoUpload(imgRating.mImageId,imgRating.mLiked);
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler()
+                                .isRatingObjectWaitingtoUpload(
+                                        imgRating.mImageId, imgRating.mLiked);
                         updateImageRatingToDb(imgRating, likeCount, false);
                     } catch (Exception e) {
                         e.printStackTrace();
