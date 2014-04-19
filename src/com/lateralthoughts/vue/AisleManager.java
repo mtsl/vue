@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Queue;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -25,6 +26,7 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
+import com.lateralthoughts.vue.domain.ImageRatingQueue;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
@@ -36,7 +38,6 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleManager {
-    
     public interface AisleAddCallback {
         public void onAisleAdded(Aisle aisle, AisleContext aisleContext);
     }
@@ -217,6 +218,15 @@ public class AisleManager {
         // updateImageRatingVolley( imageRating, likeCount);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
+            if(imageRating.mId == null){
+                ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
+                imageRatingQueueObj.imageRating = imageRating;
+                imageRatingQueueObj.likeCount = likeCount;
+              boolean isObjectExistAlready =  VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().addImageRatingObject(imageRatingQueueObj);
+              if(isObjectExistAlready){
+                  return;
+              }
+            }
             ObjectMapper mapper = new ObjectMapper();
             com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
             imageRatingRequestObject.setId(imageRating.getId());
@@ -504,6 +514,7 @@ public class AisleManager {
                                 aisleImageDetails.mRatingsList.add(imgRating);
                             }
                         }
+                       VueTrendingAislesDataModel.getInstance(VueApplication.getInstance()).getNetworkHandler().isRatingObjectWaitingtoUpload(imgRating.mImageId,imgRating.mLiked);
                         updateImageRatingToDb(imgRating, likeCount, false);
                     } catch (Exception e) {
                         e.printStackTrace();
