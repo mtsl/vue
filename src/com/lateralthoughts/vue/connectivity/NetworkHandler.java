@@ -57,6 +57,7 @@ import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
+import com.lateralthoughts.vue.domain.ImageRatingQueue;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
@@ -88,6 +89,7 @@ public class NetworkHandler {
     private boolean mUserBookmarksLoaded = false;
     private boolean mUserRatedImagesLoaded = false;
     ArrayList<String> sharedList = new ArrayList<String>();
+    ArrayList<ImageRatingQueue> imageRatingQueueList = new ArrayList<ImageRatingQueue>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -1117,5 +1119,47 @@ public class NetworkHandler {
         if(!sharedList.contains(aisleId)) {
             sharedList.add(aisleId) ;
         }
+    }
+    /*
+     * if it is the first rating object come again dont issue second netowrk call
+     * just save the latest rating object in the queue. After receiving the first rating
+     * response based on the liked status issue the request again.
+     */
+    public boolean addImageRatingObject(ImageRatingQueue imageRatingQueueObj){
+        boolean isImageRatingQueueObjExist = false;
+        long imageId = imageRatingQueueObj.imageRating.mImageId;
+        for(int i = 0;i<imageRatingQueueList.size();i++){
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList.get(i);
+            if(imageId == temImageRatingQueueObj.imageRating.mImageId){
+                imageRatingQueueList.remove(temImageRatingQueueObj);
+                isImageRatingQueueObjExist = true;
+                break;
+            }
+        }
+        imageRatingQueueList.add(imageRatingQueueObj);
+        return isImageRatingQueueObjExist;
+    }
+    public boolean isRatingObjectWaitingtoUpload(long imageId,boolean isLiked){
+        for(int i = 0;i<imageRatingQueueList.size();i++){
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList.get(i);
+            if(imageId == temImageRatingQueueObj.imageRating.mImageId){
+                imageRatingQueueList.remove(temImageRatingQueueObj);
+                if(temImageRatingQueueObj.imageRating.mLiked != isLiked) {
+                  //start the request here to upload imageRating.
+                    try {
+                        AisleManager.getAisleManager().updateRating(temImageRatingQueueObj.imageRating,
+                                temImageRatingQueueObj.likeCount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                } else {
+                   // do nothing. 
+                }
+                return false;
+               
+            }
+        }
+        return false;
     }
 }
