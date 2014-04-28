@@ -899,9 +899,10 @@ public class VueLandingPageActivity extends Activity implements
                 .getInstance(VueLandingPageActivity.this).getNetworkHandler()
                 .getmOffset();
         StackViews.getInstance().push(viewInfo);
+        Toast.makeText(this,  catName + "pushing",
+                Toast.LENGTH_LONG).show();
         boolean loadMore = false;
         boolean fromServer = true;
-        
         if (catName
                 .equalsIgnoreCase(getString(R.string.sidemenu_sub_option_My_Aisles))) {
             mIsMyAilseCallEnable = true;
@@ -975,8 +976,13 @@ public class VueLandingPageActivity extends Activity implements
                         Toast.LENGTH_LONG).show();
                 StackViews.getInstance().pull();
             }
-        } else {
-            
+        } else if(catName.equals(getString(R.string.sidemeun_option_Notifications))){
+            mLandingScreenName = catName;
+            Toast.makeText(this, getString(R.string.sidemeun_option_Notifications),
+                    Toast.LENGTH_LONG).show();
+            getActionBar().setTitle(mLandingScreenName);
+            invalidateOptionsMenu();
+             
         }
         JSONObject categorySelectedProps = new JSONObject();
         try {
@@ -1034,7 +1040,28 @@ public class VueLandingPageActivity extends Activity implements
         }
         
     }
-    
+   private void getNotificationAisles(String screenName) {
+      ArrayList<AisleWindowContent> windowContent = null;
+      
+      //get the notification aisles.
+      if(windowContent != null){
+      VueTrendingAislesDataModel.getInstance(this).clearAisles();
+      AisleWindowContentFactory.getInstance(VueApplication.getInstance())
+      .clearObjectsInUse();
+      for (AisleWindowContent content : windowContent) {
+          VueTrendingAislesDataModel.getInstance(this).addItemToList(
+                  content.getAisleId(), content);
+      }
+      VueTrendingAislesDataModel
+              .getInstance(VueApplication.getInstance()).dataObserver();
+      invalidateOptionsMenu();
+      } else {
+          Toast.makeText(this, "No Notification aisles", Toast.LENGTH_LONG)
+          .show();
+        StackViews.getInstance().pull(); 
+      }
+      
+   }
     private void showPreviousScreen(String screenName) {
         boolean fromServer = false;
         boolean loadMore = false;
@@ -1073,7 +1100,10 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).dataObserver();
                 
             }
-        } else {
+        } else if(screenName
+                .equalsIgnoreCase(getString(R.string.sidemeun_option_Notifications))){ 
+            Toast.makeText(this, getString(R.string.sidemeun_option_Notifications)+" back",
+                    Toast.LENGTH_LONG).show();
         }
     }
     

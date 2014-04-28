@@ -238,7 +238,23 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
                     String s = textView.getText().toString();
-                    if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+                    if(s.equals(getString(R.string.sidemeun_option_Notifications))) {
+                        if (getActivity() instanceof VueLandingPageActivity) {
+                            VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
+                            vueLandingPageActivity1.showCategory(s, false);
+                        }
+                        if (getActivity() instanceof AisleDetailsViewActivity) {
+                            startActivity(new Intent(
+                                    (AisleDetailsViewActivity) getActivity(),
+                                    VueLandingPageActivity.class));
+                        } else if (getActivity() instanceof DataEntryActivity) {
+                            startActivity(new Intent(
+                                    (DataEntryActivity) getActivity(),
+                                    VueLandingPageActivity.class));
+                        }
+                        
+                    
+                    } else if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
                         VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
                         if (getActivity() instanceof VueLandingPageActivity) {
                             VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
@@ -501,6 +517,10 @@ public class VueListFragment extends Fragment implements TextWatcher {
          * R.drawable.new_categories, getCategoriesChildren());
          * groups.add(item);
          */
+        item = new ListOptionItem(getString(R.string.sidemeun_option_Notifications),
+                R.drawable.settings01,null);
+        groups.add(item);
+        
         item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
                 R.drawable.settings01, getSettingsChildren());
         groups.add(item);

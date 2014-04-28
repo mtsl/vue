@@ -105,6 +105,7 @@
     <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
+    <string name="sidemeun_option_Notifications">Notifications</string>
     <string name="sidemenu_option_Profile">Profile</string>
     <string name="sidemenu_option_Invite_Friends">Invite Friends</string>
     <string name="sidemenu_option_Help">Help</string>
