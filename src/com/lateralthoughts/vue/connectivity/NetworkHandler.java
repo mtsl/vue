@@ -1003,7 +1003,7 @@ public class NetworkHandler {
     }
     
     public void getLatestTrendingAisles(final TrendingRefreshReceiver receiver) {
-        int limit = 10, offset = 0;
+        int limit = 30, offset = 0;
         final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/"
                 + limit + "/" + offset;
         @SuppressWarnings("rawtypes")
@@ -1014,11 +1014,13 @@ public class NetworkHandler {
                     ArrayList<AisleWindowContent> refreshList = new Parser()
                             .parseTrendingAislesResultData(
                                     jsonArray.toString(), true);
+                    Log.i("refeshcode", "refeshcode isAisleExist list size: "+refreshList.size());
                     ArrayList<AisleWindowContent> newList = new ArrayList<AisleWindowContent>();
                     for (AisleWindowContent aisle : refreshList) {
                         boolean isAisleExist = VueTrendingAislesDataModel
                                 .getInstance(VueApplication.getInstance())
                                 .isAisleExists(aisle);
+                        Log.i("refeshcode", "refeshcode isAisleExist: "+isAisleExist);
                         if (!isAisleExist) {
                             newList.add(aisle);
                         } else {

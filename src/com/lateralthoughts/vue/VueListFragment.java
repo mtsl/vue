@@ -767,7 +767,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
     }
     
     public void getFriendsList(String s) {
-        
         mProgress = ProgressDialog.show(getActivity(), "", "Please wait...");
         mSharedPreferencesObj = getActivity().getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);

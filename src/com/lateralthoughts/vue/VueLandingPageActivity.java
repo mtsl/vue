@@ -322,9 +322,9 @@ public class VueLandingPageActivity extends Activity implements
                                 }
                             } else {
                                 if (mLandingScreenActive) {
-                                    Toast.makeText(VueLandingPageActivity.this,
+                                 /*   Toast.makeText(VueLandingPageActivity.this,
                                             "Up to date", Toast.LENGTH_SHORT)
-                                            .show();
+                                            .show();*/
                                 }
                             }
                             return false;
