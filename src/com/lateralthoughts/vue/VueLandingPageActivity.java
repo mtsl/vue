@@ -349,7 +349,7 @@ public class VueLandingPageActivity extends Activity implements
             sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
             sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
             sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
-                    new String[] { "krishna@23neem.com" });
+                    new String[] { "vuedev@thesilverlabs.com" });
             sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                     "Bug Report");
             sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
