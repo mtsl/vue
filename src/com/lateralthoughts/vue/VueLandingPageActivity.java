@@ -60,6 +60,7 @@ import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -1042,8 +1043,16 @@ public class VueLandingPageActivity extends Activity implements
     }
    private void getNotificationAisles(String screenName) {
       ArrayList<AisleWindowContent> windowContent = null;
-      
+      String[] aisleIds;
       //get the notification aisles.
+      ArrayList<NotificationAisle> notificationAislesList =  DataBaseManager.getInstance(VueApplication.getInstance()).readAllIdsFromNotificationTable();
+      if(notificationAislesList != null && notificationAislesList.size() > 0) {
+          aisleIds = new String[notificationAislesList.size()];
+          for(int i=0;i<notificationAislesList.size();i++){
+              aisleIds[i] = notificationAislesList.get(i).getAisleId();
+          }
+          boolean isBookmarked = false;
+          windowContent = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesFromDB(aisleIds, isBookmarked);
       if(windowContent != null){
       VueTrendingAislesDataModel.getInstance(this).clearAisles();
       AisleWindowContentFactory.getInstance(VueApplication.getInstance())
@@ -1059,6 +1068,11 @@ public class VueLandingPageActivity extends Activity implements
           Toast.makeText(this, "No Notification aisles", Toast.LENGTH_LONG)
           .show();
         StackViews.getInstance().pull(); 
+      }
+      } else {
+          Toast.makeText(this, "No Notification aisles", Toast.LENGTH_LONG)
+          .show();
+        StackViews.getInstance().pull();  
       }
       
    }

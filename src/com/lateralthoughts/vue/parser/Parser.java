@@ -328,7 +328,7 @@ public class Parser {
         }
         return aisleWindowContentList;
     }
-    
+    //gets an aisle from the jsonObject.
     public AisleWindowContent getBookmarkedAisle(JSONObject josnObject) {
         AisleContext aisleContext = parseAisleData(josnObject);
         ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();
