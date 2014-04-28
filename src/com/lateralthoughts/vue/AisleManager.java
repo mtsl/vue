@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -218,11 +219,28 @@ public class AisleManager {
                 .getInstance(VueApplication.getInstance())
                 .getAisleImageForImageId(String.valueOf(imageRating.mImageId),
                         String.valueOf(imageRating.mAisleId), false);
-        
+        boolean isThereAnyEmptyRatings = false;
+        for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+            Log.e("AisleManager", "vue debugging for loop called");
+            if (listImageRating.getId() == null) {
+                Log.e("AisleManager", "vue debugging  if called ??" + imageRating.mLiked);
+                listImageRating.setLiked(imageRating.getLiked());
+                isThereAnyEmptyRatings = true;
+            } else if (listImageRating != null
+                    && listImageRating.getId() == imageRating.mId) {
+                Log.e("AisleManager", "vue debugging else if called ?? " + imageRating.mLiked);
+                listImageRating.setLiked(imageRating.mLiked);
+            }
+        }
+        Log.e("AisleManager", "vue debugging outer if called");
         // updateImageRatingVolley( imageRating, likeCount);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             if (imageRating.mId == null) {
+                if (!isThereAnyEmptyRatings) {
+                    Log.e("AisleManager", "vue debugging inner if called");
+                    aisleImageDetails.mRatingsList.add(imageRating);
+                }
                 ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
                 imageRatingQueueObj.imageRating = imageRating;
                 imageRatingQueueObj.likeCount = likeCount;
@@ -232,15 +250,6 @@ public class AisleManager {
                         .addImageRatingObject(imageRatingQueueObj);
                 if (isObjectExistAlready) {
                     return;
-                }
-                aisleImageDetails.mRatingsList.add(imageRating);
-            } else {
-                for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
-                    if (listImageRating != null
-                            && listImageRating.getId() == imageRating.mId) {
-                        listImageRating.mLiked = imageRating.mLiked;
-                        break;
-                    }
                 }
             }
             ObjectMapper mapper = new ObjectMapper();
