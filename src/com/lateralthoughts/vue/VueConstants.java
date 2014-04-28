@@ -213,6 +213,7 @@ public class VueConstants {
     public static final String BOOKMARKER_AISLES = "bookmarkedAisles";
     public static final String MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
     public static final String SHARED_AISLE = "mySharedAisles";
+    public static final String NOTIFICATION_AISLE = "notificationAisles";
     
     // Define MIME types
     public static final String ARTICLES_MIME_TYPE = "vnd.android.cursor.dir/vnd.vue.articles";
@@ -243,6 +244,8 @@ public class VueConstants {
             + AUTHORITY + "/" + ALL_RATED_IMAGES);
     public static final Uri SHARED_AISLE_URI = Uri.parse("content://"
             + AUTHORITY + "/" + SHARED_AISLE);
+    public static final Uri NOTIFICATION_AISLES_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + NOTIFICATION_AISLE);
     
     public static final String GOOGLEPLUS_USER_EMAIL = "GOOGLEPLUS_USER_EMAIL";
     public static final String INVITATION_MESG = "Invitation from Vue application.";
@@ -313,6 +316,14 @@ public class VueConstants {
     public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
     public static final String VIEW_TIME = "viewTime";
     public static final String IS_LIKED_OR_BOOKMARKED = "isLikedOrBookmarked";
+    public static final String IS_NOTIFICATION_AISLE_READ_OR_UNREAD = "isNotificationAisleReadOrUnread"; // 1
+                                                                                                         // unread,
+                                                                                                         // 0
+                                                                                                         // read
+    public static final String DONT_SHOW_AISLE = "dontshowAisleFlag"; // 1
+    // dontshow,
+    // 0
+    // show
     
     // Keys for values stored in shared preference
     public static final String IS_AISLE_DIRTY = "isAisleDirty";

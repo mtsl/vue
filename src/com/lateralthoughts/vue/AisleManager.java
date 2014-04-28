@@ -221,24 +221,19 @@ public class AisleManager {
                         String.valueOf(imageRating.mAisleId), false);
         boolean isThereAnyEmptyRatings = false;
         for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
-            Log.e("AisleManager", "vue debugging for loop called");
             if (listImageRating.getId() == null) {
-                Log.e("AisleManager", "vue debugging  if called ??" + imageRating.mLiked);
                 listImageRating.setLiked(imageRating.getLiked());
                 isThereAnyEmptyRatings = true;
             } else if (listImageRating != null
                     && listImageRating.getId() == imageRating.mId) {
-                Log.e("AisleManager", "vue debugging else if called ?? " + imageRating.mLiked);
                 listImageRating.setLiked(imageRating.mLiked);
             }
         }
-        Log.e("AisleManager", "vue debugging outer if called");
         // updateImageRatingVolley( imageRating, likeCount);
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
             if (imageRating.mId == null) {
                 if (!isThereAnyEmptyRatings) {
-                    Log.e("AisleManager", "vue debugging inner if called");
                     aisleImageDetails.mRatingsList.add(imageRating);
                 }
                 ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();

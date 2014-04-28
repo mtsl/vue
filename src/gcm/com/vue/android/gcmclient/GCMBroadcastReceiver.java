@@ -150,6 +150,11 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                                                 .getInstance())
                                                                 .getNetworkHandler().offset,
                                                         DataBaseManager.AISLE_CREATED);
+                                        DataBaseManager.getInstance(
+                                                VueApplication.getInstance())
+                                                .insertNotificationAisleId(
+                                                        aisleWindowContent
+                                                                .getAisleId());
                                     }
                                 }
                             }).start();
