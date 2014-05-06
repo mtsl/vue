@@ -1013,7 +1013,6 @@ public class AisleDetailsViewActivity extends Activity {
     public void loadBitmap(String url, int height, ImageView imageView) {
         int width = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
         if (!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL) && url != null) {
-            Log.i("LoadingfromVolley", "LoadingfromVolley");
             ((NetworkImageView) imageView).setImageUrl(url, VueApplication
                     .getInstance().getImageCacheLoader(), width, height,
                     NetworkImageView.BitmapProfile.ProfileDetailsView);

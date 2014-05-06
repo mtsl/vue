@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.json.JSONException;
@@ -32,7 +31,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -60,7 +58,6 @@ import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
-import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
@@ -323,41 +320,16 @@ public class VueLandingPageActivity extends Activity implements
                                 }
                             } else {
                                 if (mLandingScreenActive) {
-                                 /*   Toast.makeText(VueLandingPageActivity.this,
-                                            "Up to date", Toast.LENGTH_SHORT)
-                                            .show();*/
+                                    /*
+                                     * Toast.makeText(VueLandingPageActivity.this
+                                     * , "Up to date", Toast.LENGTH_SHORT)
+                                     * .show();
+                                     */
                                 }
                             }
                             return false;
                         }
                     });
-        } else if (item.getItemId() == R.id.menu_report_bug) {
-            ArrayList<Uri> imageUris = new ArrayList<Uri>();
-            Uri screenShotUri = Utils.takeScreenshot(this);
-            imageUris.add(screenShotUri);
-            String path = Environment.getExternalStorageDirectory().toString();
-            File dir = new File(path + "/vueExceptions/");
-            File file = new File(dir, "/" + "vueExceptions"
-                    + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
-                    + Calendar.getInstance().get(Calendar.DATE) + "_"
-                    + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
-            if (file.exists()) {
-                imageUris.add(Uri.fromFile(file));
-            }
-            Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sendIntent.setType("image/*");
-            sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
-            sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-            sendIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
-                    new String[] { "vuedev@thesilverlabs.com" });
-            sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                    "Bug Report");
-            sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-                    imageUris);
-            sendIntent.setClassName(VueConstants.GMAIL_PACKAGE_NAME,
-                    VueConstants.GMAIL_ACTIVITY_NAME);
-            startActivityForResult(sendIntent, 0);
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
@@ -900,8 +872,6 @@ public class VueLandingPageActivity extends Activity implements
                 .getInstance(VueLandingPageActivity.this).getNetworkHandler()
                 .getmOffset();
         StackViews.getInstance().push(viewInfo);
-        Toast.makeText(this,  catName + "pushing",
-                Toast.LENGTH_LONG).show();
         boolean loadMore = false;
         boolean fromServer = true;
         if (catName
@@ -977,13 +947,6 @@ public class VueLandingPageActivity extends Activity implements
                         Toast.LENGTH_LONG).show();
                 StackViews.getInstance().pull();
             }
-        } else if(catName.equals(getString(R.string.sidemeun_option_Notifications))){
-            mLandingScreenName = catName;
-            Toast.makeText(this, getString(R.string.sidemeun_option_Notifications),
-                    Toast.LENGTH_LONG).show();
-            getActionBar().setTitle(mLandingScreenName);
-            invalidateOptionsMenu();
-             
         }
         JSONObject categorySelectedProps = new JSONObject();
         try {
@@ -1041,41 +1004,7 @@ public class VueLandingPageActivity extends Activity implements
         }
         
     }
-   private void getNotificationAisles(String screenName) {
-      ArrayList<AisleWindowContent> windowContent = null;
-      String[] aisleIds;
-      //get the notification aisles.
-      ArrayList<NotificationAisle> notificationAislesList =  DataBaseManager.getInstance(VueApplication.getInstance()).readAllIdsFromNotificationTable();
-      if(notificationAislesList != null && notificationAislesList.size() > 0) {
-          aisleIds = new String[notificationAislesList.size()];
-          for(int i=0;i<notificationAislesList.size();i++){
-              aisleIds[i] = notificationAislesList.get(i).getAisleId();
-          }
-          boolean isBookmarked = false;
-          windowContent = DataBaseManager.getInstance(VueApplication.getInstance()).getAislesFromDB(aisleIds, isBookmarked);
-      if(windowContent != null){
-      VueTrendingAislesDataModel.getInstance(this).clearAisles();
-      AisleWindowContentFactory.getInstance(VueApplication.getInstance())
-      .clearObjectsInUse();
-      for (AisleWindowContent content : windowContent) {
-          VueTrendingAislesDataModel.getInstance(this).addItemToList(
-                  content.getAisleId(), content);
-      }
-      VueTrendingAislesDataModel
-              .getInstance(VueApplication.getInstance()).dataObserver();
-      invalidateOptionsMenu();
-      } else {
-          Toast.makeText(this, "No Notification aisles", Toast.LENGTH_LONG)
-          .show();
-        StackViews.getInstance().pull(); 
-      }
-      } else {
-          Toast.makeText(this, "No Notification aisles", Toast.LENGTH_LONG)
-          .show();
-        StackViews.getInstance().pull();  
-      }
-      
-   }
+    
     private void showPreviousScreen(String screenName) {
         boolean fromServer = false;
         boolean loadMore = false;
@@ -1114,10 +1043,6 @@ public class VueLandingPageActivity extends Activity implements
                         VueApplication.getInstance()).dataObserver();
                 
             }
-        } else if(screenName
-                .equalsIgnoreCase(getString(R.string.sidemeun_option_Notifications))){ 
-            Toast.makeText(this, getString(R.string.sidemeun_option_Notifications)+" back",
-                    Toast.LENGTH_LONG).show();
         }
     }
     

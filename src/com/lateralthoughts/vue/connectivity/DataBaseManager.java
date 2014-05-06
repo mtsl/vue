@@ -2046,7 +2046,7 @@ public class DataBaseManager {
                 .getInstance()
                 .getContentResolver()
                 .query(VueConstants.NOTIFICATION_AISLES_URI, null,
-                        VueConstants.AISLE_ID + "=?", new String[] { aisleId },
+                        VueConstants.AISLE_Id + "=?", new String[] { aisleId },
                         null);
         int cursorCount = c.getCount();
         c.close();
@@ -2055,12 +2055,13 @@ public class DataBaseManager {
                     .getInstance()
                     .getContentResolver()
                     .delete(VueConstants.NOTIFICATION_AISLES_URI,
-                            VueConstants.AISLE_ID + "=?",
+                            VueConstants.AISLE_Id + "=?",
                             new String[] { "" + aisleId });
         }
         ContentValues values = new ContentValues();
-        values.put(VueConstants.AISLE_ID, aisleId);
+        values.put(VueConstants.AISLE_Id, aisleId);
         values.put(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD, 1);
+        values.put(VueConstants.DONT_SHOW_AISLE_ON_LIST, 0);
         VueApplication.getInstance().getContentResolver()
                 .insert(VueConstants.NOTIFICATION_AISLES_URI, values);
     }
@@ -2081,64 +2082,21 @@ public class DataBaseManager {
                 if (status == 0) {
                     readStaus = true;
                 }
+                boolean dontshowstatus = false;
+                int dontshow = cursor.getInt(cursor
+                        .getColumnIndex(VueConstants.DONT_SHOW_AISLE_ON_LIST));
+                if (dontshow == 1) {
+                    dontshowstatus = true;
+                }
                 NotificationAisle notificationAisle = new NotificationAisle(
                         cursor.getString(cursor
-                                .getColumnIndex(VueConstants.AISLE_ID)),
-                        readStaus);
+                                .getColumnIndex(VueConstants.AISLE_Id)),
+                        readStaus, dontshowstatus);
                 notificationAislesList.add(notificationAisle);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return notificationAislesList;
     }
     
-    // update the notification request from notification aisles request
-    public void upDateNotificationTableForNotificationRequest(
-            ArrayList<AisleWindowContent> contentList) {
-        if (contentList != null && contentList.size() > 0) {
-            ArrayList<String> aisleIds = getAisleIds(contentList);
-            
-            Cursor aisleCursor = mContext.getContentResolver().query(
-                    VueConstants.CONTENT_URI, null, null, null, null);
-            upDateNotificationTable(aisleIds, aisleCursor);
-        }
-    }
-    
-    // update the notification request from trending aisles request
-    public void upDateNotificationTableForTrendingAisles(
-            ArrayList<AisleWindowContent> contentList) {
-        if (contentList != null && contentList.size() > 0) {
-            ArrayList<String> aisleIds = getAisleIds(contentList);
-            Cursor conticationAisleCursor = mContext.getContentResolver()
-                    .query(VueConstants.NOTIFICATION_AISLES_URI, null, null,
-                            null, null);
-            upDateNotificationTable(aisleIds, conticationAisleCursor);
-        }
-    }
-    
-    // get the aisleids from the from the aisle window list
-    private ArrayList<String> getAisleIds(
-            ArrayList<AisleWindowContent> contentList) {
-        ArrayList<String> aisleIds = new ArrayList<String>();
-        if (contentList != null && contentList.size() > 0) {
-            for (AisleWindowContent content : contentList) {
-                aisleIds.add(content.getAisleId());
-            }
-        }
-        return aisleIds;
-    }
-    
-    // if the aisle id is in cursor then update the notification table.
-    private void upDateNotificationTable(ArrayList<String> contentList,
-            Cursor dataCursor) {
-        if (dataCursor.moveToFirst()) {
-            do {
-                String aisleId = dataCursor.getString(dataCursor
-                        .getColumnIndex(VueConstants.AISLE_Id));
-                if (contentList.contains(aisleId)) {
-                    // TODO:update notifaction table.
-                }
-            } while (dataCursor.moveToNext());
-        }
-        dataCursor.close();
-    }
 }

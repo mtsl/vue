@@ -197,6 +197,7 @@ public class UploadImageBackgroundThread implements Runnable,
                     Utils.saveBitmap(getModifiedBitmap(bitmap, width, height),
                             file);
                 } else {
+                    Utils.saveBitmap(bitmap, file);
                     mImageWidth = resizedBitmapWidth;
                     mImageHeight = resizedBitmapHeight;
                 }
@@ -209,6 +210,7 @@ public class UploadImageBackgroundThread implements Runnable,
                     Utils.saveBitmap(getModifiedBitmap(bitmap, width, height),
                             file);
                 } else {
+                    Utils.saveBitmap(bitmap, file);
                     mImageWidth = resizedBitmapWidth;
                     mImageHeight = resizedBitmapHeight;
                 }

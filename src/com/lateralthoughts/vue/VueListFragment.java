@@ -13,14 +13,11 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -32,7 +29,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -43,7 +39,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -129,7 +124,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-       // setRetainInstance(true);
+        // setRetainInstance(true);
         mixpanel = mixpanel = MixpanelAPI.getInstance(getActivity(),
                 VueApplication.getInstance().MIXPANEL_TOKEN);
         if (getActivity() instanceof VueLandingPageActivity) {
@@ -172,8 +167,8 @@ public class VueListFragment extends Fragment implements TextWatcher {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
-        //setRetainInstance(true);
+        
+        // setRetainInstance(true);
     }
     
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -226,11 +221,11 @@ public class VueListFragment extends Fragment implements TextWatcher {
             public boolean onGroupClick(ExpandableListView parent, View v,
                     int groupPosition, long id) {
                 if (groupPosition == 1) {
-                    try{
-                    refreshBezelMenu();
-                    }catch(IndexOutOfBoundsException e){
+                    try {
+                        refreshBezelMenu();
+                    } catch (IndexOutOfBoundsException e) {
                         e.printStackTrace();
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -238,23 +233,7 @@ public class VueListFragment extends Fragment implements TextWatcher {
                     TextView textView = (TextView) v
                             .findViewById(R.id.vue_list_fragment_itemTextview);
                     String s = textView.getText().toString();
-                    if(s.equals(getString(R.string.sidemeun_option_Notifications))) {
-                        if (getActivity() instanceof VueLandingPageActivity) {
-                            VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
-                            vueLandingPageActivity1.showCategory(s, false);
-                        }
-                        if (getActivity() instanceof AisleDetailsViewActivity) {
-                            startActivity(new Intent(
-                                    (AisleDetailsViewActivity) getActivity(),
-                                    VueLandingPageActivity.class));
-                        } else if (getActivity() instanceof DataEntryActivity) {
-                            startActivity(new Intent(
-                                    (DataEntryActivity) getActivity(),
-                                    VueLandingPageActivity.class));
-                        }
-                        
-                    
-                    } else if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
+                    if (s.equals(getString(R.string.sidemenu_option_Trending_Aisles))) {
                         VueApplication.getInstance().mIsTrendingSelectedFromBezelMenuFlag = true;
                         if (getActivity() instanceof VueLandingPageActivity) {
                             VueLandingPageActivity vueLandingPageActivity1 = (VueLandingPageActivity) getActivity();
@@ -517,9 +496,6 @@ public class VueListFragment extends Fragment implements TextWatcher {
          * R.drawable.new_categories, getCategoriesChildren());
          * groups.add(item);
          */
-        item = new ListOptionItem(getString(R.string.sidemeun_option_Notifications),
-                R.drawable.settings01,null);
-        groups.add(item);
         
         item = new ListOptionItem(getString(R.string.sidemeun_option_Settings),
                 R.drawable.settings01, getSettingsChildren());
@@ -1200,7 +1176,9 @@ public class VueListFragment extends Fragment implements TextWatcher {
             userType = "silver";
         }
         if (userType.endsWith("bronze")) {
-            // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( new ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+            // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+            // new
+            // ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
             StringBuilder sb = new StringBuilder("You are a ");
             sb.append(userType);
             sb.append(" user with ");
@@ -1210,16 +1188,19 @@ public class VueListFragment extends Fragment implements TextWatcher {
             sb.append(" points to go to become a ");
             sb.append(nextUserType);
             sb.append(" user");
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    getActivity());
             alertDialogBuilder.setMessage(sb);
             alertDialogBuilder.setTitle("Vue");
-             alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-             dialog.cancel();
-                   }
-                  });
-             AlertDialog alertDialog = alertDialogBuilder.create();
-             alertDialog.show();
+            alertDialogBuilder.setPositiveButton(
+                    getResources().getString(R.string.ok),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         } else if (userType.equals("silver")) {
             String popupMessage = "";
             StringBuilder sb = new StringBuilder(

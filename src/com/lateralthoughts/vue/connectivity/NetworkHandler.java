@@ -1,7 +1,6 @@
 package com.lateralthoughts.vue.connectivity;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +35,6 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -649,8 +647,6 @@ public class NetworkHandler {
                         if (null != response) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(response.toString());
-                            Log.i("BookmardedList", "BookmardedList: "
-                                    + bookmarkedAisles.size());
                             mUserBookmarksLoaded = true;
                             bookmarkedList.clear();
                             boolean isDirty = false;
@@ -1017,15 +1013,11 @@ public class NetworkHandler {
                     ArrayList<AisleWindowContent> refreshList = new Parser()
                             .parseTrendingAislesResultData(
                                     jsonArray.toString(), true);
-                    Log.i("refeshcode", "refeshcode isAisleExist list size: "
-                            + refreshList.size());
                     ArrayList<AisleWindowContent> newList = new ArrayList<AisleWindowContent>();
                     for (AisleWindowContent aisle : refreshList) {
                         boolean isAisleExist = VueTrendingAislesDataModel
                                 .getInstance(VueApplication.getInstance())
                                 .isAisleExists(aisle);
-                        Log.i("refeshcode", "refeshcode isAisleExist: "
-                                + isAisleExist);
                         if (!isAisleExist) {
                             newList.add(aisle);
                         } else {
@@ -1192,9 +1184,9 @@ public class NetworkHandler {
         final ArrayList<NotificationAisle> notificationAislesList = DataBaseManager
                 .getInstance(VueApplication.getInstance())
                 .readAllIdsFromNotificationTable();
-        String url = UrlConstants.GET_AISLE_RESTURL;
         if (notificationAislesList != null && notificationAislesList.size() > 0) {
             final ArrayList<AisleWindowContent> notificationListFromServer = new ArrayList<AisleWindowContent>();
+            final ArrayList<String> notificationAisleIdsList = new ArrayList<String>();
             new Thread(new Runnable() {
                 
                 @Override
@@ -1222,6 +1214,8 @@ public class NetworkHandler {
                                 AisleWindowContent aisleItem = parser
                                         .getBookmarkedAisle(jsonObject);
                                 notificationListFromServer.add(aisleItem);
+                                notificationAisleIdsList.add(aisleItem
+                                        .getAisleId());
                                 // check this aisle is in Db or not.
                             }
                         } catch (Exception e) {
@@ -1231,9 +1225,13 @@ public class NetworkHandler {
                     // update in notification table and insert into aisles
                     // table.
                     DataBaseManager.getInstance(VueApplication.getInstance())
-                            .upDateNotificationTableForNotificationRequest(
-                                    notificationListFromServer);
-                    // TODO insert the notification aisle into Aisles db.
+                            .addTrentingAislesFromServerToDB(
+                                    VueApplication.getInstance(),
+                                    notificationListFromServer,
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .getNetworkHandler().offset,
+                                    DataBaseManager.AISLE_CREATED);
                     
                 }
             }).start();

@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -32,7 +31,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -991,14 +989,17 @@ public class DataEntryFragment extends Fragment {
     }
     
     private void showAlertForMandatoryFields(String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
         alertDialogBuilder.setTitle("Vue");
-       alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-                   dialog.cancel();
-              }
-             });
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton(
+                getResources().getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -2211,18 +2212,20 @@ public class DataEntryFragment extends Fragment {
     }
     
     public void showAlertMessageForBackendNotIntegrated(String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setTitle("Vue");
-         alertDialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                    }
+                });
         
-                    dialog.cancel();
-               }
-              });
-        
-         AlertDialog alertDialog = alertDialogBuilder.create();
-         alertDialog.show();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     void showDetailsScreenImagesInDataentryScreen() {
@@ -2355,25 +2358,29 @@ public class DataEntryFragment extends Fragment {
     }
     
     public void showAddMoreImagesDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-       alertDialogBuilder.setMessage("Do you want to Add more images?");
-       alertDialogBuilder.setTitle("Add image");
-        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-                   dialog.cancel();
-                   Utils.putTouchToChnageImagePosition(getActivity(), -1);
-                   Utils.putTouchToChnageImageTempPosition(getActivity(), -1);
-                   Utils.putTouchToChnageImageFlag(getActivity(), false);
-                   addImageToAisleButtonClickFunctionality(true);
-              }
-             });
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog,int id) {
-               
-                   dialog.cancel();
-           
-               }
-           });
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+        alertDialogBuilder.setMessage("Do you want to Add more images?");
+        alertDialogBuilder.setTitle("Add image");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        Utils.putTouchToChnageImagePosition(getActivity(), -1);
+                        Utils.putTouchToChnageImageTempPosition(getActivity(),
+                                -1);
+                        Utils.putTouchToChnageImageFlag(getActivity(), false);
+                        addImageToAisleButtonClickFunctionality(true);
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
+                        
+                    }
+                });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }

@@ -10,12 +10,6 @@
         android:title="Search Category"/>
     -->
     <item
-        android:id="@+id/menu_report_bug"
-        android:icon="@drawable/ic_action_send_now"
-        android:orderInCategory="1"
-        android:showAsAction="always"
-        android:title="@string/report_bug"/>
-    <item
         android:id="@+id/menu_refrsh_aisles"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="2"

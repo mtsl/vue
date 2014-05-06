@@ -92,16 +92,16 @@ public class VueContentGateway {
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
-                    Log.e("VueContentGateWay", "on Response called : ");  
-                     if (null != jsonArray) {
-                        if(jsonArray.length() < 5 && screenName.equalsIgnoreCase("Trending")){
+                    if (null != jsonArray) {
+                        if (jsonArray.length() < 5
+                                && screenName.equalsIgnoreCase("Trending")) {
                             mNomoreTrendingAilse = true;
-                         } 
+                        }
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
-                        responseBundle.putBoolean("loadMore", loadMore); 
-                        responseBundle.putInt("offset", offset); 
+                        responseBundle.putBoolean("loadMore", loadMore);
+                        responseBundle.putInt("offset", offset);
                         receiver.send(1, responseBundle);
                         Intent intent = new Intent(
                                 VueConstants.LANDING_SCREEN_RECEIVER);
@@ -110,7 +110,7 @@ public class VueContentGateway {
                                 screenName);
                         VueApplication.getInstance().sendBroadcast(intent);
                     }
-                } 
+                }
             };
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
@@ -151,7 +151,7 @@ public class VueContentGateway {
         mParams.add(new ParcelableNameValuePair(name, value));
     }
     
-    private  class VueAislesRequest extends JsonArrayRequest {
+    private class VueAislesRequest extends JsonArrayRequest {
         
         /**
          * Creates a new request.

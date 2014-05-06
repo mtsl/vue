@@ -126,7 +126,7 @@ public class Parser {
             }
         }
         aisleImageDetails.mRatingsList = ratingList;
-        aisleImageDetails.mLikesCount = ratingLikeCount; 
+        aisleImageDetails.mLikesCount = ratingLikeCount;
         
         // get the image comment data.
         JSONArray jsonArray = jsonObject
@@ -328,7 +328,8 @@ public class Parser {
         }
         return aisleWindowContentList;
     }
-    //gets an aisle from the jsonObject.
+    
+    // gets an aisle from the jsonObject.
     public AisleWindowContent getBookmarkedAisle(JSONObject josnObject) {
         AisleContext aisleContext = parseAisleData(josnObject);
         ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();

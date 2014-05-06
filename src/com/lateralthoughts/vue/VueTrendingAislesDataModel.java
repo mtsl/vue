@@ -77,7 +77,8 @@ public class VueTrendingAislesDataModel {
                 - VueApplication.getInstance().mLastRecordedTime;
         VueApplication.getInstance().mLastRecordedTime = System
                 .currentTimeMillis();
-        mNetworkHandler.loadInitialData(loadMore, mHandler, mContext.getResources().getString(R.string.trending));
+        mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
+                .getResources().getString(R.string.trending));
         mAislesLoadNotificationListeners = new ArrayList<NotifyAislesLoadedFromNetwork>();
     }
     
@@ -218,7 +219,8 @@ public class VueTrendingAislesDataModel {
     
     public static VueTrendingAislesDataModel getInstance(Context context) {
         if (null == sVueTrendingAislesDataModel) {
-            sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(context);
+            sVueTrendingAislesDataModel = new VueTrendingAislesDataModel(
+                    context);
         }
         return sVueTrendingAislesDataModel;
     }
@@ -406,17 +408,18 @@ public class VueTrendingAislesDataModel {
         }
         return userImageList;
     }
-
-    public void registerAisleLoadNotificationListeners(NotifyAislesLoadedFromNetwork listener){
-        if(null != listener)
+    
+    public void registerAisleLoadNotificationListeners(
+            NotifyAislesLoadedFromNetwork listener) {
+        if (null != listener)
             mAislesLoadNotificationListeners.add(listener);
     }
-
+    
     public void dismissProgress() {
         if (mNotifyProgress != null) {
             mNotifyProgress.dismissProgress(mRequestToServer);
         }
-        for(int i=0;i<mAislesLoadNotificationListeners.size();i++){
+        for (int i = 0; i < mAislesLoadNotificationListeners.size(); i++) {
             mAislesLoadNotificationListeners.get(i).aislesLoadedFromNetwork();
         }
     }
@@ -450,11 +453,12 @@ public class VueTrendingAislesDataModel {
         if (aisleImageDetails != null && aisleImageDetails.mRatingsList != null
                 && aisleImageDetails.mRatingsList.size() > 0) {
             for (int i = 0; i < aisleImageDetails.mRatingsList.size(); i++) {
-                if(aisleImageDetails.mRatingsList.get(i).mId != null) {
-                if (aisleImageDetails.mRatingsList.get(i).mId.equals(ratingId)) {
-                    aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
-                    break;
-                }
+                if (aisleImageDetails.mRatingsList.get(i).mId != null) {
+                    if (aisleImageDetails.mRatingsList.get(i).mId
+                            .equals(ratingId)) {
+                        aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
+                        break;
+                    }
                 }
             }
         }

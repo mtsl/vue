@@ -116,20 +116,20 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 } else {
                                     refreshListFlag = true;
                                 }
-                            } 
-                            if(VueLandingPageActivity.landingPageActivity != null){
-                            VueLandingPageActivity.landingPageActivity
-                                    .runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .dismissProgress();
-                                            
-                                        }
-                                    });
+                            }
+                            if (VueLandingPageActivity.landingPageActivity != null) {
+                                VueLandingPageActivity.landingPageActivity
+                                        .runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .dismissProgress();
+                                                
+                                            }
+                                        });
                             }
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null) {
@@ -147,7 +147,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 }
                             }
                             
-                            if (refreshListFlag && VueLandingPageActivity.landingPageActivity != null) {
+                            if (refreshListFlag
+                                    && VueLandingPageActivity.landingPageActivity != null) {
                                 VueLandingPageActivity.landingPageActivity
                                         .runOnUiThread(new Runnable() {
                                             @Override

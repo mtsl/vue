@@ -317,13 +317,10 @@ public class VueConstants {
     public static final String VIEW_TIME = "viewTime";
     public static final String IS_LIKED_OR_BOOKMARKED = "isLikedOrBookmarked";
     public static final String IS_NOTIFICATION_AISLE_READ_OR_UNREAD = "isNotificationAisleReadOrUnread"; // 1
-                                                                                                         // unread,
-                                                                                                         // 0
-                                                                                                         // read
-    public static final String DONT_SHOW_AISLE = "dontshowAisleFlag"; // 1
+    public static final String DONT_SHOW_AISLE_ON_LIST = "dontShowAisleOnList"; // 1
     // dontshow,
     // 0
-    // show
+    // show                                                                                // unread,
     
     // Keys for values stored in shared preference
     public static final String IS_AISLE_DIRTY = "isAisleDirty";
