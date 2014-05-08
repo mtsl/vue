@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,8 +61,8 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.notification.PopupFragment;
 import com.lateralthoughts.vue.parser.Parser;
-import com.lateralthoughts.vue.ui.CustomListPopupWindow;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
@@ -130,6 +131,9 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsMyPointsDownLoadDone = false;
     private boolean mIsAppUpGrade = false;
     private boolean mIsClearDataExcuted = false;
+    private boolean mIsNotificationListShowing = false;
+    
+    PopupFragment mPopupFragment;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -242,9 +246,11 @@ public class VueLandingPageActivity extends Activity implements
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mLandingAilsesFrag = new VueLandingAislesFragment();
+        // mPopupFragment = new PopupFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mLandingAilsesFrag).commit();
+        
         mDrawerLayout.setFocusableInTouchMode(false);
     }
     
@@ -611,66 +617,74 @@ public class VueLandingPageActivity extends Activity implements
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            
-            if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
-                
-                if (!mSlidListFrag.listener.onBackPressed()) {
-                    mDrawerLayout.closeDrawer(mContent_frame2);
-                }
-            } else if (StackViews.getInstance().getStackCount() > 0) {
-                showDefaultActionbar();
-                final ViewInfo viewInfo = StackViews.getInstance().pull();
-                if (viewInfo != null) {
-                    getActionBar().setTitle(viewInfo.mVueName);
-                    mLandingScreenName = viewInfo.mVueName;
-                    showPreviousScreen(viewInfo.mVueName);
-                    if (viewInfo.mVueName.equals(getResources().getString(
-                            R.string.trending))) {
-                        mShowRefreshIcon = true;
-                    } else {
-                        mShowRefreshIcon = false;
-                    }
-                    invalidateOptionsMenu();
-                } else {
-                    if (VueApplication.getInstance().isUserSwipeAisle) {
-                        SharedPreferences sharedPreferencesObj = this
-                                .getSharedPreferences(
-                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        boolean isAisleAlreadySwipped = sharedPreferencesObj
-                                .getBoolean(VueConstants.AISLE_SWIPE, false);
-                        if (!isAisleAlreadySwipped) {
-                            Editor editor = sharedPreferencesObj.edit();
-                            editor.putBoolean(VueConstants.AISLE_SWIPE, true);
-                            editor.commit();
-                        }
-                    }
-                    super.onBackPressed();
-                }
+            if (mIsNotificationListShowing) {
+                hideNotificationListFragment();
+                return true;
             } else {
                 
-                CancelNotification(this,
-                        VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
-                CancelNotification(this,
-                        VueConstants.IMAGE_DELETE_NOTIFICATION_ID);
-                CancelNotification(this,
-                        VueConstants.CHANGE_USER_NOTIFICATION_ID);
-                FileCache fileCache = new FileCache(
-                        VueApplication.getInstance());
-                fileCache.clearVueAppResizedPictures();
-                fileCache.clearTwoDaysOldPictures();
-                mOtherSourceImagePath = null;
-                mOtherSourceImageLookingFor = null;
-                mOtherSourceImageCategory = null;
-                mOtherSourceImageOccasion = null;
-                mOtherSourceImageUrl = null;
-                mOtherSourceImageWidth = 0;
-                mOtherSourceImageHeight = 0;
-                mOtherSourceImageDetailsUrl = null;
-                mOtherSourceImageStore = null;
-                super.onBackPressed();
+                if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
+                    
+                    if (!mSlidListFrag.listener.onBackPressed()) {
+                        mDrawerLayout.closeDrawer(mContent_frame2);
+                    }
+                } else if (StackViews.getInstance().getStackCount() > 0) {
+                    showDefaultActionbar();
+                    final ViewInfo viewInfo = StackViews.getInstance().pull();
+                    if (viewInfo != null) {
+                        getActionBar().setTitle(viewInfo.mVueName);
+                        mLandingScreenName = viewInfo.mVueName;
+                        showPreviousScreen(viewInfo.mVueName);
+                        if (viewInfo.mVueName.equals(getResources().getString(
+                                R.string.trending))) {
+                            mShowRefreshIcon = true;
+                        } else {
+                            mShowRefreshIcon = false;
+                        }
+                        invalidateOptionsMenu();
+                    } else {
+                        if (VueApplication.getInstance().isUserSwipeAisle) {
+                            SharedPreferences sharedPreferencesObj = this
+                                    .getSharedPreferences(
+                                            VueConstants.SHAREDPREFERENCE_NAME,
+                                            0);
+                            boolean isAisleAlreadySwipped = sharedPreferencesObj
+                                    .getBoolean(VueConstants.AISLE_SWIPE, false);
+                            if (!isAisleAlreadySwipped) {
+                                Editor editor = sharedPreferencesObj.edit();
+                                editor.putBoolean(VueConstants.AISLE_SWIPE,
+                                        true);
+                                editor.commit();
+                            }
+                        }
+                        super.onBackPressed();
+                    }
+                } else {
+                    
+                    CancelNotification(this,
+                            VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID);
+                    CancelNotification(this,
+                            VueConstants.IMAGE_DELETE_NOTIFICATION_ID);
+                    CancelNotification(this,
+                            VueConstants.CHANGE_USER_NOTIFICATION_ID);
+                    FileCache fileCache = new FileCache(
+                            VueApplication.getInstance());
+                    fileCache.clearVueAppResizedPictures();
+                    fileCache.clearTwoDaysOldPictures();
+                    mOtherSourceImagePath = null;
+                    mOtherSourceImageLookingFor = null;
+                    mOtherSourceImageCategory = null;
+                    mOtherSourceImageOccasion = null;
+                    mOtherSourceImageUrl = null;
+                    mOtherSourceImageWidth = 0;
+                    mOtherSourceImageHeight = 0;
+                    mOtherSourceImageDetailsUrl = null;
+                    mOtherSourceImageStore = null;
+                    super.onBackPressed();
+                }
             }
         }
         return false;
+        
     }
     
     private void showLogInDialog(boolean hideCancelButton) {
@@ -2173,12 +2187,7 @@ public class VueLandingPageActivity extends Activity implements
                     public void run() {
                         if (notificationList != null
                                 && notificationList.size() > 0) {
-                            CustomListPopupWindow cListPopup = new CustomListPopupWindow(
-                                    VueLandingPageActivity.this);
-                            cListPopup.setCustomAdapter(
-                                    findViewById(R.id.show_notification),
-                                    notificationList);
-                            cListPopup.showList();
+                            showNotificationListFragment(notificationList);
                         } else {
                             Toast.makeText(VueLandingPageActivity.this,
                                     "Sorry you dont have any notifications.",
@@ -2188,5 +2197,26 @@ public class VueLandingPageActivity extends Activity implements
                 });
             }
         }).start();
+    }
+    
+    private void showNotificationListFragment(
+            ArrayList<NotificationAisle> notificationList) {
+        try {
+            Log.i("Notification", "Notification showLIstFragment");
+            mIsNotificationListShowing = true;
+            mPopupFragment = new PopupFragment(notificationList);
+            FragmentManager fm = getFragmentManager();
+            fm.beginTransaction().add(R.id.content_frame, mPopupFragment)
+                    .commit();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    private void hideNotificationListFragment() {
+        mIsNotificationListShowing = false;
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().remove(mPopupFragment).commit();
     }
 }

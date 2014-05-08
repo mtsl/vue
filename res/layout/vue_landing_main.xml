@@ -6,21 +6,22 @@
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/content_frame2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#ffffff" >    
+        android:background="#ffffff" >
 
         <fragment
             android:id="@+id/listfrag"
             android:name="com.lateralthoughts.vue.VueListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start" /> 
+            android:layout_gravity="start" />
     </FrameLayout>
 
 </android.support.v4.widget.DrawerLayout>
