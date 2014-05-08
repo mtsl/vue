@@ -102,8 +102,6 @@ public class NotificationListAdapter extends BaseAdapter {
             
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "you are at : " + position,
-                        Toast.LENGTH_SHORT).show();
                 try {
                     if (!notificationList.get(position).isReadStatus()) {
                         DataBaseManager.getInstance(context)

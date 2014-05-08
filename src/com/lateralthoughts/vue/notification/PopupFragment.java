@@ -1,18 +1,25 @@
 package com.lateralthoughts.vue.notification;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,8 +29,11 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueConstants;
+import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.ui.NotificationListAdapter;
+import com.lateralthoughts.vue.utils.Utils;
 
 public class PopupFragment extends Fragment {
     Context mContext;
@@ -79,11 +89,14 @@ public class PopupFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                String feedBackText = editText.getText().toString();
+                final String feedBackText = editText.getText().toString();
                 if (feedBackText.length() > 0) {
+                    InputMethodManager imm = (InputMethodManager) getActivity()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                     editText.setText("");
-                    Toast.makeText(getActivity(), "Sending feedback...",
-                            Toast.LENGTH_SHORT).show();
+                    VueLandingPageActivity activity = (VueLandingPageActivity) getActivity();
+                    activity.hideNotificationListFragment(true, feedBackText);
                 } else {
                     Toast.makeText(getActivity(), "Type your feedback",
                             Toast.LENGTH_SHORT).show();
