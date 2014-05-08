@@ -316,12 +316,10 @@ public class VueConstants {
     public static final String RECENTLY_VIEWED_AISLE_ID = "recentlyViewedAisleId";
     public static final String VIEW_TIME = "viewTime";
     public static final String IS_LIKED_OR_BOOKMARKED = "isLikedOrBookmarked";
-    public static final String IS_NOTIFICATION_AISLE_READ_OR_UNREAD = "isNotificationAisleReadOrUnread"; // 1
-    public static final String DONT_SHOW_AISLE_ON_LIST = "dontShowAisleOnList"; // 1
-    // dontshow,
-    // 0
-    // show                                                                                // unread,
-    
+    public static final String IS_NOTIFICATION_AISLE_READ_OR_UNREAD = "isNotificationAisleReadOrUnread";
+    public static final String NOTIFICATION_AISLE_COMMENTS_COUNT = "NotificationAislesCommentsCount";
+    public static final String NOTIFICATION_AISLE_TITLE = "NotificationAislesTitle";
+    public static final String NOTIFICATION_TEXT = "NotificationText";
     // Keys for values stored in shared preference
     public static final String IS_AISLE_DIRTY = "isAisleDirty";
     public static final String IS_IMAGE_DIRTY = "isImageDirty";

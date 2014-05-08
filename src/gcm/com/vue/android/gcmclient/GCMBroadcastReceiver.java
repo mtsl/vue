@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
@@ -25,7 +26,9 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.user.VueUser;
 
 public class GCMBroadcastReceiver extends BroadcastReceiver {
     String aisleId = null;
@@ -125,6 +128,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                             notificationManager.notify(
                                     VueConstants.GCM_NOTIFICATION_ID,
                                     builder.build());
+                            final String mesg = notificationMessage;
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -150,11 +154,91 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                                                 .getInstance())
                                                                 .getNetworkHandler().offset,
                                                         DataBaseManager.AISLE_CREATED);
+                                        VueUser vueUser = null;
+                                        try {
+                                            vueUser = VueTrendingAislesDataModel
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .getNetworkHandler()
+                                                    .getUserFromServerByUserId(
+                                                            lastReceivedNotification
+                                                                    .getUserIdOfObjectModifier());
+                                        } catch (Exception e1) {
+                                        }
+                                        String userProfileImageUrl = null;
+                                        if (vueUser != null) {
+                                            userProfileImageUrl = vueUser
+                                                    .getUserImageURL();
+                                        }
+                                        // Title (lookingfor and occasion)
+                                        String occasion = null;
+                                        String lookingFor = null;
+                                        if (aisleWindowContent
+                                                .getAisleContext().mOccasion != null
+                                                && aisleWindowContent
+                                                        .getAisleContext().mOccasion
+                                                        .length() > 1) {
+                                            occasion = aisleWindowContent
+                                                    .getAisleContext().mOccasion;
+                                        }
+                                        if (aisleWindowContent
+                                                .getAisleContext().mLookingForItem != null
+                                                && aisleWindowContent
+                                                        .getAisleContext().mLookingForItem
+                                                        .length() > 1) {
+                                            lookingFor = aisleWindowContent
+                                                    .getAisleContext().mLookingForItem;
+                                        }
+                                        if (occasion != null
+                                                && occasion.length() > 1) {
+                                            occasion = occasion.toLowerCase();
+                                            occasion = Character.toString(
+                                                    occasion.charAt(0))
+                                                    .toUpperCase()
+                                                    + occasion.substring(1);
+                                        }
+                                        if (lookingFor != null
+                                                && lookingFor.length() > 1) {
+                                            lookingFor = lookingFor
+                                                    .toLowerCase();
+                                            lookingFor = Character.toString(
+                                                    lookingFor.charAt(0))
+                                                    .toUpperCase()
+                                                    + lookingFor.substring(1);
+                                        }
+                                        String title = "";
+                                        if (occasion != null) {
+                                            title = occasion + " : ";
+                                        }
+                                        if (lookingFor != null) {
+                                            title = title + lookingFor;
+                                        }
+                                        // Like, Bookmark and comments Counts
+                                        // for an Aisle...
+                                        int likeCount = 0, bookmarkCount = aisleWindowContent
+                                                .getAisleContext().mBookmarkCount, commentsCount = 0;
+                                        if (aisleWindowContent.getImageList() != null) {
+                                            for (AisleImageDetails aisleImageDetails : aisleWindowContent
+                                                    .getImageList()) {
+                                                likeCount += aisleImageDetails.mLikesCount;
+                                                try {
+                                                    commentsCount += aisleImageDetails.mCommentsList
+                                                            .size();
+                                                } catch (Exception e) {
+                                                }
+                                            }
+                                        }
+                                        NotificationAisle notificationAisle = new NotificationAisle(
+                                                aisleWindowContent.getAisleId(),
+                                                userProfileImageUrl, title,
+                                                likeCount, bookmarkCount,
+                                                commentsCount, null, false,
+                                                mesg);
                                         DataBaseManager.getInstance(
                                                 VueApplication.getInstance())
                                                 .insertNotificationAisleId(
-                                                        aisleWindowContent
-                                                                .getAisleId());
+                                                        notificationAisle);
                                     }
                                 }
                             }).start();

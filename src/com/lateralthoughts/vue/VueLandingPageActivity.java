@@ -58,8 +58,10 @@ import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.ui.CustomListPopupWindow;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
 import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
@@ -289,10 +291,7 @@ public class VueLandingPageActivity extends Activity implements
                 showDiscardOtherAppImageDialog();
                 
             }
-        } /*
-           * else if (item.getItemId() == R.id.menu_pending_aisle) {
-           * startActivity(new Intent(this, PendingAisles.class)); }
-           */else if (item.getItemId() == R.id.menu_refrsh_aisles) {
+        } else if (item.getItemId() == R.id.menu_refrsh_aisles) {
             mRefreshFalg = true;
             invalidateOptionsMenu();
             JSONObject categorySelectedProps = new JSONObject();
@@ -330,6 +329,8 @@ public class VueLandingPageActivity extends Activity implements
                             return false;
                         }
                     });
+        } else if (item.getItemId() == R.id.show_notification) {
+            loadNotificationList();
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
@@ -2142,7 +2143,6 @@ public class VueLandingPageActivity extends Activity implements
     
     public void clearHelpImages() {
         new Thread(new Runnable() {
-            
             @Override
             public void run() {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -2159,5 +2159,34 @@ public class VueLandingPageActivity extends Activity implements
     
     public interface ShareImage {
         public void setShareImage(boolean value);
+    }
+    
+    private void loadNotificationList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final ArrayList<NotificationAisle> notificationList = DataBaseManager
+                        .getInstance(VueLandingPageActivity.this)
+                        .readAllIdsFromNotificationTable();
+                VueLandingPageActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (notificationList != null
+                                && notificationList.size() > 0) {
+                            CustomListPopupWindow cListPopup = new CustomListPopupWindow(
+                                    VueLandingPageActivity.this);
+                            cListPopup.setCustomAdapter(
+                                    findViewById(R.id.show_notification),
+                                    notificationList);
+                            cListPopup.showList();
+                        } else {
+                            Toast.makeText(VueLandingPageActivity.this,
+                                    "Sorry you dont have any notifications.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 }

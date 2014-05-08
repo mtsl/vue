@@ -26,7 +26,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -1236,5 +1235,23 @@ public class NetworkHandler {
                 }
             }).start();
         }
+    }
+    
+    public VueUser getUserFromServerByUserId(long userId) throws Exception {
+        VueUser retrievedUser = null;
+        
+        URL url = new URL(UrlConstants.GET_USER_RESTURL + "/" + userId);
+        HttpGet httpGet = new HttpGet(url.toString());
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        
+        HttpResponse response = httpClient.execute(httpGet);
+        if (response.getEntity() != null
+                && response.getStatusLine().getStatusCode() == 200) {
+            String responseMessage = EntityUtils.toString(response.getEntity());
+            if (responseMessage.length() > 0) {
+                retrievedUser = new Parser().parseUserData(responseMessage);
+            }
+        }
+        return retrievedUser;
     }
 }

@@ -9,16 +9,22 @@
         android:showAsAction="ifRoom|collapseActionView"
         android:title="Search Category"/>
     -->
+      <item
+        android:id="@+id/show_notification"
+        android:icon="@drawable/ic_action_overflow"
+        android:orderInCategory="3"
+        android:showAsAction="always"
+        android:title="@string/show_notifications"/>
     <item
         android:id="@+id/menu_refrsh_aisles"
         android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:showAsAction="always"
         android:title="@string/rfresh_aisle"/>
     <item
         android:id="@+id/menu_create_aisle"
         android:icon="@drawable/new_save"
-        android:orderInCategory="3"
+        android:orderInCategory="2"
         android:showAsAction="always"
         android:title="@string/create_aisle"/>
     <!--

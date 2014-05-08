@@ -39,6 +39,7 @@ public class VueContentProvider extends ContentProvider {
     private static final int ALL_RATED_IMAGES_ROW_MATCH = 22;
     private static final int ALL_SHARED_AISLE = 23;
     private static final int ONE_SHARED_AISLE = 24;
+    private static final int NOTIFICATION_AISLES = 25;
     private DbHelper mDbHelper;
     private static final UriMatcher URIMATCHER;
     
@@ -86,17 +87,20 @@ public class VueContentProvider extends ContentProvider {
         URIMATCHER.addURI(VueConstants.AUTHORITY,
                 VueConstants.BOOKMARKER_AISLES + "/#", BOOKMARKED_AISLE_MATCH);
         URIMATCHER.addURI(VueConstants.AUTHORITY,
-                VueConstants.MY_BOOKMARKED_AISLES, + MY_BOOKMARKED_AISLES_MATCH);
+                VueConstants.MY_BOOKMARKED_AISLES, +MY_BOOKMARKED_AISLES_MATCH);
         URIMATCHER.addURI(VueConstants.AUTHORITY,
                 VueConstants.MY_BOOKMARKED_AISLES + "/#",
                 MY_BOOKMARKED_AISLE_MATCH);
-        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES,
-                ALL_RATED_IMAGES_TABLE_MATCH);
-        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES + "/#",
-                ALL_RATED_IMAGES_ROW_MATCH);
-        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE, ALL_SHARED_AISLE);
-        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE 
+        URIMATCHER.addURI(VueConstants.AUTHORITY,
+                VueConstants.ALL_RATED_IMAGES, ALL_RATED_IMAGES_TABLE_MATCH);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.ALL_RATED_IMAGES
+                + "/#", ALL_RATED_IMAGES_ROW_MATCH);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE,
+                ALL_SHARED_AISLE);
+        URIMATCHER.addURI(VueConstants.AUTHORITY, VueConstants.SHARED_AISLE
                 + "/#", ONE_SHARED_AISLE);
+        URIMATCHER.addURI(VueConstants.AUTHORITY,
+                VueConstants.NOTIFICATION_AISLE, NOTIFICATION_AISLES);
     }
     
     @Override
@@ -244,8 +248,7 @@ public class VueContentProvider extends ContentProvider {
             break;
         case ALL_RATED_IMAGES_ROW_MATCH:
             id = uri.getLastPathSegment();
-            rowsDeleted = aislesDB.delete(
-                    VueConstants.ALL_RATED_IMAGES,
+            rowsDeleted = aislesDB.delete(VueConstants.ALL_RATED_IMAGES,
                     VueConstants.ID
                             + "="
                             + id
@@ -255,14 +258,24 @@ public class VueContentProvider extends ContentProvider {
                     selection, selectionArgs);
             break;
         case ALL_SHARED_AISLE:
-            rowsDeleted = aislesDB.delete(VueConstants.SHARED_AISLE,
-                    selection, selectionArgs);
-        break;
+            rowsDeleted = aislesDB.delete(VueConstants.SHARED_AISLE, selection,
+                    selectionArgs);
+            break;
         case ONE_SHARED_AISLE:
             id = uri.getLastPathSegment();
             rowsDeleted = aislesDB.delete(
                     VueConstants.SHARED_AISLE,
                     VueConstants.SHARE_AISLE_ID
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            break;
+        case NOTIFICATION_AISLES:
+            id = uri.getLastPathSegment();
+            rowsDeleted = aislesDB.delete(
+                    VueConstants.NOTIFICATION_AISLE,
+                    VueConstants.AISLE_Id
                             + "="
                             + id
                             + (!TextUtils.isEmpty(selection) ? " AND ("
@@ -383,8 +396,8 @@ public class VueContentProvider extends ContentProvider {
             }
             break;
         case ALL_RATED_IMAGES_TABLE_MATCH:
-            rowId = aislesDB.insert(VueConstants.ALL_RATED_IMAGES, null,
-                    values);
+            rowId = aislesDB
+                    .insert(VueConstants.ALL_RATED_IMAGES, null, values);
             if (rowId > 0) {
                 rowUri = ContentUris.appendId(
                         VueConstants.ALL_RATED_IMAGES_URI.buildUpon(), rowId)
@@ -393,27 +406,36 @@ public class VueContentProvider extends ContentProvider {
             }
             break;
         case ALL_RATED_IMAGES_ROW_MATCH:
-            rowId = aislesDB.insert(VueConstants.ALL_RATED_IMAGES, null,
-                    values);
+            rowId = aislesDB
+                    .insert(VueConstants.ALL_RATED_IMAGES, null, values);
             if (rowId > 0) {
                 rowUri = ContentUris.appendId(
-                        VueConstants.ALL_RATED_IMAGES_URI.buildUpon(),
-                        rowId).build();
+                        VueConstants.ALL_RATED_IMAGES_URI.buildUpon(), rowId)
+                        .build();
                 return rowUri;
             }
             break;
         case ALL_SHARED_AISLE:
-            rowId = aislesDB.insert(VueConstants.SHARED_AISLE, null,
-                    values);
+            rowId = aislesDB.insert(VueConstants.SHARED_AISLE, null, values);
             if (rowId > 0) {
                 rowUri = ContentUris.appendId(
-                        VueConstants.SHARED_AISLE_URI.buildUpon(),
-                        rowId).build();
+                        VueConstants.SHARED_AISLE_URI.buildUpon(), rowId)
+                        .build();
                 return rowUri;
             }
             break;
-            
-            
+        case NOTIFICATION_AISLES:
+            rowId = aislesDB.insert(VueConstants.NOTIFICATION_AISLE, null,
+                    values);
+            if (rowId > 0) {
+                rowUri = ContentUris
+                        .appendId(
+                                VueConstants.NOTIFICATION_AISLES_URI
+                                        .buildUpon(),
+                                rowId).build();
+                return rowUri;
+            }
+            break;
         case COMMENTS_ROW_MATCH:
             throw new IllegalArgumentException("Unsupported URI: " + uri);
         case CATEGORY_ROW_MATCH:
@@ -611,6 +633,12 @@ public class VueContentProvider extends ContentProvider {
                     + (!TextUtils.isEmpty(selection) ? " AND (" + selection
                             + ')' : ""), selectionArgs, null, null, null);
             break;
+        case NOTIFICATION_AISLES:
+            qb.setTables(VueConstants.NOTIFICATION_AISLE);
+            id = uri.getLastPathSegment();
+            cursor = qb.query(aislesDB, projection, selection, selectionArgs,
+                    null, null, sortOrder);
+            break;
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
@@ -781,8 +809,7 @@ public class VueContentProvider extends ContentProvider {
             break;
         case ALL_RATED_IMAGES_ROW_MATCH:
             id = uri.getLastPathSegment();
-            rowsUpdated = aislesDB.update(
-                    VueConstants.ALL_RATED_IMAGES,
+            rowsUpdated = aislesDB.update(VueConstants.ALL_RATED_IMAGES,
                     values,
                     VueConstants.ID
                             + "="
@@ -792,21 +819,30 @@ public class VueContentProvider extends ContentProvider {
             
             break;
         case ALL_SHARED_AISLE:
-            rowsUpdated = aislesDB.update(VueConstants.SHARED_AISLE,
-                    values, selection, selectionArgs);
+            rowsUpdated = aislesDB.update(VueConstants.SHARED_AISLE, values,
+                    selection, selectionArgs);
             break;
         case ONE_SHARED_AISLE:
             id = uri.getLastPathSegment();
-            rowsUpdated = aislesDB.update(
-                    VueConstants.SHARED_AISLE,
-                    values,
+            rowsUpdated = aislesDB.update(VueConstants.SHARED_AISLE, values,
                     VueConstants.ID
                             + "="
                             + id
                             + (!TextUtils.isEmpty(selection) ? " AND ("
                                     + selection + ')' : ""), selectionArgs);
             break;
-            
+        case NOTIFICATION_AISLES:
+            id = uri.getLastPathSegment();
+            rowsUpdated = aislesDB.update(
+                    VueConstants.NOTIFICATION_AISLE,
+                    values,
+                    VueConstants.AISLE_Id
+                            + "="
+                            + id
+                            + (!TextUtils.isEmpty(selection) ? " AND ("
+                                    + selection + ')' : ""), selectionArgs);
+            break;
+        
         }
         return rowsUpdated;
     }

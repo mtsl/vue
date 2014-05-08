@@ -2041,62 +2041,72 @@ public class DataBaseManager {
         }
     }
     
-    public void insertNotificationAisleId(String aisleId) {
-        Cursor c = VueApplication
-                .getInstance()
-                .getContentResolver()
-                .query(VueConstants.NOTIFICATION_AISLES_URI, null,
-                        VueConstants.AISLE_Id + "=?", new String[] { aisleId },
-                        null);
-        int cursorCount = c.getCount();
-        c.close();
-        if (cursorCount > 0) {
-            VueApplication
-                    .getInstance()
-                    .getContentResolver()
-                    .delete(VueConstants.NOTIFICATION_AISLES_URI,
-                            VueConstants.AISLE_Id + "=?",
-                            new String[] { "" + aisleId });
+    public void insertNotificationAisleId(NotificationAisle notificationAisle) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(VueConstants.AISLE_Id, notificationAisle.getAisleId());
+            values.put(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD, 1);
+            values.put(VueConstants.IMAGE_URL,
+                    notificationAisle.getUserProfileImageUrl());
+            values.put(VueConstants.NOTIFICATION_AISLE_TITLE,
+                    notificationAisle.getAisleTitle());
+            values.put(VueConstants.NOTIFICATION_TEXT,
+                    notificationAisle.getNotificationText());
+            values.put(VueConstants.LIKES_COUNT,
+                    notificationAisle.getLikeCount());
+            values.put(VueConstants.BOOKMARK_COUNT,
+                    notificationAisle.getBookmarkCount());
+            values.put(VueConstants.NOTIFICATION_AISLE_COMMENTS_COUNT,
+                    notificationAisle.getCommentsCount());
+            VueApplication.getInstance().getContentResolver()
+                    .insert(VueConstants.NOTIFICATION_AISLES_URI, values);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        ContentValues values = new ContentValues();
-        values.put(VueConstants.AISLE_Id, aisleId);
-        values.put(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD, 1);
-        values.put(VueConstants.DONT_SHOW_AISLE_ON_LIST, 0);
-        VueApplication.getInstance().getContentResolver()
-                .insert(VueConstants.NOTIFICATION_AISLES_URI, values);
     }
     
     public ArrayList<NotificationAisle> readAllIdsFromNotificationTable() {
-        ArrayList<NotificationAisle> notificationAislesList = null;
-        Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.NOTIFICATION_AISLES_URI,
-                new String[] { VueConstants.ID }, null, null,
-                VueConstants.ID + " DESC");
-        if (cursor.moveToFirst()) {
-            notificationAislesList = new ArrayList<NotificationAisle>();
-            do {
-                int status = cursor
-                        .getInt(cursor
-                                .getColumnIndex(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD));
-                boolean readStaus = false;
-                if (status == 0) {
-                    readStaus = true;
-                }
-                boolean dontshowstatus = false;
-                int dontshow = cursor.getInt(cursor
-                        .getColumnIndex(VueConstants.DONT_SHOW_AISLE_ON_LIST));
-                if (dontshow == 1) {
-                    dontshowstatus = true;
-                }
-                NotificationAisle notificationAisle = new NotificationAisle(
-                        cursor.getString(cursor
-                                .getColumnIndex(VueConstants.AISLE_Id)),
-                        readStaus, dontshowstatus);
-                notificationAislesList.add(notificationAisle);
-            } while (cursor.moveToNext());
+        try {
+            ArrayList<NotificationAisle> notificationAislesList = null;
+            Cursor cursor = mContext.getContentResolver().query(
+                    VueConstants.NOTIFICATION_AISLES_URI, null, null, null,
+                    VueConstants.ID + " DESC");
+            if (cursor.moveToFirst()) {
+                notificationAislesList = new ArrayList<NotificationAisle>();
+                do {
+                    int status = cursor
+                            .getInt(cursor
+                                    .getColumnIndex(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD));
+                    boolean readStaus = false;
+                    if (status == 0) {
+                        readStaus = true;
+                    }
+                    NotificationAisle notificationAisle = new NotificationAisle(
+                            cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.AISLE_Id)),
+                            cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.IMAGE_URL)),
+                            cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.NOTIFICATION_AISLE_TITLE)),
+                            cursor.getInt(cursor
+                                    .getColumnIndex(VueConstants.LIKES_COUNT)),
+                            cursor.getInt(cursor
+                                    .getColumnIndex(VueConstants.BOOKMARK_COUNT)),
+                            cursor.getInt(cursor
+                                    .getColumnIndex(VueConstants.NOTIFICATION_AISLE_COMMENTS_COUNT)),
+                            null,
+                            readStaus,
+                            cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.NOTIFICATION_TEXT)));
+                    notificationAislesList.add(notificationAisle);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            return notificationAislesList;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        cursor.close();
-        return notificationAislesList;
+        return null;
     }
     
 }

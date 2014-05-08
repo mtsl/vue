@@ -68,9 +68,9 @@
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
     </style>
+
     <style name="AlertDialogCustom" parent="android:Theme.Light">
-         
         <item name="android:textSize">5sp</item>
     </style>
- 
+
 </resources>

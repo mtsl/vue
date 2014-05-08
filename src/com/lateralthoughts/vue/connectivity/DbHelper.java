@@ -36,7 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
     public static final String DATABASE_TABLE_MY_SHARED_AISLES = "mySharedAisles";
     public static final String DATABASE_TABLE_NOTIFICATION_AISLES = "notificationAisles";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 16;
     
     private String mCreateShareTable = "create table if not exists "
             + DATABASE_TABLE_MY_SHARED_AISLES + " ("
@@ -132,8 +132,12 @@ public class DbHelper extends SQLiteOpenHelper {
             + DATABASE_TABLE_NOTIFICATION_AISLES + " (" + VueConstants.ID
             + " integer primary key autoincrement, " + VueConstants.AISLE_Id
             + " text, " + VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD
-            + " integer, " + VueConstants.DONT_SHOW_AISLE_ON_LIST
-            + " integer);";
+            + " integer, " + VueConstants.IMAGE_URL + " text, "
+            + VueConstants.NOTIFICATION_AISLE_TITLE + " text, "
+            + VueConstants.NOTIFICATION_TEXT + " text, "
+            + VueConstants.LIKES_COUNT + " integer, "
+            + VueConstants.BOOKMARK_COUNT + " integer, "
+            + VueConstants.NOTIFICATION_AISLE_COMMENTS_COUNT + " integer);";
     
     private String mCreateMyBookmarkedAislesTable = "create table if not exists "
             + DATABASE_TABLE_MY_BOOKMARKED_AISLES
