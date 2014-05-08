@@ -8,13 +8,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.domain.NotificationAisle;
@@ -58,6 +63,7 @@ public class PopupFragment extends Fragment {
                 .findViewById(R.id.overflow_listlayout_layout);
         relBg.getBackground().setAlpha(85);
         View heder = inflater.inflate(R.layout.popup_header, null);
+        ImageView sendButton = (ImageView) heder.findViewById(R.id.send_button);
         LinearLayout listLay = (LinearLayout) v.findViewById(R.id.list_lay_id);
         ListView list = (ListView) v.findViewById(R.id.list_id);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -66,8 +72,42 @@ public class PopupFragment extends Fragment {
         listLay.setLayoutParams(params);
         list.addHeaderView(heder);
         list.setAdapter(new NotificationListAdapter(mContext, mNotificationList));
-        TextView textView = (TextView) heder.findViewById(R.id.hint_text_id);
-        textView.setVisibility(View.INVISIBLE);
+        
+        final EditText editText = (EditText) heder
+                .findViewById(R.id.message_id);
+        sendButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                String feedBackText = editText.getText().toString();
+                if (feedBackText.length() > 0) {
+                    editText.setText("");
+                    Toast.makeText(getActivity(), "Sending feedback...",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Type your feedback",
+                            Toast.LENGTH_SHORT).show();
+                }
+                
+            }
+        });
+        list.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        list.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                editText.getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        });
+        editText.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // to provide touch scroll for edit text
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
         return v;
     }
     
