@@ -57,6 +57,7 @@
     <string name="yes_mesg">Yes</string>
     <string name="fb_no_friends">There are no friends to show.</string>
     <string name="no_mesg">No</string>
+    <string name="send_feedback">Send Feedback</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>

@@ -3,11 +3,13 @@ package com.lateralthoughts.vue.ui;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +71,8 @@ public class NotificationListAdapter extends BaseAdapter {
                     .findViewById(R.id.comments);
             holder.userImage = (NetworkImageView) convertView
                     .findViewById(R.id.user_image);
+            holder.overflow_listlayout_layout = (LinearLayout) convertView
+                    .findViewById(R.id.overflow_listlayout_layout);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -87,6 +91,13 @@ public class NotificationListAdapter extends BaseAdapter {
                 notificationList.get(position).getUserProfileImageUrl(),
                 VueApplication.getInstance().getImageCacheLoader(), 62, 72,
                 NetworkImageView.BitmapProfile.ProfileDetailsView);
+        if (notificationList.get(position).isReadStatus()) { // read
+            holder.overflow_listlayout_layout.setBackgroundColor(Color
+                    .parseColor("#C0C0C0"));
+        } else { // unread
+            holder.overflow_listlayout_layout.setBackgroundColor(Color
+                    .parseColor("#FFFFFF"));
+        }
         convertView.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -117,6 +128,7 @@ public class NotificationListAdapter extends BaseAdapter {
     
     class ViewHolder {
         NetworkImageView userImage;
+        LinearLayout overflow_listlayout_layout;
         TextView notificationDescription, bookmarks, likes, comments,
                 notificationText;
     }
