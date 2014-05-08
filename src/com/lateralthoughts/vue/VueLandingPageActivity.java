@@ -336,7 +336,11 @@ public class VueLandingPageActivity extends Activity implements
                         }
                     });
         } else if (item.getItemId() == R.id.show_notification) {
-            loadNotificationList();
+            if (!mIsNotificationListShowing) {
+                loadNotificationList();
+            } else {
+                hideNotificationListFragment();
+            }
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
