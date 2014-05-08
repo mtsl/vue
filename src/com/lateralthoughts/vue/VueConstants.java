@@ -332,4 +332,6 @@ public class VueConstants {
     public static final String BOOKMARKED = "bookmarked";
     public static final String COMMENTER_URL = "commenterUrl";
     public static final String ADMIN_MAIL_ADDRESS = "admin@thesilverlabs.com";
+    public static final String VUE_FEEDBACK_MAIL = "vuedev@thesilverlabs.com";
+    public static final String VUE_FEEDBACK_SUBJECT = "Vue feedback from the user";
 }

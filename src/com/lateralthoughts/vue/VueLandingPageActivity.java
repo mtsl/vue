@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.json.JSONException;
@@ -31,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -339,7 +341,7 @@ public class VueLandingPageActivity extends Activity implements
             if (!mIsNotificationListShowing) {
                 loadNotificationList();
             } else {
-                hideNotificationListFragment();
+                hideNotificationListFragment(false, null);
             }
         }
         // Handle your other action bar items...
@@ -622,7 +624,7 @@ public class VueLandingPageActivity extends Activity implements
         
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mIsNotificationListShowing) {
-                hideNotificationListFragment();
+                hideNotificationListFragment(false, null);
                 return true;
             } else {
                 
@@ -2218,9 +2220,45 @@ public class VueLandingPageActivity extends Activity implements
         
     }
     
-    private void hideNotificationListFragment() {
+    public void hideNotificationListFragment(boolean flag,
+            final String feedBackText) {
         mIsNotificationListShowing = false;
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().remove(mPopupFragment).commit();
+        if (flag) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent sendIntent = new Intent(
+                            android.content.Intent.ACTION_SEND);
+                    sendIntent.setType("*/*");
+                    sendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                    sendIntent.putExtra(Intent.EXTRA_STREAM,
+                            Uri.parse("mailto:"));
+                    sendIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+                            feedBackText);
+                    sendIntent.putExtra(Intent.EXTRA_EMAIL,
+                            new String[] { VueConstants.VUE_FEEDBACK_MAIL });
+                    sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                            VueConstants.VUE_FEEDBACK_SUBJECT);
+                    ArrayList<Uri> uris = new ArrayList<Uri>();
+                    uris.add(Utils.takeScreenshot(VueLandingPageActivity.this));
+                    File dir = new File(Environment
+                            .getExternalStorageDirectory().toString()
+                            + "/vueExceptions/");
+                    File file = new File(dir, "/" + "vueExceptions"
+                            + (Calendar.getInstance().get(Calendar.MONTH) + 1)
+                            + "-" + Calendar.getInstance().get(Calendar.DATE)
+                            + "_" + Calendar.getInstance().get(Calendar.YEAR)
+                            + ".txt");
+                    uris.add(Uri.fromFile(file));
+                    sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                            uris);
+                    sendIntent.setClassName(VueConstants.GMAIL_PACKAGE_NAME,
+                            VueConstants.GMAIL_ACTIVITY_NAME);
+                    startActivityForResult(sendIntent, 64);
+                }
+            }, 100);
+        }
     }
 }
