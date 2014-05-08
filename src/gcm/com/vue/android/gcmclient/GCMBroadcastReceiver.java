@@ -129,6 +129,9 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                     VueConstants.GCM_NOTIFICATION_ID,
                                     builder.build());
                             final String mesg = notificationMessage;
+                            final String reciviedNotificationImageId = String
+                                    .valueOf(lastReceivedNotification
+                                            .getCorrespondingOwnerImageId());
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -165,6 +168,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                             lastReceivedNotification
                                                                     .getUserIdOfObjectModifier());
                                         } catch (Exception e1) {
+                                            e1.printStackTrace();
                                         }
                                         String userProfileImageUrl = null;
                                         if (vueUser != null) {
@@ -230,7 +234,9 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                             }
                                         }
                                         NotificationAisle notificationAisle = new NotificationAisle(
-                                                aisleWindowContent.getAisleId(),
+                                                0, aisleWindowContent
+                                                        .getAisleId(),
+                                                reciviedNotificationImageId,
                                                 userProfileImageUrl, title,
                                                 likeCount, bookmarkCount,
                                                 commentsCount, null, false,

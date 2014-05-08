@@ -1239,8 +1239,7 @@ public class NetworkHandler {
     
     public VueUser getUserFromServerByUserId(long userId) throws Exception {
         VueUser retrievedUser = null;
-        
-        URL url = new URL(UrlConstants.GET_USER_RESTURL + "/" + userId);
+        URL url = new URL(UrlConstants.GET_USER_RESTURL + userId);
         HttpGet httpGet = new HttpGet(url.toString());
         DefaultHttpClient httpClient = new DefaultHttpClient();
         

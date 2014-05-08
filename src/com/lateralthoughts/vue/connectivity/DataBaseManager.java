@@ -2045,6 +2045,7 @@ public class DataBaseManager {
         try {
             ContentValues values = new ContentValues();
             values.put(VueConstants.AISLE_Id, notificationAisle.getAisleId());
+            values.put(VueConstants.IMAGE_ID, notificationAisle.getImageId());
             values.put(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD, 1);
             values.put(VueConstants.IMAGE_URL,
                     notificationAisle.getUserProfileImageUrl());
@@ -2065,6 +2066,20 @@ public class DataBaseManager {
         }
     }
     
+    public void updateNotificationAisleAsRead(final int id) {
+        runTask(new Runnable() {
+            
+            @Override
+            public void run() {
+                ContentValues values = new ContentValues();
+                values.put(VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD, 0);
+                mContext.getContentResolver().update(
+                        VueConstants.NOTIFICATION_AISLES_URI, values,
+                        VueConstants.ID + "=?", new String[] { "" + id });
+            }
+        });
+    }
+    
     public ArrayList<NotificationAisle> readAllIdsFromNotificationTable() {
         try {
             ArrayList<NotificationAisle> notificationAislesList = null;
@@ -2082,8 +2097,12 @@ public class DataBaseManager {
                         readStaus = true;
                     }
                     NotificationAisle notificationAisle = new NotificationAisle(
+                            cursor.getInt(cursor
+                                    .getColumnIndex(VueConstants.ID)),
                             cursor.getString(cursor
                                     .getColumnIndex(VueConstants.AISLE_Id)),
+                            cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.IMAGE_ID)),
                             cursor.getString(cursor
                                     .getColumnIndex(VueConstants.IMAGE_URL)),
                             cursor.getString(cursor
@@ -2108,5 +2127,4 @@ public class DataBaseManager {
         }
         return null;
     }
-    
 }

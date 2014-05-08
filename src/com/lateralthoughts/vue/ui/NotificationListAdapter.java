@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.NotificationAisle;
 
 public class NotificationListAdapter extends BaseAdapter {
@@ -44,7 +49,7 @@ public class NotificationListAdapter extends BaseAdapter {
     }
     
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         
         final ViewHolder holder;
         if (convertView == null) {
@@ -62,7 +67,7 @@ public class NotificationListAdapter extends BaseAdapter {
             holder.likes = (TextView) convertView.findViewById(R.id.likes);
             holder.comments = (TextView) convertView
                     .findViewById(R.id.comments);
-            holder.userImage = (ImageView) convertView
+            holder.userImage = (NetworkImageView) convertView
                     .findViewById(R.id.user_image);
             convertView.setTag(holder);
         } else {
@@ -78,12 +83,40 @@ public class NotificationListAdapter extends BaseAdapter {
                 .getAisleTitle());
         holder.notificationText.setText(notificationList.get(position)
                 .getNotificationText());
+        ((NetworkImageView) holder.userImage).setImageUrl(
+                notificationList.get(position).getUserProfileImageUrl(),
+                VueApplication.getInstance().getImageCacheLoader(), 62, 72,
+                NetworkImageView.BitmapProfile.ProfileDetailsView);
+        convertView.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "you are at : " + position,
+                        Toast.LENGTH_SHORT).show();
+                try {
+                    if (!notificationList.get(position).isReadStatus()) {
+                        DataBaseManager.getInstance(context)
+                                .updateNotificationAisleAsRead(
+                                        notificationList.get(position).getId());
+                        notificationList.get(position).setReadStatus(true);
+                        notifyDataSetChanged();
+                    }
+                    notificationList.get(position).setReadStatus(true);
+                    VueLandingPageActivity activity = (VueLandingPageActivity) context;
+                    activity.loadDetailsScreenForNotificationClick(
+                            notificationList.get(position).getAisleId(),
+                            notificationList.get(position).getImageId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         return convertView;
         
     }
     
     class ViewHolder {
-        ImageView userImage;
+        NetworkImageView userImage;
         TextView notificationDescription, bookmarks, likes, comments,
                 notificationText;
     }

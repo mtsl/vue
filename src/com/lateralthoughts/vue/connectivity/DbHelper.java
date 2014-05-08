@@ -36,7 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_TABLE_MY_BOOKMARKED_AISLES = "myBookmarkedAisles";
     public static final String DATABASE_TABLE_MY_SHARED_AISLES = "mySharedAisles";
     public static final String DATABASE_TABLE_NOTIFICATION_AISLES = "notificationAisles";
-    public static final int DATABASE_VERSION = 16;
+    public static final int DATABASE_VERSION = 17;
     
     private String mCreateShareTable = "create table if not exists "
             + DATABASE_TABLE_MY_SHARED_AISLES + " ("
@@ -134,6 +134,7 @@ public class DbHelper extends SQLiteOpenHelper {
             + " text, " + VueConstants.IS_NOTIFICATION_AISLE_READ_OR_UNREAD
             + " integer, " + VueConstants.IMAGE_URL + " text, "
             + VueConstants.NOTIFICATION_AISLE_TITLE + " text, "
+            + VueConstants.IMAGE_ID + " text, "
             + VueConstants.NOTIFICATION_TEXT + " text, "
             + VueConstants.LIKES_COUNT + " integer, "
             + VueConstants.BOOKMARK_COUNT + " integer, "

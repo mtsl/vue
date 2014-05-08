@@ -3,7 +3,26 @@ package com.lateralthoughts.vue.domain;
 import java.util.ArrayList;
 
 public class NotificationAisle {
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    private int id;
     private String aisleId;
+    
+    public String getImageId() {
+        return imageId;
+    }
+    
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+    
+    private String imageId;
     
     public String getNotificationText() {
         return notificationText;
@@ -90,10 +109,11 @@ public class NotificationAisle {
     
     private boolean readStatus; // true for read, false for unread
     
-    public NotificationAisle(String aisleId, String userProfileImageUrl,
-            String aisleTitle, int likeCount, int bookmarkCount,
-            int commentsCount, ArrayList<NotificationAisle> aggregatedAisles,
-            boolean readStatus, String notificationText) {
+    public NotificationAisle(int id, String aisleId, String imageId,
+            String userProfileImageUrl, String aisleTitle, int likeCount,
+            int bookmarkCount, int commentsCount,
+            ArrayList<NotificationAisle> aggregatedAisles, boolean readStatus,
+            String notificationText) {
         this.aisleId = aisleId;
         this.userProfileImageUrl = userProfileImageUrl;
         this.aisleTitle = aisleTitle;
@@ -103,6 +123,7 @@ public class NotificationAisle {
         this.aggregatedAisles = aggregatedAisles;
         this.readStatus = readStatus;
         this.notificationText = notificationText;
+        this.imageId = imageId;
     }
     
 }

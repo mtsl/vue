@@ -852,7 +852,14 @@ public class VueLandingPageActivity extends Activity implements
                     }
                 }
             }
-            loadDetailsScreenForNotificationClick(intent.getExtras());
+            if (intent.getExtras() != null) {
+                String notificationImageId = intent.getExtras().getString(
+                        VueConstants.NOTIFICATION_IMAGE_ID, null);
+                String notificationAisleId = intent.getExtras().getString(
+                        VueConstants.NOTIFICATION_AISLE_ID, null);
+                loadDetailsScreenForNotificationClick(notificationAisleId,
+                        notificationImageId);
+            }
         }
     }
     
@@ -1738,86 +1745,72 @@ public class VueLandingPageActivity extends Activity implements
     public void onClick(View view) {
     }
     
-    private void loadDetailsScreenForNotificationClick(Bundle notificationBundle) {
-        if (notificationBundle != null) {
-            final String notificationImageId = notificationBundle.getString(
-                    VueConstants.NOTIFICATION_IMAGE_ID, null);
-            final String notificationAisleId = notificationBundle.getString(
-                    VueConstants.NOTIFICATION_AISLE_ID, null);
-            if (notificationAisleId != null) {
-                final ProgressDialog progressDialog = ProgressDialog.show(this,
-                        "", "Loading...");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final AisleWindowContent aisleWindowContent = new Parser()
-                                .getAisleForAisleIdFromServerORDatabase(
-                                        notificationAisleId, false);
-                        VueLandingPageActivity.this
-                                .runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (progressDialog != null) {
-                                            progressDialog.dismiss();
-                                        }
-                                        if (aisleWindowContent != null) {
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueLandingPageActivity.this)
-                                                    .dataObserver();
-                                            List<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
-                                            aisleList.add(aisleWindowContent);
-                                            DataBaseManager
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .addTrentingAislesFromServerToDB(
-                                                            VueApplication
-                                                                    .getInstance(),
-                                                            aisleList,
-                                                            VueTrendingAislesDataModel
-                                                                    .getInstance(
-                                                                            VueApplication
-                                                                                    .getInstance())
-                                                                    .getNetworkHandler().offset,
-                                                            DataBaseManager.AISLE_CREATED);
-                                            DataBaseManager
-                                                    .getInstance(
-                                                            VueLandingPageActivity.this)
-                                                    .updateOrAddRecentlyViewedAisles(
-                                                            aisleWindowContent
-                                                                    .getAisleId());
-                                            Intent intent = new Intent();
-                                            intent.setClass(
-                                                    VueLandingPageActivity.this,
-                                                    AisleDetailsViewActivity.class);
-                                            VueApplication
-                                                    .getInstance()
-                                                    .setClickedWindowID(
-                                                            aisleWindowContent
-                                                                    .getAisleId());
-                                            VueApplication
-                                                    .getInstance()
-                                                    .setClickedWindowCount(
-                                                            aisleWindowContent
-                                                                    .getImageList()
-                                                                    .size());
-                                            VueApplication
-                                                    .getInstance()
-                                                    .setmAisleImgCurrentPos(
-                                                            VueTrendingAislesDataModel
-                                                                    .getInstance(
-                                                                            VueLandingPageActivity.this)
-                                                                    .getImagePositionInAisle(
-                                                                            aisleWindowContent,
-                                                                            notificationImageId));
-                                            startActivity(intent);
-                                        }
-                                    }
-                                });
-                    }
-                }).start();
-            }
+    public void loadDetailsScreenForNotificationClick(
+            final String notificationAisleId, final String notificationImageId) {
+        if (notificationAisleId != null) {
+            final ProgressDialog progressDialog = ProgressDialog.show(this, "",
+                    "Loading...");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final AisleWindowContent aisleWindowContent = new Parser()
+                            .getAisleForAisleIdFromServerORDatabase(
+                                    notificationAisleId, false);
+                    VueLandingPageActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null) {
+                                progressDialog.dismiss();
+                            }
+                            if (aisleWindowContent != null) {
+                                VueTrendingAislesDataModel.getInstance(
+                                        VueLandingPageActivity.this)
+                                        .dataObserver();
+                                List<AisleWindowContent> aisleList = new ArrayList<AisleWindowContent>();
+                                aisleList.add(aisleWindowContent);
+                                DataBaseManager
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .addTrentingAislesFromServerToDB(
+                                                VueApplication.getInstance(),
+                                                aisleList,
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .getNetworkHandler().offset,
+                                                DataBaseManager.AISLE_CREATED);
+                                DataBaseManager
+                                        .getInstance(
+                                                VueLandingPageActivity.this)
+                                        .updateOrAddRecentlyViewedAisles(
+                                                aisleWindowContent.getAisleId());
+                                Intent intent = new Intent();
+                                intent.setClass(VueLandingPageActivity.this,
+                                        AisleDetailsViewActivity.class);
+                                VueApplication
+                                        .getInstance()
+                                        .setClickedWindowID(
+                                                aisleWindowContent.getAisleId());
+                                VueApplication.getInstance()
+                                        .setClickedWindowCount(
+                                                aisleWindowContent
+                                                        .getImageList().size());
+                                VueApplication
+                                        .getInstance()
+                                        .setmAisleImgCurrentPos(
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueLandingPageActivity.this)
+                                                        .getImagePositionInAisle(
+                                                                aisleWindowContent,
+                                                                notificationImageId));
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                }
+            }).start();
         }
     }
     
@@ -2099,7 +2092,14 @@ public class VueLandingPageActivity extends Activity implements
                 handleSendMultipleImages(intent, true);
             }
         }
-        loadDetailsScreenForNotificationClick(getIntent().getExtras());
+        if (getIntent().getExtras() != null) {
+            String notificationImageId = getIntent().getExtras().getString(
+                    VueConstants.NOTIFICATION_IMAGE_ID, null);
+            String notificationAisleId = getIntent().getExtras().getString(
+                    VueConstants.NOTIFICATION_AISLE_ID, null);
+            loadDetailsScreenForNotificationClick(notificationAisleId,
+                    notificationImageId);
+        }
         
     }
     
