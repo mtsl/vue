@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -59,6 +60,7 @@ import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.notification.PopupFragment;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
@@ -128,6 +130,9 @@ public class VueLandingPageActivity extends Activity implements
     private boolean mIsMyPointsDownLoadDone = false;
     private boolean mIsAppUpGrade = false;
     private boolean mIsClearDataExcuted = false;
+    private boolean mIsNotificationListShowing = false;
+    
+     PopupFragment  mPopupFragment;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -238,11 +243,13 @@ public class VueLandingPageActivity extends Activity implements
                 invalidateOptionsMenu();
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mLandingAilsesFrag = new VueLandingAislesFragment();
+        mDrawerLayout.setDrawerListener(mDrawerToggle); 
+       mLandingAilsesFrag = new VueLandingAislesFragment();
+       // mPopupFragment = new PopupFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mLandingAilsesFrag).commit();
+       
         mDrawerLayout.setFocusableInTouchMode(false);
     }
     
@@ -330,6 +337,13 @@ public class VueLandingPageActivity extends Activity implements
                             return false;
                         }
                     });
+        } else if (item.getItemId() == R.id.show_notification){
+            Log.i("Notification", "Notification onOptionItem clicked");
+            if(!mIsNotificationListShowing){
+            showNotificationListFragment(R.id.show_notification);
+            } else {
+                 hideNotificationListFragment();
+            }
         }
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
@@ -610,6 +624,10 @@ public class VueLandingPageActivity extends Activity implements
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+             if(mIsNotificationListShowing){
+                 hideNotificationListFragment();
+              return true;   
+             } else {
             
             if (mDrawerLayout.isDrawerOpen(mContent_frame2)) {
                 
@@ -669,7 +687,9 @@ public class VueLandingPageActivity extends Activity implements
                 super.onBackPressed();
             }
         }
+        }
         return false;
+        
     }
     
     private void showLogInDialog(boolean hideCancelButton) {
@@ -2159,5 +2179,24 @@ public class VueLandingPageActivity extends Activity implements
     
     public interface ShareImage {
         public void setShareImage(boolean value);
+    }
+    
+    private void showNotificationListFragment(int id) {
+        try {
+            Log.i("Notification", "Notification showLIstFragment");
+            mIsNotificationListShowing = true;
+            mPopupFragment = new PopupFragment();
+            FragmentManager fm = getFragmentManager();
+            fm.beginTransaction()
+                    .add(R.id.content_frame, mPopupFragment).commit();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        
+    }
+    private void hideNotificationListFragment(){
+        mIsNotificationListShowing = false;
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().remove(mPopupFragment).commit();
     }
 }
