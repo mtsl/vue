@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.R;
@@ -73,10 +75,31 @@ public class NotificationListAdapter extends BaseAdapter {
                     .findViewById(R.id.user_image);
             holder.overflow_listlayout_layout = (LinearLayout) convertView
                     .findViewById(R.id.overflow_listlayout_layout);
+            holder.bookmarkId = (ImageView) convertView.findViewById(R.id.bookmark_id);
+            holder.commentId = (ImageView) convertView.findViewById(R.id.comment_id);
+            holder.likeId = (ImageView) convertView.findViewById(R.id.like_id);
+            holder.bottom_lay_id = (RelativeLayout) convertView.findViewById(R.id.bottom_lay_id);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        if(notificationList.size() == 1 && notificationList.get(position).ismEmptyNotification() == true) {
+            holder.notificationText.setText(notificationList.get(position)
+                    .getNotificationText());
+            holder.bookmarks.setVisibility(View.GONE);
+            holder.likes.setVisibility(View.GONE);
+            holder.bookmarkId.setVisibility(View.GONE);
+            holder.commentId.setVisibility(View.GONE);
+            holder.likeId.setVisibility(View.GONE);
+            holder.bottom_lay_id.setVisibility(View.GONE);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            int pixel = VueApplication.getInstance().getPixel(4);
+            holder.notificationText.setMaxLines(4);
+            params.setMargins(pixel, pixel, pixel, pixel);
+            holder.notificationText.setSingleLine(false);
+            holder.notificationText.setLayoutParams(params);
+            ((NetworkImageView) holder.userImage).setVisibility(View.GONE);
+        } else {
         holder.bookmarks.setText(notificationList.get(position)
                 .getBookmarkCount() + "");
         holder.likes
@@ -120,6 +143,7 @@ public class NotificationListAdapter extends BaseAdapter {
                 }
             }
         });
+        }
         return convertView;
         
     }
@@ -129,5 +153,7 @@ public class NotificationListAdapter extends BaseAdapter {
         LinearLayout overflow_listlayout_layout;
         TextView notificationDescription, bookmarks, likes, comments,
                 notificationText;
+        ImageView likeId,bookmarkId,commentId;
+        RelativeLayout bottom_lay_id;
     }
 }

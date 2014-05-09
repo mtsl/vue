@@ -2195,9 +2195,15 @@ public class VueLandingPageActivity extends Activity implements
                                 && notificationList.size() > 0) {
                             showNotificationListFragment(notificationList);
                         } else {
-                            Toast.makeText(VueLandingPageActivity.this,
-                                    "Sorry you dont have any notifications.",
-                                    Toast.LENGTH_LONG).show();
+                            final ArrayList<NotificationAisle> notificationList = new ArrayList<NotificationAisle>();
+                            NotificationAisle notificationAisle = new NotificationAisle();
+                            notificationAisle
+                                    .setNotificationText(getString(R.string.no_notification_text));
+                            notificationAisle.setReadStatus(false);
+                            notificationAisle.setAisleId("");
+                            notificationAisle.setmEmptyNotification(true);
+                            notificationList.add(notificationAisle);
+                            showNotificationListFragment(notificationList);
                         }
                     }
                 });

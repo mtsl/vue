@@ -150,6 +150,7 @@
     <string name="data_entry_invite_friends_mandatory_mesg">Please choose atleast one friends to invite</string>
     <string name="no_camera_label">Sorry, Threre is no camera in this device.</string>
     <string name="invite">Invite</string>
+    <string name="no_notification_text">0 messages\nWhen you have message they will show here.</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>

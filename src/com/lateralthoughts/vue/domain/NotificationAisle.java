@@ -3,6 +3,10 @@ package com.lateralthoughts.vue.domain;
 import java.util.ArrayList;
 
 public class NotificationAisle {
+    public NotificationAisle() {
+        
+    }
+    
     public int getId() {
         return id;
     }
@@ -125,5 +129,17 @@ public class NotificationAisle {
         this.notificationText = notificationText;
         this.imageId = imageId;
     }
+    
+    private boolean mEmptyNotification = false;
+
+    public boolean ismEmptyNotification() {
+        return mEmptyNotification;
+    }
+
+    public void setmEmptyNotification(boolean mEmptyNotification) {
+        this.mEmptyNotification = mEmptyNotification;
+    }
+    
+   
     
 }
