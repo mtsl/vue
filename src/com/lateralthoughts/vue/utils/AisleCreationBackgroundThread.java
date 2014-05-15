@@ -33,8 +33,10 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.user.VueUser;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleCreationBackgroundThread implements Runnable,
@@ -92,6 +94,20 @@ public class AisleCreationBackgroundThread implements Runnable,
             mNotificationManager.notify(
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            NotificationAisle notificationAisle = new NotificationAisle(0,
+                    null, null, storedVueUser.getUserImageURL(), "", 0, 0, 0,
+                    null, false, VueApplication.getInstance().getResources()
+                            .getString(R.string.uploading_aisle_mesg));
+            DataBaseManager.getInstance(VueApplication.getInstance())
+                    .insertNotificationAisleId(notificationAisle);
             ObjectMapper mapper = new ObjectMapper();
             URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
@@ -165,6 +181,39 @@ public class AisleCreationBackgroundThread implements Runnable,
                                 DataBaseManager.getInstance(
                                         VueApplication.getInstance())
                                         .aisleUpdateToDB(aisleContext);
+                                int slNo = DataBaseManager
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .getUploadingNotificationAisleSerialNo();
+                                if (slNo != -1) {
+                                    String title = "";
+                                    if (aisleContext.mOccasion != null) {
+                                        title = aisleContext.mOccasion + " : ";
+                                    }
+                                    if (aisleContext.mLookingForItem != null) {
+                                        title = title
+                                                + aisleContext.mLookingForItem;
+                                    }
+                                    NotificationAisle notificationAisle = new NotificationAisle(
+                                            0,
+                                            aisleContext.mAisleId,
+                                            null,
+                                            null,
+                                            title,
+                                            0,
+                                            0,
+                                            0,
+                                            null,
+                                            false,
+                                            VueApplication
+                                                    .getInstance()
+                                                    .getString(
+                                                            R.string.uploaded_aisle_mesg));
+                                    DataBaseManager.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateNotificationAisleAsUploaded(
+                                                    slNo, notificationAisle);
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }

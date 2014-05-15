@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleImageDetails;

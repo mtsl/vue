@@ -18,6 +18,9 @@
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
     <string name="uploading_mesg">Uploading...</string>
+    <string name="uploading_aisle_mesg">Uploading Aisle...</string>
+    <string name="uploaded_aisle_mesg">Aisle was created</string>
+    <string name="uploading_image_mesg">Uploading Image...</string>
     <string name="deleting_mesg">Deleting...</string>
     <string name="upload_successful_mesg">Upload successful</string>
     <string name="delete_successful_mesg">Delete successful</string>

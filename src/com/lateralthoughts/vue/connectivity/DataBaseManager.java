@@ -2080,6 +2080,26 @@ public class DataBaseManager {
         });
     }
     
+    public void updateNotificationAisleAsUploaded(final int id,
+            final NotificationAisle notificationAisle) {
+        runTask(new Runnable() {
+            
+            @Override
+            public void run() {
+                ContentValues values = new ContentValues();
+                values.put(VueConstants.AISLE_Id,
+                        notificationAisle.getAisleId());
+                values.put(VueConstants.NOTIFICATION_AISLE_TITLE,
+                        notificationAisle.getAisleTitle());
+                values.put(VueConstants.NOTIFICATION_TEXT,
+                        notificationAisle.getNotificationText());
+                mContext.getContentResolver().update(
+                        VueConstants.NOTIFICATION_AISLES_URI, values,
+                        VueConstants.ID + "=?", new String[] { "" + id });
+            }
+        });
+    }
+    
     public ArrayList<NotificationAisle> readAllIdsFromNotificationTable() {
         try {
             ArrayList<NotificationAisle> notificationAislesList = null;
@@ -2126,5 +2146,21 @@ public class DataBaseManager {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public int getUploadingNotificationAisleSerialNo() {
+        int slNo = -1;
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.NOTIFICATION_AISLES_URI, null,
+                VueConstants.ID + "=?", new String[] { "" + 0 },
+                VueConstants.ID + " DESC");
+        if (cursor.moveToFirst()) {
+            do {
+                slNo = cursor.getInt(cursor.getColumnIndex(VueConstants.ID));
+                break;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return slNo;
     }
 }
