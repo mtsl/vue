@@ -187,6 +187,8 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="show_notifications">ShowNotifications</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
+        <string name="undo">Undo</string>
+    <string name="undoall">Undo All</string>
     <!-- MixPanel -->
 
 </resources>

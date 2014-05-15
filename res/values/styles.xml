@@ -72,5 +72,8 @@
     <style name="AlertDialogCustom" parent="android:Theme.Light">
         <item name="android:textSize">5sp</item>
     </style>
-
+    <style name="fade_animation">
+        <item name="@android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="@android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
 </resources>

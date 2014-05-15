@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -52,6 +52,16 @@ public class NotificationListAdapter extends BaseAdapter {
         return position;
     }
     
+    public void removeItem(int position) {
+        notificationList.remove(position);
+        Log.i("notificationListSize", "notificationListSize: "
+                + notificationList.size());
+        if (notificationList.size() == 0) {
+            addTempItem();
+        }
+        notifyDataSetChanged();
+    }
+    
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         
@@ -75,15 +85,19 @@ public class NotificationListAdapter extends BaseAdapter {
                     .findViewById(R.id.user_image);
             holder.overflow_listlayout_layout = (LinearLayout) convertView
                     .findViewById(R.id.overflow_listlayout_layout);
-            holder.bookmarkId = (ImageView) convertView.findViewById(R.id.bookmark_id);
-            holder.commentId = (ImageView) convertView.findViewById(R.id.comment_id);
+            holder.bookmarkId = (ImageView) convertView
+                    .findViewById(R.id.bookmark_id);
+            holder.commentId = (ImageView) convertView
+                    .findViewById(R.id.comment_id);
             holder.likeId = (ImageView) convertView.findViewById(R.id.like_id);
-            holder.bottom_lay_id = (RelativeLayout) convertView.findViewById(R.id.bottom_lay_id);
+            holder.bottom_lay_id = (RelativeLayout) convertView
+                    .findViewById(R.id.bottom_lay_id);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if(notificationList.size() == 1 && notificationList.get(position).ismEmptyNotification() == true) {
+        if (notificationList.size() == 1
+                && notificationList.get(position).ismEmptyNotification() == true) {
             holder.notificationText.setText(notificationList.get(position)
                     .getNotificationText());
             holder.bookmarks.setVisibility(View.GONE);
@@ -92,7 +106,8 @@ public class NotificationListAdapter extends BaseAdapter {
             holder.commentId.setVisibility(View.GONE);
             holder.likeId.setVisibility(View.GONE);
             holder.bottom_lay_id.setVisibility(View.GONE);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             int pixel = VueApplication.getInstance().getPixel(4);
             holder.notificationText.setMaxLines(4);
             params.setMargins(pixel, pixel, pixel, pixel);
@@ -100,52 +115,49 @@ public class NotificationListAdapter extends BaseAdapter {
             holder.notificationText.setLayoutParams(params);
             ((NetworkImageView) holder.userImage).setVisibility(View.GONE);
         } else {
-        holder.bookmarks.setText(notificationList.get(position)
-                .getBookmarkCount() + "");
-        holder.likes
-                .setText(notificationList.get(position).getLikeCount() + "");
-        holder.comments.setText(notificationList.get(position)
-                .getCommentsCount() + "");
-        holder.notificationDescription.setText(notificationList.get(position)
-                .getAisleTitle());
-        holder.notificationText.setText(notificationList.get(position)
-                .getNotificationText());
-        ((NetworkImageView) holder.userImage).setImageUrl(
-                notificationList.get(position).getUserProfileImageUrl(),
-                VueApplication.getInstance().getImageCacheLoader(), 62, 72,
-                NetworkImageView.BitmapProfile.ProfileDetailsView);
-        if (notificationList.get(position).isReadStatus()) { // read
-            holder.overflow_listlayout_layout.setBackgroundColor(Color
-                    .parseColor("#C0C0C0"));
-        } else { // unread
-            holder.overflow_listlayout_layout.setBackgroundColor(Color
-                    .parseColor("#FFFFFF"));
-        }
-        convertView.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (!notificationList.get(position).isReadStatus()) {
-                        DataBaseManager.getInstance(context)
-                                .updateNotificationAisleAsRead(
-                                        notificationList.get(position).getId());
-                        notificationList.get(position).setReadStatus(true);
-                        notifyDataSetChanged();
-                    }
-                    notificationList.get(position).setReadStatus(true);
-                    VueLandingPageActivity activity = (VueLandingPageActivity) context;
-                    activity.loadDetailsScreenForNotificationClick(
-                            notificationList.get(position).getAisleId(),
-                            notificationList.get(position).getImageId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            holder.bookmarks.setText(notificationList.get(position)
+                    .getBookmarkCount() + "");
+            holder.likes.setText(notificationList.get(position).getLikeCount()
+                    + "");
+            holder.comments.setText(notificationList.get(position)
+                    .getCommentsCount() + "");
+            holder.notificationDescription.setText(notificationList.get(
+                    position).getAisleTitle());
+            holder.notificationText.setText(notificationList.get(position)
+                    .getNotificationText());
+            ((NetworkImageView) holder.userImage).setImageUrl(notificationList
+                    .get(position).getUserProfileImageUrl(), VueApplication
+                    .getInstance().getImageCacheLoader(), 62, 72,
+                    NetworkImageView.BitmapProfile.ProfileDetailsView);
+            if (notificationList.get(position).isReadStatus()) { // read
+                holder.overflow_listlayout_layout.setBackgroundColor(Color
+                        .parseColor("#C0C0C0"));
+            } else { // unread
+                holder.overflow_listlayout_layout.setBackgroundColor(Color
+                        .parseColor("#FFFFFF"));
             }
-        });
         }
         return convertView;
         
+    }
+    
+    public void loadScreenForNotificationAisle(int position) {
+        try {
+            if (!notificationList.get(position).isReadStatus()) {
+                DataBaseManager.getInstance(context)
+                        .updateNotificationAisleAsRead(
+                                notificationList.get(position).getId());
+                notificationList.get(position).setReadStatus(true);
+                notifyDataSetChanged();
+            }
+            notificationList.get(position).setReadStatus(true);
+            VueLandingPageActivity activity = (VueLandingPageActivity) context;
+            activity.loadDetailsScreenForNotificationClick(notificationList
+                    .get(position).getAisleId(), notificationList.get(position)
+                    .getImageId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     class ViewHolder {
@@ -153,7 +165,17 @@ public class NotificationListAdapter extends BaseAdapter {
         LinearLayout overflow_listlayout_layout;
         TextView notificationDescription, bookmarks, likes, comments,
                 notificationText;
-        ImageView likeId,bookmarkId,commentId;
+        ImageView likeId, bookmarkId, commentId;
         RelativeLayout bottom_lay_id;
+    }
+    
+    private void addTempItem() {
+        NotificationAisle notificationAisle = new NotificationAisle();
+        notificationAisle.setNotificationText(context
+                .getString(R.string.no_notification_text));
+        notificationAisle.setReadStatus(false);
+        notificationAisle.setAisleId("");
+        notificationAisle.setmEmptyNotification(true);
+        notificationList.add(notificationAisle);
     }
 }
