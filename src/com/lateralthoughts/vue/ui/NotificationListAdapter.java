@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -50,6 +50,16 @@ public class NotificationListAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+    
+    public void removeItem(int position) {
+        notificationList.remove(position);
+        Log.i("notificationListSize", "notificationListSize: "
+                + notificationList.size());
+        if (notificationList.size() == 0) {
+            addTempItem();
+        }
+        notifyDataSetChanged();
     }
     
     @Override
@@ -145,39 +155,40 @@ public class NotificationListAdapter extends BaseAdapter {
                 holder.overflow_listlayout_layout.setBackgroundColor(Color
                         .parseColor("#FFFFFF"));
             }
-            convertView.setOnClickListener(new OnClickListener() {
-                
-                @Override
-                public void onClick(View v) {
-                    if (!notificationList
-                            .get(position)
-                            .getNotificationText()
-                            .equals(context.getResources().getString(
-                                    R.string.uploading_aisle_mesg))) {
-                        try {
-                            if (!notificationList.get(position).isReadStatus()) {
-                                DataBaseManager.getInstance(context)
-                                        .updateNotificationAisleAsRead(
-                                                notificationList.get(position)
-                                                        .getId());
-                                notificationList.get(position).setReadStatus(
-                                        true);
-                                notifyDataSetChanged();
-                            }
-                            notificationList.get(position).setReadStatus(true);
-                            VueLandingPageActivity activity = (VueLandingPageActivity) context;
-                            activity.loadDetailsScreenForNotificationClick(
-                                    notificationList.get(position).getAisleId(),
-                                    notificationList.get(position).getImageId());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
         }
         return convertView;
-        
+    }
+    
+    public int getSerialNumber(int position) {
+        if (notificationList != null && notificationList.size() > 0) {
+            return notificationList.get(position).getId();
+        }
+        return -1;
+    }
+    
+    public void loadScreenForNotificationAisle(int position) {
+        if (!notificationList
+                .get(position)
+                .getNotificationText()
+                .equals(context.getResources().getString(
+                        R.string.uploading_aisle_mesg))) {
+            try {
+                if (!notificationList.get(position).isReadStatus()) {
+                    DataBaseManager.getInstance(context)
+                            .updateNotificationAisleAsRead(
+                                    notificationList.get(position).getId());
+                    notificationList.get(position).setReadStatus(true);
+                    notifyDataSetChanged();
+                }
+                notificationList.get(position).setReadStatus(true);
+                VueLandingPageActivity activity = (VueLandingPageActivity) context;
+                activity.loadDetailsScreenForNotificationClick(notificationList
+                        .get(position).getAisleId(),
+                        notificationList.get(position).getImageId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     class ViewHolder {
@@ -187,5 +198,15 @@ public class NotificationListAdapter extends BaseAdapter {
                 notificationText;
         ImageView likeId, bookmarkId, commentId;
         RelativeLayout bottom_lay_id;
+    }
+    
+    private void addTempItem() {
+        NotificationAisle notificationAisle = new NotificationAisle();
+        notificationAisle.setNotificationText(context
+                .getString(R.string.no_notification_text));
+        notificationAisle.setReadStatus(false);
+        notificationAisle.setAisleId("");
+        notificationAisle.setmEmptyNotification(true);
+        notificationList.add(notificationAisle);
     }
 }
