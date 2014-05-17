@@ -22,6 +22,7 @@ public class ExceptionHandler implements
      *            Context
      */
     public ExceptionHandler(Activity context) {
+        
     }
     
     /**

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,14 +51,16 @@ public class NotificationListAdapter extends BaseAdapter {
         return position;
     }
     
-    public void removeItem(int position) {
-        notificationList.remove(position);
-        Log.i("notificationListSize", "notificationListSize: "
-                + notificationList.size());
+    public NotificationAisle removeItem(int position) {
+        NotificationAisle notificatinAisle = null;
+        if(notificationList != null && notificationList.size() > 0){
+            notificatinAisle =   notificationList.remove(position);
+        }
         if (notificationList.size() == 0) {
             addTempItem();
         }
         notifyDataSetChanged();
+        return notificatinAisle;
     }
     
     @Override

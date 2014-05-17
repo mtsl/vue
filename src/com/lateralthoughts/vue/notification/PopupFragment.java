@@ -153,13 +153,17 @@ public class PopupFragment extends Fragment {
                      */
                     public SwipeDismissList.Undoable onDismiss(
                             AbsListView listView, final int position) {
-                        
+                        Log.i("notificationListSize", "notificationListSize current position: "
+                                + position);
                         // Delete that item from the adapter.
-                        ((NotificationListAdapter) mNotificationAdapter)
-                                .removeItem(position - 1);
-                        int slNo = ((NotificationListAdapter) mNotificationAdapter)
-                                .getSerialNumber(position - 1);
-                        if (slNo != -1) {
+                     NotificationAisle notificationAisle =   ((NotificationListAdapter) mNotificationAdapter)
+                                .removeItem(position - 1); 
+                     int slNo = 0;
+                     if(notificationAisle != null){
+                         slNo = notificationAisle.getId();
+                     }
+                     
+                        if (slNo != 0) {
                             // TODO delete record from db with slNo
                         }
                         
