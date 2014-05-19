@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.lateralthoughts.vue.VueConstants;
 
@@ -275,9 +276,9 @@ public class VueContentProvider extends ContentProvider {
             id = uri.getLastPathSegment();
             rowsDeleted = aislesDB.delete(
                     VueConstants.NOTIFICATION_AISLE,
-                    VueConstants.AISLE_Id
+                    VueConstants.ID
                             + "="
-                            + id
+                            + selectionArgs[0]
                             + (!TextUtils.isEmpty(selection) ? " AND ("
                                     + selection + ')' : ""), selectionArgs);
             break;
@@ -833,12 +834,10 @@ public class VueContentProvider extends ContentProvider {
             break;
         case NOTIFICATION_AISLES:
             id = uri.getLastPathSegment();
-            rowsUpdated = aislesDB.update(
-                    VueConstants.NOTIFICATION_AISLE,
-                    values,
-                    VueConstants.AISLE_Id
+            rowsUpdated = aislesDB.update(VueConstants.NOTIFICATION_AISLE,
+                    values, VueConstants.ID
                             + "="
-                            + id
+                            + selectionArgs[0]
                             + (!TextUtils.isEmpty(selection) ? " AND ("
                                     + selection + ')' : ""), selectionArgs);
             break;

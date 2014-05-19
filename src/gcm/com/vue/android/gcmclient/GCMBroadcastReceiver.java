@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleImageDetails;
@@ -130,6 +129,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                     VueConstants.GCM_NOTIFICATION_ID,
                                     builder.build());
                             final String mesg = notificationMessage;
+                            final String uName = userName;
                             final String reciviedNotificationImageId = String
                                     .valueOf(lastReceivedNotification
                                             .getCorrespondingOwnerImageId());
@@ -238,10 +238,10 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                                                 0, aisleWindowContent
                                                         .getAisleId(),
                                                 reciviedNotificationImageId,
-                                                userProfileImageUrl, title,
-                                                likeCount, bookmarkCount,
-                                                commentsCount, null, false,
-                                                mesg);
+                                                uName, userProfileImageUrl,
+                                                title, likeCount,
+                                                bookmarkCount, commentsCount,
+                                                null, false, mesg);
                                         DataBaseManager.getInstance(
                                                 VueApplication.getInstance())
                                                 .insertNotificationAisleId(

@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -36,6 +37,7 @@ import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
 import com.lateralthoughts.vue.ImageRating;
+import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.domain.AisleBookmark;
@@ -2059,6 +2061,7 @@ public class DataBaseManager {
                     notificationAisle.getBookmarkCount());
             values.put(VueConstants.NOTIFICATION_AISLE_COMMENTS_COUNT,
                     notificationAisle.getCommentsCount());
+            values.put(VueConstants.USER_NAME, notificationAisle.getUserName());
             VueApplication.getInstance().getContentResolver()
                     .insert(VueConstants.NOTIFICATION_AISLES_URI, values);
         } catch (Exception e) {
@@ -2100,7 +2103,7 @@ public class DataBaseManager {
         });
     }
     
-    public ArrayList<NotificationAisle> readAllIdsFromNotificationTable() {
+    public ArrayList<NotificationAisle> getAllNotifications() {
         try {
             ArrayList<NotificationAisle> notificationAislesList = null;
             Cursor cursor = mContext.getContentResolver().query(
@@ -2124,6 +2127,8 @@ public class DataBaseManager {
                             cursor.getString(cursor
                                     .getColumnIndex(VueConstants.IMAGE_ID)),
                             cursor.getString(cursor
+                                    .getColumnIndex(VueConstants.USER_NAME)),
+                            cursor.getString(cursor
                                     .getColumnIndex(VueConstants.IMAGE_URL)),
                             cursor.getString(cursor
                                     .getColumnIndex(VueConstants.NOTIFICATION_AISLE_TITLE)),
@@ -2141,7 +2146,48 @@ public class DataBaseManager {
                 } while (cursor.moveToNext());
             }
             cursor.close();
-            return notificationAislesList;
+            ArrayList<NotificationAisle> aggregatedAisles = new ArrayList<NotificationAisle>();
+            ArrayList<String> duplicateAisleIds = new ArrayList<String>();
+            if (notificationAislesList != null
+                    && notificationAislesList.size() > 0) {
+                for (NotificationAisle notificationAisle : notificationAislesList) {
+                    ArrayList<NotificationAisle> childAisles = new ArrayList<NotificationAisle>();
+                    if (!duplicateAisleIds.contains(notificationAisle
+                            .getAisleId())) {
+                        duplicateAisleIds.add(notificationAisle.getAisleId());
+                        for (NotificationAisle notificationAisleTwo : notificationAislesList) {
+                            if (notificationAisle.getAisleId().equals(
+                                    notificationAisleTwo.getAisleId())) {
+                                childAisles.add(notificationAisleTwo);
+                            }
+                        }
+                        if (childAisles.size() > 5) {
+                            NotificationAisle notiAisle = new NotificationAisle(
+                                    childAisles.get(0).getId(), childAisles
+                                            .get(0).getAisleId(), childAisles
+                                            .get(0).getImageId(), childAisles
+                                            .get(0).getUserName(), childAisles
+                                            .get(0).getUserProfileImageUrl(),
+                                    childAisles.get(0).getAisleTitle(),
+                                    childAisles.get(0).getLikeCount(),
+                                    childAisles.get(0).getBookmarkCount(),
+                                    childAisles.get(0).getCommentsCount(),
+                                    aggregatedAisles, childAisles.get(0)
+                                            .isReadStatus(),
+                                    formNotificationTextForAggregatedAisles(
+                                            childAisles, childAisles.get(0)
+                                                    .getUserName()));
+                            notiAisle.setAggregatedAisles(childAisles);
+                            aggregatedAisles.add(notiAisle);
+                        } else {
+                            for (NotificationAisle notificationAisle2 : childAisles) {
+                                aggregatedAisles.add(notificationAisle2);
+                            }
+                        }
+                    }
+                }
+            }
+            return aggregatedAisles;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2151,8 +2197,11 @@ public class DataBaseManager {
     public int getUploadingNotificationAisleSerialNo() {
         int slNo = -1;
         Cursor cursor = mContext.getContentResolver().query(
-                VueConstants.NOTIFICATION_AISLES_URI, null,
-                VueConstants.ID + "=?", new String[] { "" + 0 },
+                VueConstants.NOTIFICATION_AISLES_URI,
+                null,
+                VueConstants.NOTIFICATION_TEXT + "=?",
+                new String[] { VueApplication.getInstance().getResources()
+                        .getString(R.string.uploading_aisle_mesg) },
                 VueConstants.ID + " DESC");
         if (cursor.moveToFirst()) {
             do {
@@ -2162,5 +2211,79 @@ public class DataBaseManager {
         }
         cursor.close();
         return slNo;
+    }
+    
+    public int getUploadingNotificationImageSerialNo() {
+        int slNo = -1;
+        Cursor cursor = mContext.getContentResolver().query(
+                VueConstants.NOTIFICATION_AISLES_URI,
+                null,
+                VueConstants.NOTIFICATION_TEXT + "=?",
+                new String[] { VueApplication.getInstance().getResources()
+                        .getString(R.string.uploading_image_mesg) },
+                VueConstants.ID + " DESC");
+        if (cursor.moveToFirst()) {
+            do {
+                slNo = cursor.getInt(cursor.getColumnIndex(VueConstants.ID));
+                break;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return slNo;
+    }
+    
+    public void deleteNotificationAisle(final int id) {
+        runTask(new Runnable() {
+            
+            @Override
+            public void run() {
+                mContext.getContentResolver().delete(
+                        VueConstants.NOTIFICATION_AISLES_URI,
+                        VueConstants.ID + "=?", new String[] { "" + id });
+            }
+        });
+    }
+    
+    private String formNotificationTextForAggregatedAisles(
+            ArrayList<NotificationAisle> aggregatedAisles, String userName) {
+        String notificationText = "";
+        boolean likeFlag = false, commentFlag = false, addImageFlag = false;
+        if (aggregatedAisles != null && aggregatedAisles.size() > 0) {
+            for (NotificationAisle notificationAisle : aggregatedAisles) {
+                if (likeFlag && commentFlag && addImageFlag) {
+                    break;
+                } else if (notificationAisle.getNotificationText().contains(
+                        "commented on your image")) {
+                    commentFlag = true;
+                } else if (notificationAisle.getNotificationText().contains(
+                        "added an image to your aisle")) {
+                    addImageFlag = true;
+                } else if (notificationAisle.getNotificationText().contains(
+                        "liked your image")) {
+                    likeFlag = true;
+                }
+            }
+            if (addImageFlag) {
+                notificationText += "added image";
+            }
+            if (likeFlag) {
+                if (notificationText.trim().length() == 0) {
+                    notificationText += "liked";
+                } else {
+                    notificationText += " and liked";
+                }
+            }
+            if (addImageFlag) {
+                if (notificationText.trim().length() == 0) {
+                    notificationText += "commented";
+                } else {
+                    notificationText += " and commented";
+                }
+            }
+            if (notificationText.trim().length() > 0) {
+                notificationText = userName + " and others " + notificationText;
+            }
+        }
+        return notificationText;
     }
 }

@@ -1176,67 +1176,6 @@ public class NetworkHandler {
         return false;
     }
     
-    /**
-     * load the notification aisles
-     */
-    private void loadNotificationAisles() {
-        final ArrayList<NotificationAisle> notificationAislesList = DataBaseManager
-                .getInstance(VueApplication.getInstance())
-                .readAllIdsFromNotificationTable();
-        if (notificationAislesList != null && notificationAislesList.size() > 0) {
-            final ArrayList<AisleWindowContent> notificationListFromServer = new ArrayList<AisleWindowContent>();
-            final ArrayList<String> notificationAisleIdsList = new ArrayList<String>();
-            new Thread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    for (int i = 0; i < notificationAislesList.size(); i++) {
-                        try {
-                            String url2 = UrlConstants.GET_AISLE_RESTURL
-                                    + notificationAislesList.get(i)
-                                            .getAisleId();
-                            URL url = new URL(url2);
-                            HttpPut httpPut = new HttpPut(url.toString());
-                            StringEntity entity = new StringEntity("");
-                            entity.setContentType("application/json;charset=UTF-8");
-                            entity.setContentEncoding(new BasicHeader(
-                                    HTTP.CONTENT_TYPE,
-                                    "application/json;charset=UTF-8"));
-                            httpPut.setEntity(entity);
-                            DefaultHttpClient httpClient = new DefaultHttpClient();
-                            HttpResponse response = httpClient.execute(httpPut);
-                            if (response.getEntity() != null
-                                    && response.getStatusLine().getStatusCode() == 200) {
-                                Parser parser = new Parser();
-                                JSONObject jsonObject = new JSONObject(response
-                                        .toString());
-                                AisleWindowContent aisleItem = parser
-                                        .getBookmarkedAisle(jsonObject);
-                                notificationListFromServer.add(aisleItem);
-                                notificationAisleIdsList.add(aisleItem
-                                        .getAisleId());
-                                // check this aisle is in Db or not.
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    // update in notification table and insert into aisles
-                    // table.
-                    DataBaseManager.getInstance(VueApplication.getInstance())
-                            .addTrentingAislesFromServerToDB(
-                                    VueApplication.getInstance(),
-                                    notificationListFromServer,
-                                    VueTrendingAislesDataModel.getInstance(
-                                            VueApplication.getInstance())
-                                            .getNetworkHandler().offset,
-                                    DataBaseManager.AISLE_CREATED);
-                    
-                }
-            }).start();
-        }
-    }
-    
     public VueUser getUserFromServerByUserId(long userId) throws Exception {
         VueUser retrievedUser = null;
         URL url = new URL(UrlConstants.GET_USER_RESTURL + userId);

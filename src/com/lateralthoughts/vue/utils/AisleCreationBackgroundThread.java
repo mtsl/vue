@@ -20,6 +20,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -103,8 +104,10 @@ public class AisleCreationBackgroundThread implements Runnable,
                 e1.printStackTrace();
             }
             NotificationAisle notificationAisle = new NotificationAisle(0,
-                    null, null, storedVueUser.getUserImageURL(), "", 0, 0, 0,
-                    null, false, VueApplication.getInstance().getResources()
+                    "-1", null, storedVueUser.getFirstName() + ""
+                            + storedVueUser.getLastName(),
+                    storedVueUser.getUserImageURL(), "", 0, 0, 0, null, false,
+                    VueApplication.getInstance().getResources()
                             .getString(R.string.uploading_aisle_mesg));
             DataBaseManager.getInstance(VueApplication.getInstance())
                     .insertNotificationAisleId(notificationAisle);
@@ -199,6 +202,7 @@ public class AisleCreationBackgroundThread implements Runnable,
                                             aisleContext.mAisleId,
                                             null,
                                             null,
+                                            null,
                                             title,
                                             0,
                                             0,
@@ -213,6 +217,24 @@ public class AisleCreationBackgroundThread implements Runnable,
                                             VueApplication.getInstance())
                                             .updateNotificationAisleAsUploaded(
                                                     slNo, notificationAisle);
+                                    Intent i = new Intent(
+                                            "RefreshNotificationListReciver");
+                                    Bundle b = new Bundle();
+                                    b.putString("AisleId",
+                                            aisleContext.mAisleId);
+                                    b.putString("ImageId", null);
+                                    b.putString("Title", title);
+                                    b.putInt("BookmarkCount", 0);
+                                    b.putString(
+                                            "NotificationText",
+                                            VueApplication
+                                                    .getInstance()
+                                                    .getResources()
+                                                    .getString(
+                                                            R.string.uploading_aisle_mesg));
+                                    i.putExtras(b);
+                                    VueApplication.getInstance().sendBroadcast(
+                                            i);
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();

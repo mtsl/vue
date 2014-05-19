@@ -22,6 +22,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -37,9 +38,11 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
 import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.user.VueUser;
 
 public class AddImageToAisleBackgroundThread implements Runnable,
         CountingStringEntity.UploadListener {
@@ -103,6 +106,24 @@ public class AddImageToAisleBackgroundThread implements Runnable,
             mNotificationManager.notify(
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
+            if (mFromDetailsScreenFlag) {
+                VueUser storedVueUser = null;
+                try {
+                    storedVueUser = Utils.readUserObjectFromFile(
+                            VueApplication.getInstance(),
+                            VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                NotificationAisle notificationAisle = new NotificationAisle(0,
+                        "-11", null, storedVueUser.getFirstName() + ""
+                                + storedVueUser.getLastName(),
+                        storedVueUser.getUserImageURL(), "", 0, 0, 0, null,
+                        false, VueApplication.getInstance().getResources()
+                                .getString(R.string.uploading_image_mesg));
+                DataBaseManager.getInstance(VueApplication.getInstance())
+                        .insertNotificationAisleId(notificationAisle);
+            }
             ObjectMapper mapper = new ObjectMapper();
             URL url = new URL(UrlConstants.CREATE_IMAGE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
@@ -357,6 +378,75 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                             VueApplication
                                                                     .getInstance())
                                                     .dataObserver();
+                                            int slNo = DataBaseManager
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .getUploadingNotificationImageSerialNo();
+                                            if (slNo != -1) {
+                                                String title = "";
+                                                if (aisleWindowContent
+                                                        .getAisleContext().mOccasion != null) {
+                                                    title = aisleWindowContent
+                                                            .getAisleContext().mOccasion
+                                                            + " : ";
+                                                }
+                                                if (aisleWindowContent
+                                                        .getAisleContext().mLookingForItem != null) {
+                                                    title = title
+                                                            + aisleWindowContent
+                                                                    .getAisleContext().mLookingForItem;
+                                                }
+                                                NotificationAisle notificationAisle = new NotificationAisle(
+                                                        0,
+                                                        aisleWindowContent
+                                                                .getAisleContext().mAisleId,
+                                                        aisleImageDetails.mId,
+                                                        null,
+                                                        null,
+                                                        title,
+                                                        0,
+                                                        aisleWindowContent
+                                                                .getAisleContext().mBookmarkCount,
+                                                        0,
+                                                        null,
+                                                        false,
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getString(
+                                                                        R.string.uploaded_image_mesg));
+                                                DataBaseManager
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .updateNotificationAisleAsUploaded(
+                                                                slNo,
+                                                                notificationAisle);
+                                                Intent i = new Intent(
+                                                        "RefreshNotificationListReciver");
+                                                Bundle b = new Bundle();
+                                                b.putString(
+                                                        "AisleId",
+                                                        aisleWindowContent
+                                                                .getAisleContext().mAisleId);
+                                                b.putString("ImageId",
+                                                        aisleImageDetails.mId);
+                                                b.putString("Title", title);
+                                                b.putInt(
+                                                        "BookmarkCount",
+                                                        aisleWindowContent
+                                                                .getAisleContext().mBookmarkCount);
+                                                b.putString(
+                                                        "NotificationText",
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getResources()
+                                                                .getString(
+                                                                        R.string.uploading_image_mesg));
+                                                i.putExtras(b);
+                                                VueApplication.getInstance()
+                                                        .sendBroadcast(i);
+                                            }
                                         }
                                     }
                                     if (VueApplication.getInstance()

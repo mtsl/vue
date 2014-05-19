@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -28,7 +31,9 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.notification.SwipeDismissList.Undoable;
 import com.lateralthoughts.vue.ui.NotificationListAdapter;
@@ -41,6 +46,7 @@ public class PopupFragment extends Fragment {
     private ArrayList<NotificationAisle> mNotificationList;
     private SwipeDismissList mSwipeList;
     ListView list;
+    private NotificationListRefreshReciever mNotificationListRefreshReciever = null;
     
     @Override
     public void onAttach(Activity activity) {
@@ -50,6 +56,7 @@ public class PopupFragment extends Fragment {
     
     public PopupFragment(ArrayList<NotificationAisle> notificationList) {
         mNotificationList = notificationList;
+        mNotificationListRefreshReciever = new NotificationListRefreshReciever();
     }
     
     public PopupFragment() {
@@ -153,18 +160,28 @@ public class PopupFragment extends Fragment {
                      */
                     public SwipeDismissList.Undoable onDismiss(
                             AbsListView listView, final int position) {
-                        Log.i("notificationListSize", "notificationListSize current position: "
-                                + position);
                         // Delete that item from the adapter.
-                     NotificationAisle notificationAisle =   ((NotificationListAdapter) mNotificationAdapter)
-                                .removeItem(position - 1); 
-                     int slNo = 0;
-                     if(notificationAisle != null){
-                         slNo = notificationAisle.getId();
-                     }
-                     
+                        NotificationAisle notificationAisle = ((NotificationListAdapter) mNotificationAdapter)
+                                .removeItem(position - 1);
+                        int slNo = 0;
+                        if (notificationAisle != null) {
+                            slNo = notificationAisle.getId();
+                        }
+                        
                         if (slNo != 0) {
-                            // TODO delete record from db with slNo
+                            if (notificationAisle.getAggregatedAisles() != null
+                                    && notificationAisle.getAggregatedAisles()
+                                            .size() > 0) {
+                                for (NotificationAisle notificationAisle1 : notificationAisle
+                                        .getAggregatedAisles()) {
+                                    DataBaseManager.getInstance(mContext)
+                                            .deleteNotificationAisle(
+                                                    notificationAisle1.getId());
+                                }
+                            } else {
+                                DataBaseManager.getInstance(mContext)
+                                        .deleteNotificationAisle(slNo);
+                            }
                         }
                         
                         // Return an Undoable, for that deletion. If you write
@@ -262,4 +279,90 @@ public class PopupFragment extends Fragment {
         
     }
     
+    @Override
+    public void onPause() {
+        super.onPause();
+        VueApplication.getInstance().unregisterReceiver(
+                mNotificationListRefreshReciever);
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter ifiltercategory = new IntentFilter(
+                "RefreshNotificationListReciver");
+        VueApplication.getInstance().registerReceiver(
+                mNotificationListRefreshReciever, ifiltercategory);
+    }
+    
+    public class NotificationListRefreshReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            if (intent != null) {
+                Bundle b = intent.getExtras();
+                if (b != null) {
+                    if (mNotificationList != null) {
+                        for (int i = 0; i < mNotificationList.size(); i++) {
+                            if (mNotificationList
+                                    .get(i)
+                                    .getNotificationText()
+                                    .equals(VueApplication
+                                            .getInstance()
+                                            .getResources()
+                                            .getString(
+                                                    R.string.uploading_aisle_mesg))
+                                    || mNotificationList
+                                            .get(i)
+                                            .getNotificationText()
+                                            .equals(VueApplication
+                                                    .getInstance()
+                                                    .getResources()
+                                                    .getString(
+                                                            R.string.uploading_image_mesg))) {
+                                mNotificationList.get(i).setAisleId(
+                                        b.getString("AisleId"));
+                                mNotificationList.get(i).setImageId(
+                                        b.getString("ImageId"));
+                                mNotificationList.get(i).setAisleTitle(
+                                        b.getString("Title"));
+                                mNotificationList.get(i).setBookmarkCount(
+                                        b.getInt("BookmarkCount"));
+                                if (b.getString("NotificationText")
+                                        .equals(VueApplication
+                                                .getInstance()
+                                                .getResources()
+                                                .getString(
+                                                        R.string.uploading_aisle_mesg))) {
+                                    mNotificationList
+                                            .get(i)
+                                            .setNotificationText(
+                                                    VueApplication
+                                                            .getInstance()
+                                                            .getResources()
+                                                            .getString(
+                                                                    R.string.uploaded_aisle_mesg));
+                                } else if (b
+                                        .getString("NotificationText")
+                                        .equals(VueApplication
+                                                .getInstance()
+                                                .getResources()
+                                                .getString(
+                                                        R.string.uploading_image_mesg))) {
+                                    mNotificationList
+                                            .get(i)
+                                            .setNotificationText(
+                                                    VueApplication
+                                                            .getInstance()
+                                                            .getResources()
+                                                            .getString(
+                                                                    R.string.uploaded_image_mesg));
+                                }
+                            }
+                        }
+                        mNotificationAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        }
+    }
 }

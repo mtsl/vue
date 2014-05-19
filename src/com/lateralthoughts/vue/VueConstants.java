@@ -309,6 +309,7 @@ public class VueConstants {
     public static final String USER_FACEBOOK_ID = "facebookId";
     public static final String USER_GOOGLEPLUS_ID = "googlePlusId";
     public static final String USER_PROFILE_IMAGE_URL = "userImageURL";
+    public static final String USER_NAME = "userName";
     // Reciver constants
     public static final int AISLE_TRENDING_LIST_DATA = 1;
     public static final int AISLE_TRENDING_PARSED_DATA = 2;

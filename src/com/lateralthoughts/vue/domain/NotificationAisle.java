@@ -17,6 +17,15 @@ public class NotificationAisle {
     
     private int id;
     private String aisleId;
+    private String userName;
+    
+    public String getUserName() {
+        return userName;
+    }
+    
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
     
     public String getImageId() {
         return imageId;
@@ -114,8 +123,8 @@ public class NotificationAisle {
     private boolean readStatus; // true for read, false for unread
     
     public NotificationAisle(int id, String aisleId, String imageId,
-            String userProfileImageUrl, String aisleTitle, int likeCount,
-            int bookmarkCount, int commentsCount,
+            String userName, String userProfileImageUrl, String aisleTitle,
+            int likeCount, int bookmarkCount, int commentsCount,
             ArrayList<NotificationAisle> aggregatedAisles, boolean readStatus,
             String notificationText) {
         this.aisleId = aisleId;
@@ -128,18 +137,18 @@ public class NotificationAisle {
         this.readStatus = readStatus;
         this.notificationText = notificationText;
         this.imageId = imageId;
+        this.id = id;
+        this.userName = userName;
     }
     
     private boolean mEmptyNotification = false;
-
+    
     public boolean ismEmptyNotification() {
         return mEmptyNotification;
     }
-
+    
     public void setmEmptyNotification(boolean mEmptyNotification) {
         this.mEmptyNotification = mEmptyNotification;
     }
-    
-   
     
 }

@@ -53,8 +53,8 @@ public class NotificationListAdapter extends BaseAdapter {
     
     public NotificationAisle removeItem(int position) {
         NotificationAisle notificatinAisle = null;
-        if(notificationList != null && notificationList.size() > 0){
-            notificatinAisle =   notificationList.remove(position);
+        if (notificationList != null && notificationList.size() > 0) {
+            notificatinAisle = notificationList.remove(position);
         }
         if (notificationList.size() == 0) {
             addTempItem();
@@ -168,11 +168,18 @@ public class NotificationListAdapter extends BaseAdapter {
     }
     
     public void loadScreenForNotificationAisle(int position) {
-        if (!notificationList
+        if (notificationList
                 .get(position)
                 .getNotificationText()
                 .equals(context.getResources().getString(
-                        R.string.uploading_aisle_mesg))) {
+                        R.string.uploading_aisle_mesg))
+                || notificationList
+                        .get(position)
+                        .getNotificationText()
+                        .equals(context.getResources().getString(
+                                R.string.uploading_image_mesg))) {
+        } else {
+            
             try {
                 if (!notificationList.get(position).isReadStatus()) {
                     DataBaseManager.getInstance(context)
@@ -189,6 +196,7 @@ public class NotificationListAdapter extends BaseAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
         }
     }
     

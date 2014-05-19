@@ -2187,7 +2187,7 @@ public class VueLandingPageActivity extends Activity implements
             public void run() {
                 final ArrayList<NotificationAisle> notificationList = DataBaseManager
                         .getInstance(VueLandingPageActivity.this)
-                        .readAllIdsFromNotificationTable();
+                        .getAllNotifications();
                 VueLandingPageActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
