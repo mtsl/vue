@@ -1,6 +1,12 @@
 package com.lateralthoughts.vue.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -14,6 +20,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -24,8 +31,12 @@ import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueLandingPageActivity;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.Aisle;
+import com.lateralthoughts.vue.domain.NotificationAisle;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
+import com.lateralthoughts.vue.user.VueUser;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AisleCreationBackgroundThread implements Runnable,
@@ -83,11 +94,27 @@ public class AisleCreationBackgroundThread implements Runnable,
             mNotificationManager.notify(
                     VueConstants.AISLE_INFO_UPLOAD_NOTIFICATION_ID,
                     mNotification);
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            NotificationAisle notificationAisle = new NotificationAisle(0,
+                    null, null, storedVueUser.getUserImageURL(), "", 0, 0, 0,
+                    null, false, VueApplication.getInstance().getResources()
+                            .getString(R.string.uploading_aisle_mesg));
+            DataBaseManager.getInstance(VueApplication.getInstance())
+                    .insertNotificationAisleId(notificationAisle);
             ObjectMapper mapper = new ObjectMapper();
             URL url = new URL(UrlConstants.CREATE_AISLE_RESTURL);
             HttpPut httpPut = new HttpPut(url.toString());
             CountingStringEntity entity = new CountingStringEntity(
                     mapper.writeValueAsString(mAisle));
+            writeToSdcard("\nAilseCreationgRequest is:  "
+                    + mapper.writeValueAsString(mAisle) + "\n");
             entity.setUploadListener(this);
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
@@ -126,7 +153,15 @@ public class AisleCreationBackgroundThread implements Runnable,
                 .runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        
                         if (null != mResponseMessage) {
+                            // TODO insert aisle for
+                            if (mResponseMessage.length() < 10) {
+                                writeToSdcard("AisleCreation Failed got empty response from server\n response message is: "
+                                        + mResponseMessage);
+                            } else {
+                                writeToSdcard("AisleCreation Success");
+                            }
                             try {
                                 AisleContext aisleContext = new Parser()
                                         .parseAisleData(new JSONObject(
@@ -143,6 +178,42 @@ public class AisleCreationBackgroundThread implements Runnable,
                                 mAisleAddCallback.onAisleAdded(aisle,
                                         aisleContext);
                                 mixpanel.track("Create_Aisle_Success", null);
+                                DataBaseManager.getInstance(
+                                        VueApplication.getInstance())
+                                        .aisleUpdateToDB(aisleContext);
+                                int slNo = DataBaseManager
+                                        .getInstance(
+                                                VueApplication.getInstance())
+                                        .getUploadingNotificationAisleSerialNo();
+                                if (slNo != -1) {
+                                    String title = "";
+                                    if (aisleContext.mOccasion != null) {
+                                        title = aisleContext.mOccasion + " : ";
+                                    }
+                                    if (aisleContext.mLookingForItem != null) {
+                                        title = title
+                                                + aisleContext.mLookingForItem;
+                                    }
+                                    NotificationAisle notificationAisle = new NotificationAisle(
+                                            0,
+                                            aisleContext.mAisleId,
+                                            null,
+                                            null,
+                                            title,
+                                            0,
+                                            0,
+                                            0,
+                                            null,
+                                            false,
+                                            VueApplication
+                                                    .getInstance()
+                                                    .getString(
+                                                            R.string.uploaded_aisle_mesg));
+                                    DataBaseManager.getInstance(
+                                            VueApplication.getInstance())
+                                            .updateNotificationAisleAsUploaded(
+                                                    slNo, notificationAisle);
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -159,5 +230,38 @@ public class AisleCreationBackgroundThread implements Runnable,
                         }
                     }
                 });
+    }
+    
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/AisleCreationResponse/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "AisleCreationResponse"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        }
     }
 }

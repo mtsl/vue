@@ -16,27 +16,28 @@
 
 package com.facebook.widget;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.R.color;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookException;
@@ -53,6 +54,7 @@ import com.facebook.model.GraphUser;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 /**
@@ -79,8 +81,7 @@ public class LoginButton extends Button {
     private Fragment parentFragment;
     private LoginButtonProperties properties = new LoginButtonProperties();
     private MixpanelAPI mixpanel;
-    private JSONObject loginprops;
-    private MixpanelAPI.People people;
+    
     static class LoginButtonProperties {
         private SessionDefaultAudience defaultAudience = SessionDefaultAudience.FRIENDS;
         private List<String> permissions = Collections.<String> emptyList();
@@ -223,8 +224,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         if (attrs.getStyleAttribute() == 0) {
             // apparently there's no method of setting a default style in xml,
             // so in case the users do not explicitly specify a style, we need
@@ -251,8 +252,8 @@ public class LoginButton extends Button {
      */
     public LoginButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mixpanel = MixpanelAPI.getInstance(context, VueApplication.getInstance().MIXPANEL_TOKEN);
-        people = mixpanel.getPeople();
+        mixpanel = MixpanelAPI.getInstance(context,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         initializeActiveSessionWithCachedToken(context);
     }
     
@@ -611,14 +612,10 @@ public class LoginButton extends Button {
         
         @Override
         public void onClick(View v) {
+            VueApplication.getInstance().mFBLoginFailureReason = null;
+            writeToSdcard("Before fb login : " + new Date());
             if (VueConnectivityManager.isNetworkConnected(getContext())) {
-                loginprops = new JSONObject();
-                try {
-                    loginprops.put("login selected", "facebook");
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                mixpanel.track("Facebook Login Selected", null);
                 Context context = getContext();
                 final Session openSession = sessionTracker.getOpenSession();
                 if (openSession != null) {
@@ -691,6 +688,8 @@ public class LoginButton extends Button {
                                     .equals(properties.authorizationType)) {
                                 currentSession.openForPublish(openRequest);
                             } else {
+                                openRequest.setPermissions(Arrays
+                                        .asList("email"));
                                 currentSession.openForRead(openRequest);
                             }
                         }
@@ -705,80 +704,35 @@ public class LoginButton extends Button {
         // }
     }
     
-    void showAlertToChangeLocalSettings(final String message) {
-        final Dialog dialog = new Dialog(getContext(),
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.networkdialogue);
-        TextView titleview = (TextView) dialog.findViewById(R.id.dialogtitle);
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/vueLoginTimes/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "vueLoginTimes_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
-        TextView messageview = (TextView) dialog.findViewById(R.id.messagetext);
-        titleview.setText(Html.fromHtml("<b>fashion</b>wrap"));
-        titleview.setTextSize(16 + 4);
-        messageview.setTextSize(16);
-        messageview.setText(message);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        okButton.setOnClickListener(new OnClickListener() {
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
             
-            public void onClick(View v) {
-                
-                dialog.dismiss();
-                
-                Session currentSession = sessionTracker.getSession();
-                if (currentSession == null
-                        || currentSession.getState().isClosed()) {
-                    sessionTracker.setSession(null);
-                    Session session = new Session.Builder(getContext())
-                            .setApplicationId(applicationId).build();
-                    Session.setActiveSession(session);
-                    currentSession = session;
-                }
-                if (!currentSession.isOpened()) {
-                    Session.OpenRequest openRequest = null;
-                    if (parentFragment != null) {
-                        openRequest = new Session.OpenRequest(parentFragment);
-                    } else if (getContext() instanceof Activity) {
-                        openRequest = new Session.OpenRequest(
-                                (Activity) getContext());
-                    }
-                    
-                    if (openRequest != null) {
-                        openRequest
-                                .setDefaultAudience(properties.defaultAudience);
-                        openRequest.setPermissions(properties.permissions);
-                        openRequest.setLoginBehavior(properties.loginBehavior);
-                        
-                        if (SessionAuthorizationType.PUBLISH
-                                .equals(properties.authorizationType)) {
-                            currentSession.openForPublish(openRequest);
-                        } else {
-                            currentSession.openForRead(openRequest);
-                        }
-                    }
-                }
-                
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        
-        dialog.setOnCancelListener(new OnCancelListener() {
-            
-            public void onCancel(DialogInterface dialog) {
-                if (!message.equalsIgnoreCase(getResources().getString(
-                        R.string.alert_Dialog_Network))) {
-                }
-                
-            }
-        });
-        dialog.show();
-        return;
-        
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private class LoginButtonCallback implements Session.StatusCallback {

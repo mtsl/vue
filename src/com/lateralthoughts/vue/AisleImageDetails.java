@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.lateralthoughts.vue.parser.ImageComments;
 
 public class AisleImageDetails {
-    public String mDetalsUrl;
+    public String mDetailsUrl;
     public String mImageUrl;
     public String mId;
     public String mStore;
@@ -29,4 +29,5 @@ public class AisleImageDetails {
     public int mTempResizeBitmapwidth;
     public int mTempResizedBitmapHeight;
     public boolean mHasMostLikes, mSameMostLikes;
+    public boolean mIsChoosen;
 }

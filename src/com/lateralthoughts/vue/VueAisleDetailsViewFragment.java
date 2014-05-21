@@ -4,11 +4,14 @@ package com.lateralthoughts.vue;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,17 +30,18 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -46,9 +51,9 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.ShareDialog.ShareViaVueClickedListner;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleDetailSwipeListener;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.EditTextBackEvent;
 import com.lateralthoughts.vue.utils.OnInterceptListener;
 import com.lateralthoughts.vue.utils.Utils;
@@ -75,7 +80,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
     private int mListCount = 3;
     AisleDetailsViewAdapterPager mAisleDetailsAdapter;
     private AisleDetailsSwipeListner mSwipeListener;
-    private LoginWarningMessage mLoginWarningMessage = null;
     private View mDetailsContentView = null;
     private ImageView mDotOne, mDotTwo, mDotThree, mDotFour, mDotFive, mDotSix,
             mDotSeven, mDotEight, mDotNine, mDotTen;
@@ -129,7 +133,7 @@ public class VueAisleDetailsViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+       // setRetainInstance(true);
     }
     
     @Override
@@ -162,12 +166,19 @@ public class VueAisleDetailsViewFragment extends Fragment {
         
         String detailsUrl = null;
         try {
-            detailsUrl = VueTrendingAislesDataModel
-                    .getInstance(getActivity())
-                    .getAisleItem(
-                            VueApplication.getInstance().getClickedWindowID())
-                    .getImageList()
-                    .get(VueApplication.getInstance().getmAisleImgCurrentPos()).mDetalsUrl;
+            if (VueApplication.getInstance().getPedningAisle() != null) {
+                detailsUrl = VueApplication.getInstance().getPedningAisle()
+                        .getImageList().get(0).mDetailsUrl;
+            } else {
+                detailsUrl = VueTrendingAislesDataModel
+                        .getInstance(getActivity())
+                        .getAisleItem(
+                                VueApplication.getInstance()
+                                        .getClickedWindowID())
+                        .getImageList()
+                        .get(VueApplication.getInstance()
+                                .getmAisleImgCurrentPos()).mDetailsUrl;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,13 +197,39 @@ public class VueAisleDetailsViewFragment extends Fragment {
             mFindAtUrl = "";
         }
         String profileUrl = null;
-        profileUrl = VueTrendingAislesDataModel
-                .getInstance(getActivity())
-                .getAisleItem(VueApplication.getInstance().getClickedWindowID())
-                .getAisleContext().mAisleOwnerImageURL;
+        if (VueApplication.getInstance().getPedningAisle() != null) {
+            profileUrl = VueApplication.getInstance().getPedningAisle()
+                    .getAisleContext().mAisleOwnerImageURL;
+        } else {
+            if (VueTrendingAislesDataModel.getInstance(getActivity())
+                    .getAisleItem(
+                            VueApplication.getInstance().getClickedWindowID()) != null
+                    && VueTrendingAislesDataModel
+                            .getInstance(getActivity())
+                            .getAisleItem(
+                                    VueApplication.getInstance()
+                                            .getClickedWindowID())
+                            .getAisleContext() != null) {
+                profileUrl = VueTrendingAislesDataModel
+                        .getInstance(getActivity())
+                        .getAisleItem(
+                                VueApplication.getInstance()
+                                        .getClickedWindowID())
+                        .getAisleContext().mAisleOwnerImageURL;
+            } else {
+                // Some times when the user returning from the other apps or
+                // from the browser
+                // apps lost data to avoid force close checking the current
+                // ailse.
+                getActivity().finish();
+                
+            }
+        }
         if (profileUrl != null && profileUrl.length() > 5) {
             mVueUserPic.setImageUrl(profileUrl, VueApplication.getInstance()
-                    .getImageCacheLoader());
+                    .getImageCacheLoader(), VueApplication.getInstance()
+                    .getPixel(32), VueApplication.getInstance().getPixel(32),
+                    NetworkImageView.BitmapProfile.ProfileLandingView);
         }
         mEditTextFindAt.setOnClickListener(new OnClickListener() {
             
@@ -345,52 +382,51 @@ public class VueAisleDetailsViewFragment extends Fragment {
                             }, mAdapterNotifyDelay);
                             return;
                         }
-                        
-                        final Dialog dialog = new Dialog(getActivity(),
-                                R.style.Theme_Dialog_Translucent);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.vue_popup);
-                        final TextView noButton = (TextView) dialog
-                                .findViewById(R.id.nobutton);
-                        TextView yesButton = (TextView) dialog
-                                .findViewById(R.id.okbutton);
-                        TextView messagetext = (TextView) dialog
-                                .findViewById(R.id.messagetext);
-                        messagetext.setText(getResources().getString(
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                mContext);
+                        alertDialogBuilder.setMessage(getResources().getString(
                                 R.string.discard_comment));
-                        yesButton.setText("Discard");
-                        noButton.setText("Continue");
-                        yesButton.setOnClickListener(new OnClickListener() {
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                edtCommentView.setText("");
-                                edtCommentFrameLay.setVisibility(View.GONE);
-                                enterComentStaticTextLay
-                                        .setVisibility(View.VISIBLE);
-                                // notify the adapter after keybord gone
-                                new Handler().postDelayed(new Runnable() {
-                                    
-                                    @Override
-                                    public void run() {
-                                        mInputMethodManager.hideSoftInputFromWindow(
-                                                edtCommentView.getWindowToken(),
-                                                0);
-                                        mAisleDetailsAdapter
-                                                .notifyDataSetChanged();
+                        alertDialogBuilder.setTitle("Discad message");
+                        alertDialogBuilder.setPositiveButton("Discard",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                            int id) {
+                                        dialog.cancel();
+                                        edtCommentView.setText("");
+                                        edtCommentFrameLay
+                                                .setVisibility(View.GONE);
+                                        enterComentStaticTextLay
+                                                .setVisibility(View.VISIBLE);
+                                        // notify the adapter after keybord gone
+                                        new Handler().postDelayed(
+                                                new Runnable() {
+                                                    
+                                                    @Override
+                                                    public void run() {
+                                                        mInputMethodManager
+                                                                .hideSoftInputFromWindow(
+                                                                        edtCommentView
+                                                                                .getWindowToken(),
+                                                                        0);
+                                                        mAisleDetailsAdapter
+                                                                .notifyDataSetChanged();
+                                                        
+                                                    }
+                                                }, mAdapterNotifyDelay);
+                                    }
+                                });
+                        alertDialogBuilder.setNegativeButton("Continue",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                            int id) {
+                                        dialog.cancel();
+                                        mInputMethodManager.showSoftInput(
+                                                edtCommentView, 0);
                                         
                                     }
-                                }, mAdapterNotifyDelay);
-                            }
-                        });
-                        noButton.setOnClickListener(new OnClickListener() {
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                mInputMethodManager.showSoftInput(
-                                        edtCommentView, 0);
-                            }
-                        });
-                        dialog.show();
-                        
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
                     }
                     
                     @Override
@@ -440,68 +476,55 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 }
             }
         });
+        
         sendCommentButon.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("ADDED_COMMENTS_FROM_DETAILSVIEW", null);
-                FlurryAgent.logEvent("ADD_COMMENTS_DETAILSVIEW");
+                if (mAisleDetailsAdapter != null) {
+                    mAisleDetailsAdapter.trackMixpanelEvent(mixpanel, true);
+                }
                 String etText = edtCommentView.getText().toString();
                 
                 if (etText != null && etText.length() >= 1) {
-                    if (mAisleDetailsAdapter.checkLimitForLoginDialog()) {
-                        if (mLoginWarningMessage == null) {
-                            mLoginWarningMessage = new LoginWarningMessage(
-                                    mContext);
-                        }
-                        mLoginWarningMessage.showLoginWarningMessageDialog(
-                                "You need to Login with the app to Comment.",
-                                true, false, 0, null, null);
-                    } else {
-                        // Updating Comments Count in Preference to show
-                        // LoginDialog.
-                        SharedPreferences sharedPreferencesObj = getActivity()
-                                .getSharedPreferences(
-                                        VueConstants.SHAREDPREFERENCE_NAME, 0);
-                        int commentsCount = sharedPreferencesObj.getInt(
-                                VueConstants.COMMENTS_COUNT_IN_PREFERENCES, 0);
-                        boolean isUserLoggedInFlag = sharedPreferencesObj
-                                .getBoolean(VueConstants.VUE_LOGIN, false);
-                        if (commentsCount == 8 && !isUserLoggedInFlag) {
-                            if (mLoginWarningMessage == null) {
-                                mLoginWarningMessage = new LoginWarningMessage(
-                                        getActivity());
-                            }
-                            mLoginWarningMessage
-                                    .showLoginWarningMessageDialog(
-                                            "You have 2 aisle left to comment without logging in.",
-                                            false, false, 8, edtCommentView,
-                                            null);
-                        } else if (commentsCount == 9 && !isUserLoggedInFlag) {
-                            if (mLoginWarningMessage == null) {
-                                mLoginWarningMessage = new LoginWarningMessage(
-                                        getActivity());
-                            }
-                            mLoginWarningMessage
-                                    .showLoginWarningMessageDialog(
-                                            "You have 1 aisle left to comment without logging in.",
-                                            false, false, 9, edtCommentView,
-                                            null);
-                        } else {
-                            SharedPreferences.Editor editor = sharedPreferencesObj
-                                    .edit();
-                            editor.putInt(
-                                    VueConstants.COMMENTS_COUNT_IN_PREFERENCES,
-                                    commentsCount + 1);
-                            editor.commit();
-                            addComment(edtCommentView, enterComentStaticTextLay);
-                        }
-                    }
+                    addComment(edtCommentView, enterComentStaticTextLay);
                 }
             }
         });
         
         mAisleDetailsList.setAdapter(mAisleDetailsAdapter);
+        try {
+            SharedPreferences sharedPreferencesObj = getActivity()
+                    .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+            boolean isHelpShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.HELP_SCREEN_ACCES, false);
+            boolean isAlreadyDetailsScreenShown = sharedPreferencesObj
+                    .getBoolean(VueConstants.IS_ALREADY_VIEWED_DETAILS_SCREEN,
+                            false);
+            if (isHelpShown && isAlreadyDetailsScreenShown) {
+                int count = sharedPreferencesObj.getInt(
+                        VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, 0);
+                final int SHOW_LIMIT = 3;
+                if (count < SHOW_LIMIT) {
+                    long showedTime = sharedPreferencesObj.getLong(
+                            VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME, 0);
+                    int hours = (int) Utils.dateDifference(showedTime);
+                    final int DAY_LATER = 24;
+                    if (hours > DAY_LATER) {
+                        showInviteFriendsDialog();
+                    }
+                }
+                
+            } else {
+                Editor edit = sharedPreferencesObj.edit();
+                edit.putBoolean(VueConstants.IS_ALREADY_VIEWED_DETAILS_SCREEN,
+                        true);
+                edit.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         mVueUserName = (TextView) mDetailsContentView
                 .findViewById(R.id.vue_user_name);
         mVueUserName.setTextSize(Utils.MEDIUM_TEXT_SIZE);
@@ -631,8 +654,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
         vueShareLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                mixpanel.track("SHARED_AISLE_FROM_DETAILSVIEW", null);
-                FlurryAgent.logEvent("SHARE_AISLE_DETAILSVIEW");
                 closeKeyboard();
                 // to smoothen the touch response
                 new Handler().postDelayed(new Runnable() {
@@ -660,9 +681,14 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("FINDAT_FROM_DETAILSVIEW", null);
-                FlurryAgent.logEvent("FINDAT_DETAILSVIEW");
+                if (mAisleDetailsAdapter != null) {
+                    mAisleDetailsAdapter.trackMixpanelEvent(mixpanel, false);
+                }
                 String url = mFindAtUrl;
+                if (url != null
+                        && (url.startsWith("www") || url.startsWith("WWW"))) {
+                    url = "http://" + url;
+                }
                 if (url != null && url.startsWith("http")) {
                     closeKeyboard();
                     Uri uriUrl = Uri.parse(url.trim());
@@ -692,34 +718,22 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
             @Override
             public void onClick(View v) {
-                mixpanel.track("ADD_IMAGE_TO_AISLE_FROM_DETAILSVIEW", null);
-                FlurryAgent.logEvent("ADD_IMAGE_TO_AISLE_DETAILSVIEW");
-                closeKeyboard();
-                // to smoothen the touch response
-                int addAilseDelay = 200;
-                new Handler().postDelayed(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(getActivity(),
-                                CreateAisleSelectionActivity.class);
-                        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
-                                getActivity(), true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        Bundle b = new Bundle();
-                        b.putBoolean(
-                                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
-                                true);
-                        intent.putExtras(b);
-                        if (!CreateAisleSelectionActivity.isActivityShowing) {
-                            CreateAisleSelectionActivity.isActivityShowing = true;
-                            getActivity()
-                                    .startActivityForResult(
-                                            intent,
-                                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+                if (!VueApplication.getInstance().mInstalledAppsLoadStatus) {
+                    Toast.makeText(getActivity(),
+                            "Please try again... Installed apps are loading.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    closeKeyboard();
+                    // to smoothen the touch response
+                    int addAilseDelay = 200;
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            addImageToAisle();
                         }
-                    }
-                }, addAilseDelay);
+                    }, addAilseDelay);
+                }
             }
         });
         detailsAddImageLayout.setOnLongClickListener(new OnLongClickListener() {
@@ -782,10 +796,6 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 boolean starLayVisibility, boolean isMostLikedImage) {
             showEditIcon(editLayVisibility);
             showLikeStatus(starLayVisibility, isMostLikedImage);
-            
-        }
-        
-        public void onReceiveImageCount(int count) {
             
         }
         
@@ -862,6 +872,23 @@ public class VueAisleDetailsViewFragment extends Fragment {
             
         }
         
+        @Override
+        public void onImageAddEvent() {
+            addImageToAisle();
+            
+        }
+        
+        @Override
+        public void onReceiveImageCount(int count) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        @Override
+        public void finishScreen() {
+            getActivity().finish();
+        }
+        
     }
     
     private void addComment(EditText editText, RelativeLayout view) {
@@ -872,8 +899,10 @@ public class VueAisleDetailsViewFragment extends Fragment {
                 editText.getApplicationWindowToken(),
                 InputMethodManager.SHOW_FORCED, 0);
         if (etText != null) {
-            mAisleDetailsAdapter.updateListCount(etText);
-            mAisleDetailsAdapter.createComment(etText);
+            if (loginChcecking()) {
+                mAisleDetailsAdapter.updateListCount(etText);
+                mAisleDetailsAdapter.createComment(etText);
+            }
         }
         editText.setVisibility(View.GONE);
         editText.setText("");
@@ -1176,5 +1205,116 @@ public class VueAisleDetailsViewFragment extends Fragment {
         mAisleDetailsAdapter.mSetPager = false;
         notifyAdapter();
         mAisleDetailsAdapter.setmSetPagerToTrue();
+    }
+    
+    private void addImageToAisle() {
+        Intent intent = new Intent(getActivity(),
+                CreateAisleSelectionActivity.class);
+        Utils.putFromDetailsScreenToDataentryCreateAisleScreenPreferenceFlag(
+                getActivity(), true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Bundle b = new Bundle();
+        b.putBoolean(
+                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_FLAG,
+                true);
+        intent.putExtras(b);
+        if (!CreateAisleSelectionActivity.isActivityShowing) {
+            CreateAisleSelectionActivity.isActivityShowing = true;
+            getActivity()
+                    .startActivityForResult(
+                            intent,
+                            VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_ACTIVITY_RESULT);
+        }
+    }
+    
+    private void showInviteFriendsDialog() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(
+                VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, 0);
+        count = count + 1;
+        Editor edit = sharedPreferencesObj.edit();
+        edit.putInt(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_COUNT, count);
+        edit.putLong(VueConstants.DETAILS_USER_FINDFRIENDS_OPEN_TIME,
+                System.currentTimeMillis());
+        edit.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
+        edit.commit();
+        
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                new ContextThemeWrapper(getActivity(), R.style.AppBaseTheme));
+        alertDialogBuilder
+                .setTitle(getResources().getString(R.string.app_name));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Skip for now",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("Invite Friends",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        if (mAisleDetailsActivity == null) {
+                            mAisleDetailsActivity = (AisleDetailsViewActivity) getActivity();
+                        }
+                        mAisleDetailsActivity.mDrawerLayout
+                                .openDrawer(mAisleDetailsActivity.mDrawerLeft);
+                    }
+                });
+        ArrayList<String> hint_array_list = new ArrayList<String>();
+        hint_array_list.add("1. Help Friends make their shopping decisions");
+        hint_array_list.add("2. Invite them to join Vue");
+        hint_array_list.add("3. Earn $$ rewards");
+        ListView listview = new ListView(getActivity());
+        ListAdapter adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.select_dialog_item, android.R.id.text1,
+                hint_array_list) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                return v;
+            }
+        };
+        listview.setAdapter(adapter);
+        alertDialogBuilder.setView(listview);
+        Dialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        Editor edit2 = sharedPreferencesObj.edit();
+        edit2.putBoolean(VueConstants.DETAILS_HELP_SCREEN_ACCES, true);
+        edit2.commit();
+    }
+    
+    private boolean loginChcecking() {
+        SharedPreferences sharedPreferencesObj = mContext.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+                VueConstants.VUE_LOGIN, false);
+        if (isUserLoggedInFlag) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(mContext,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null && storedVueUser.getId() != null) {
+                return true;
+            } else {
+                Toast.makeText(
+                        mContext,
+                        mContext.getResources().getString(
+                                R.string.vue_server_login_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    mContext,
+                    mContext.getResources().getString(
+                            R.string.vue_fb_gplus_login_mesg),
+                    Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }

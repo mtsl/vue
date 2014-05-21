@@ -28,7 +28,8 @@ public class ScaledImageViewFactory {
     private ArrayList<ScaleImageView> mAvailableObjects = null;
     private ArrayList<ScaleImageView> mObjectsInUse = null;
     
-    private final int POOL_SIZE = 500;
+   // private final int POOL_SIZE = 500;
+    private final int POOL_SIZE = 100;
     private final int POOL_STEP_SIZE = 200;
     private final int POOL_MAX_SIZE = 2000;
     
@@ -110,8 +111,8 @@ public class ScaledImageViewFactory {
         
         synchronized (this) {
             view = mObjectsInUse.remove(index);
-            // view.setImageBitmap(null);
-            view.setImageDrawable(null);
+            //view.setImageBitmap(null);
+            //view.setImageDrawable(null);
             mAvailableObjects.add(view);
             // TODO: we have a way to expand the pool once the initial objects
             // get used up - should

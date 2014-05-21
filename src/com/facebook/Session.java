@@ -990,7 +990,7 @@ public class Session implements Serializable {
     }
     
     static void initializeStaticContext(Context currentContext) {
-        staticContext = VueApplication.getInstance().mVueApplicationContext;
+        staticContext = VueApplication.getInstance();
     }
     
     void authorize(AuthorizationRequest request) {
@@ -1793,7 +1793,7 @@ public class Session implements Serializable {
             return this;
         }
         
-        List<String> getPermissions() {
+        public List<String> getPermissions() {
             return permissions;
         }
         
@@ -1805,7 +1805,7 @@ public class Session implements Serializable {
             return this;
         }
         
-        SessionDefaultAudience getDefaultAudience() {
+        public SessionDefaultAudience getDefaultAudience() {
             return defaultAudience;
         }
         

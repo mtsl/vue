@@ -33,6 +33,16 @@ public class FileCache {
     
     private File mVueUserProfileImageDir;
     
+    public File getmVueInstalledAppIconsDir() {
+        return mVueInstalledAppIconsDir;
+    }
+    
+    public void setmVueInstalledAppIconsDir(File mVueInstalledAppIconsDir) {
+        this.mVueInstalledAppIconsDir = mVueInstalledAppIconsDir;
+    }
+    
+    private File mVueInstalledAppIconsDir;
+    
     public File getmVueUserProfileImageDir() {
         return mVueUserProfileImageDir;
     }
@@ -57,6 +67,9 @@ public class FileCache {
             mVueUserProfileImageDir = new File(
                     context.getExternalFilesDir(null),
                     VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
+            mVueInstalledAppIconsDir = new File(
+                    context.getExternalFilesDir(null),
+                    VueConstants.VUE_INSTALLED_APP_ICONS_FILENAME);
         } else {
             mCacheDir = context.getCacheDir();
             mVueAppCameraPicsDir = new File(context.getFilesDir(),
@@ -67,6 +80,8 @@ public class FileCache {
                     VueConstants.VUE_APP_RESIZED_PICTURES_FOLDER);
             mVueUserProfileImageDir = new File(context.getFilesDir(),
                     VueConstants.VUE_APP_USER_PROFILE_PICTURES_FOLDER);
+            mVueInstalledAppIconsDir = new File(context.getFilesDir(),
+                    VueConstants.VUE_INSTALLED_APP_ICONS_FILENAME);
         }
         
         if (!mCacheDir.exists())
@@ -79,6 +94,8 @@ public class FileCache {
             mVueUserProfileImageDir.mkdirs();
         if (!mHelpPicDir.exists())
             mHelpPicDir.mkdirs();
+        if (!mVueInstalledAppIconsDir.exists())
+            mVueInstalledAppIconsDir.mkdirs();
     }
     
     public File getFile(String url) {
@@ -109,6 +126,11 @@ public class FileCache {
         return f;
     }
     
+    public File getVueInstalledAppIconFile(String imageName) {
+        File f = new File(mVueInstalledAppIconsDir, imageName + ".jpg");
+        return f;
+    }
+    
     @Deprecated
     public void clear() {
         File[] files = mCacheDir.listFiles();
@@ -125,7 +147,13 @@ public class FileCache {
         for (File f : files)
             f.delete();
     }
-    
+    public void clearHelpImages() { 
+        File[] files = mHelpPicDir.listFiles();
+        if (files == null)
+            return;
+        for (File f : files)
+            f.delete();
+    }
     public void clearTwoDaysOldPictures() {
         File[] files = mCacheDir.listFiles();
         if (files == null) {

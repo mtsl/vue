@@ -20,4 +20,5 @@ public class AisleContext {
     public int mBookmarkCount;
     public int mShareCount;
     public ArrayList<String> mCommentList;
+    public boolean mIsEmptyAisle = false;
 }

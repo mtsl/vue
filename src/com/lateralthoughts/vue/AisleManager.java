@@ -2,15 +2,23 @@ package com.lateralthoughts.vue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
@@ -18,7 +26,9 @@ import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
+import com.lateralthoughts.vue.domain.ImageRatingQueue;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.AddImageToAisleBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleCreationBackgroundThread;
 import com.lateralthoughts.vue.utils.AisleUpdateBackgroundThread;
@@ -28,7 +38,6 @@ import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class AisleManager {
-    
     public interface AisleAddCallback {
         public void onAisleAdded(Aisle aisle, AisleContext aisleContext);
     }
@@ -38,11 +47,13 @@ public class AisleManager {
     }
     
     public interface ImageUploadCallback {
-        public void onImageUploaded(String imageUrl);
+        public void onImageUploaded(String imageUrl, int width, int height);
     }
     
     public interface ImageAddedCallback {
-        public void onImageAdded(String imageId);
+        public void onImageAdded(String aisleId, String imageId,
+                String lookingFor, String findAt, String size, String source,
+                boolean fromDetailScreen);
     }
     
     private static AisleManager sAisleManager = null;
@@ -76,9 +87,10 @@ public class AisleManager {
     }
     
     public void updateAisle(final Aisle aisle,
-            AisleUpdateCallback aisleUpdateCallback) {
+            AisleUpdateCallback aisleUpdateCallback,
+            boolean fromDetailsScreenFlag) {
         Thread t = new Thread(new AisleUpdateBackgroundThread(aisle,
-                aisleUpdateCallback));
+                aisleUpdateCallback, fromDetailsScreenFlag));
         t.start();
     }
     
@@ -102,14 +114,16 @@ public class AisleManager {
     // issues a request to add an image to the aisle.
     public void addImageToAisle(AisleContext aisleContext,
             final boolean fromDetailsScreenFlag, String imageId,
-            VueImage image, ImageAddedCallback imageAddedCallback) {
+            String lookingfor, VueImage image,
+            ImageAddedCallback imageAddedCallback) {
         if (null == image) {
             throw new RuntimeException(
                     "Can't create Aisle without a non null aisle object");
         }
         
         Thread t = new Thread(new AddImageToAisleBackgroundThread(aisleContext,
-                image, fromDetailsScreenFlag, imageId, imageAddedCallback));
+                image, fromDetailsScreenFlag, imageId, lookingfor,
+                imageAddedCallback));
         t.start();
     }
     
@@ -126,118 +140,51 @@ public class AisleManager {
      * @throws ClientProtocolException
      *             , IOException
      * */
-    public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark,
-    
-    String userId) throws ClientProtocolException, IOException {
+    public void aisleBookmarkUpdate(final AisleBookmark aisleBookmark)
+            throws ClientProtocolException, IOException {
         mIsDirty = true;
-        String url;
-        if (aisleBookmark.getId() == null) {
-            url = UrlConstants.CREATE_BOOKMARK_RESTURL + "/";
-        } else {
-            url = UrlConstants.UPDATE_BOOKMARK_RESTURL + "/";
-        }
         if (VueConnectivityManager.isNetworkConnected(VueApplication
                 .getInstance())) {
-            VueUser storedVueUser = null;
-            try {
-                storedVueUser = Utils.readUserObjectFromFile(
-                        VueApplication.getInstance(),
-                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            String bookmarkAisleAsString = mapper
-                    .writeValueAsString(aisleBookmark);
-            
-            @SuppressWarnings("rawtypes")
-            Response.Listener listener = new Response.Listener<String>() {
+            new Thread(new Runnable() {
                 
                 @Override
-                public void onResponse(String jsonArray) {
-                    if (jsonArray != null) {
-                        try {
-                            AisleBookmark createdAisleBookmark = (new ObjectMapper())
-                                    .readValue(jsonArray, AisleBookmark.class);
-                            mIsDirty = false;
-                            Editor editor = mSharedPreferencesObj.edit();
-                            editor.putBoolean(VueConstants.IS_AISLE_DIRTY,
-                                    false);
-                            editor.commit();
-                            ArrayList<AisleWindowContent> windowList;
-                            if (aisleBookmark.getBookmarked()) {
-                                windowList = DataBaseManager.getInstance(
-                                        VueApplication.getInstance())
-                                        .getAisleByAisleId(
-                                                Long.toString(aisleBookmark
-                                                        .getAisleId()));
-                            } else {
-                                windowList = DataBaseManager.getInstance(
-                                        VueApplication.getInstance())
-                                        .getAisleByAisleIdFromBookmarks(
-                                                Long.toString(aisleBookmark
-                                                        .getAisleId()));
-                            }
-                            updateBookmartToDb(windowList,
-                                    createdAisleBookmark, mIsDirty);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                public void run() {
+                    VueUser storedVueUser = null;
+                    try {
+                        storedVueUser = Utils.readUserObjectFromFile(
+                                VueApplication.getInstance(),
+                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                        if (aisleBookmark.getId() == null) {
+                            createAisleBookmark(aisleBookmark,
+                                    storedVueUser.getId(), mIsDirty);
+                        } else {
+                            
+                            updateAisleBookmark(aisleBookmark,
+                                    storedVueUser.getId());
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    
                 }
-                
-            };
-            
-            Response.ErrorListener errorListener = new ErrorListener() {
-                
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    mIsDirty = true;
-                    Editor editor = mSharedPreferencesObj.edit();
-                    editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-                    editor.commit();
-                    ArrayList<AisleWindowContent> windowList;
-                    if (aisleBookmark.getBookmarked()) {
-                        windowList = DataBaseManager.getInstance(
-                                VueApplication.getInstance())
-                                .getAisleByAisleId(
-                                        Long.toString(aisleBookmark
-                                                .getAisleId()));
-                    } else {
-                        windowList = DataBaseManager.getInstance(
-                                VueApplication.getInstance())
-                                .getAisleByAisleIdFromBookmarks(
-                                        Long.toString(aisleBookmark
-                                                .getAisleId()));
-                    }
-                    updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
-                }
-                
-            };
-            @SuppressWarnings("unchecked")
-            BookmarkPutRequest request = new BookmarkPutRequest(
-                    bookmarkAisleAsString, listener, errorListener, url
-                            + storedVueUser.getId());
-            VueApplication.getInstance().getRequestQueue().add(request);
-        } else {
-            mIsDirty = true;
-            Editor editor = mSharedPreferencesObj.edit();
-            editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
-            editor.commit();
-            ArrayList<AisleWindowContent> windowList;
-            if (aisleBookmark.getBookmarked()) {
-                windowList = DataBaseManager.getInstance(
-                        VueApplication.getInstance()).getAisleByAisleId(
-                        Long.toString(aisleBookmark.getAisleId()));
-            } else {
-                windowList = DataBaseManager.getInstance(
-                        VueApplication.getInstance())
-                        .getAisleByAisleIdFromBookmarks(
-                                Long.toString(aisleBookmark.getAisleId()));
-            }
-            updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
+            }).start();
+        } else {/*
+                 * mIsDirty = true; Editor editor =
+                 * mSharedPreferencesObj.edit();
+                 * editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+                 * editor.commit(); ArrayList<AisleWindowContent> windowList;
+                 * 
+                 * if (aisleBookmark.getBookmarked()) { windowList =
+                 * DataBaseManager.getInstance(
+                 * VueApplication.getInstance()).getAisleByAisleId(
+                 * Long.toString(aisleBookmark.getAisleId())); } else {
+                 * windowList = DataBaseManager.getInstance(
+                 * VueApplication.getInstance())
+                 * .getAisleByAisleIdFromBookmarks(
+                 * Long.toString(aisleBookmark.getAisleId())); }
+                 * updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
+                 */
         }
-        
     }
     
     /**
@@ -268,6 +215,90 @@ public class AisleManager {
     
     public void updateRating(final ImageRating imageRating, final int likeCount)
             throws ClientProtocolException, IOException {
+        AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                .getInstance(VueApplication.getInstance())
+                .getAisleImageForImageId(String.valueOf(imageRating.mImageId),
+                        String.valueOf(imageRating.mAisleId), false);
+        boolean isThereAnyEmptyRatings = false;
+        for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+            if (listImageRating.getId() == null) {
+                listImageRating.setLiked(imageRating.getLiked());
+                isThereAnyEmptyRatings = true;
+            } else if (listImageRating != null
+                    && listImageRating.getId() == imageRating.mId) {
+                listImageRating.setLiked(imageRating.mLiked);
+            }
+        }
+        // updateImageRatingVolley( imageRating, likeCount);
+        if (VueConnectivityManager.isNetworkConnected(VueApplication
+                .getInstance())) {
+            if (imageRating.mId == null) {
+                if (!isThereAnyEmptyRatings) {
+                    aisleImageDetails.mRatingsList.add(imageRating);
+                }
+                ImageRatingQueue imageRatingQueueObj = new ImageRatingQueue();
+                imageRatingQueueObj.imageRating = imageRating;
+                imageRatingQueueObj.likeCount = likeCount;
+                boolean isObjectExistAlready = VueTrendingAislesDataModel
+                        .getInstance(VueApplication.getInstance())
+                        .getNetworkHandler()
+                        .addImageRatingObject(imageRatingQueueObj);
+                if (isObjectExistAlready) {
+                    return;
+                }
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            com.lateralthoughts.vue.domain.ImageRating imageRatingRequestObject = new com.lateralthoughts.vue.domain.ImageRating();
+            imageRatingRequestObject.setId(imageRating.getId());
+            imageRatingRequestObject.setAisleId(imageRating.getAisleId());
+            imageRatingRequestObject.setImageId(imageRating.getImageId());
+            imageRatingRequestObject.setLiked(imageRating.getLiked());
+            imageRatingRequestObject.setLastModifiedTimestamp(imageRating
+                    .getLastModifiedTimestamp());
+            final String imageRatingString = mapper
+                    .writeValueAsString(imageRatingRequestObject);
+            try {
+                final VueUser storedVueUser = Utils.readUserObjectFromFile(
+                        VueApplication.getInstance(),
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        imageRatingPutRequest(imageRating, imageRatingString,
+                                storedVueUser.getId(), likeCount);
+                    }
+                }).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (aisleImageDetails.mRatingsList != null) {
+                if (imageRating.mId != null) {
+                    for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+                        if (listImageRating != null
+                                && listImageRating.getId() == imageRating.mId) {
+                            listImageRating.mLiked = imageRating.mLiked;
+                            break;
+                        }
+                    }
+                } else {
+                    aisleImageDetails.mRatingsList.add(imageRating);
+                }
+            }
+            /*
+             * if (imageRating.getId() == null) { imageRating.mId = 0001L; }
+             * updateImageRatingToDb(imageRating, likeCount, true); Editor
+             * editor = mSharedPreferencesObj.edit();
+             * editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+             * editor.commit();
+             */
+        }
+    }
+    
+    // TODO: VOLLEY CODE NOT WORKING NEEDS TO BE TESTED.
+    private void updateImageRatingVolley(final ImageRating imageRating,
+            final int likeCount) throws ClientProtocolException, IOException {
         String url;
         if (imageRating.mId == null) {
             url = UrlConstants.CREATE_RATING_RESTURL + "/";
@@ -329,7 +360,7 @@ public class AisleManager {
                 }
             };
             
-            Response.ErrorListener errorListener = new ErrorListener() {
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
                 
                 @Override
                 public void onErrorResponse(VolleyError error) {
@@ -341,6 +372,7 @@ public class AisleManager {
                 }
                 
             };
+            
             @SuppressWarnings("unchecked")
             ImageRatingPutRequest request = new ImageRatingPutRequest(
                     imageRatingString, listener, errorListener, url
@@ -358,6 +390,198 @@ public class AisleManager {
     private void updateImageRatingToDb(ImageRating imgRating, int likeCount,
             boolean isDirty) {
         DataBaseManager.getInstance(VueApplication.getInstance())
-                .addLikeOrDisLike(likeCount, isDirty, imgRating, true);
+                .addLikeOrDisLike(likeCount, isDirty, imgRating, true, isDirty);
+        DataBaseManager.getInstance(VueApplication.getInstance())
+                .updateAllRatingAisles(imgRating, isDirty);
     }
+    
+    private AisleBookmark createAisleBookmark(AisleBookmark bookmark,
+            Long long1, boolean mIsDirty) throws Exception {
+        AisleBookmark createdAisleBookmark = null;
+        ObjectMapper mapper = new ObjectMapper();
+        String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
+        if (bookmark.getId() != null) {
+            bookmarkUrl = UrlConstants.UPDATE_BOOKMARK_RESTURL;
+        }
+        URL url = new URL(bookmarkUrl + "/" + long1);
+        HttpPut httpPut = new HttpPut(url.toString());
+        StringEntity entity = new StringEntity(
+                mapper.writeValueAsString(bookmark));
+        entity.setContentType("application/json;charset=UTF-8");
+        entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                "application/json;charset=UTF-8"));
+        httpPut.setEntity(entity);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpResponse response = httpClient.execute(httpPut);
+        if (response.getEntity() != null
+                && response.getStatusLine().getStatusCode() == 200) {
+            String responseMessage = EntityUtils.toString(response.getEntity());
+            System.out.println("Response: " + responseMessage);
+            if (responseMessage.length() > 0) {
+                createdAisleBookmark = (new ObjectMapper()).readValue(
+                        responseMessage, AisleBookmark.class);
+                onSuccesfulBookmarkResponse(createdAisleBookmark);
+                
+            } else {
+                onFailureBookmarkResponse(bookmark);
+            }
+            
+        } else {
+            onFailureBookmarkResponse(bookmark);
+        }
+        return createdAisleBookmark;
+    }
+    
+    public AisleBookmark updateAisleBookmark(AisleBookmark bookmark, Long long1)
+            throws Exception {
+        AisleBookmark updatedAisleBookmark = null;
+        ObjectMapper mapper = new ObjectMapper();
+        String bookmarkUrl = UrlConstants.CREATE_BOOKMARK_RESTURL;
+        if (bookmark.getId() != null) {
+            bookmarkUrl = UrlConstants.UPDATE_BOOKMARK_RESTURL;
+        }
+        URL url = new URL(bookmarkUrl + "/" + long1);
+        HttpPut httpPut = new HttpPut(url.toString());
+        StringEntity entity = new StringEntity(
+                mapper.writeValueAsString(bookmark));
+        entity.setContentType("application/json;charset=UTF-8");
+        entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                "application/json;charset=UTF-8"));
+        httpPut.setEntity(entity);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpResponse response = httpClient.execute(httpPut);
+        if (response.getEntity() != null
+                && response.getStatusLine().getStatusCode() == 200) {
+            String responseMessage = EntityUtils.toString(response.getEntity());
+            if (responseMessage.length() > 0) {
+                updatedAisleBookmark = (new ObjectMapper()).readValue(
+                        responseMessage, AisleBookmark.class);
+                onSuccesfulBookmarkResponse(updatedAisleBookmark);
+            } else {
+                onFailureBookmarkResponse(bookmark);
+            }
+        } else {
+            onFailureBookmarkResponse(bookmark);
+        }
+        return updatedAisleBookmark;
+    }
+    
+    private void onSuccesfulBookmarkResponse(AisleBookmark createdAisleBookmark) {
+        try {
+            mIsDirty = false;
+            Editor editor = mSharedPreferencesObj.edit();
+            editor.putBoolean(VueConstants.IS_AISLE_DIRTY, false);
+            editor.commit();
+            ArrayList<AisleWindowContent> windowList;
+            if (createdAisleBookmark.getBookmarked()) {
+                windowList = DataBaseManager.getInstance(
+                        VueApplication.getInstance()).getAisleByAisleId(
+                        Long.toString(createdAisleBookmark.getAisleId()));
+            } else {
+                windowList = DataBaseManager
+                        .getInstance(VueApplication.getInstance())
+                        .getAisleByAisleIdFromBookmarks(
+                                Long.toString(createdAisleBookmark.getAisleId()));
+            }
+            updateBookmartToDb(windowList, createdAisleBookmark, mIsDirty);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void onFailureBookmarkResponse(AisleBookmark aisleBookmark) {
+        mIsDirty = true;
+        Editor editor = mSharedPreferencesObj.edit();
+        editor.putBoolean(VueConstants.IS_AISLE_DIRTY, true);
+        editor.commit();
+        ArrayList<AisleWindowContent> windowList;
+        if (aisleBookmark.getBookmarked()) {
+            windowList = DataBaseManager.getInstance(
+                    VueApplication.getInstance()).getAisleByAisleId(
+                    Long.toString(aisleBookmark.getAisleId()));
+        } else {
+            windowList = DataBaseManager.getInstance(
+                    VueApplication.getInstance())
+                    .getAisleByAisleIdFromBookmarks(
+                            Long.toString(aisleBookmark.getAisleId()));
+        }
+        updateBookmartToDb(windowList, aisleBookmark, mIsDirty);
+    }
+    
+    private void imageRatingPutRequest(ImageRating imageRating,
+            String ratingString, Long userId, final int likeCount) {
+        try {
+            String ratingUrl = UrlConstants.CREATE_RATING_RESTURL;
+            if (imageRating.getId() != null) {
+                ratingUrl = UrlConstants.UPDATE_RATING_RESTURL;
+            }
+            URL url = new URL(ratingUrl + "/" + userId);
+            HttpPut httpPut = new HttpPut(url.toString());
+            StringEntity entity = new StringEntity(ratingString);
+            entity.setContentType("application/json;charset=UTF-8");
+            entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json;charset=UTF-8"));
+            httpPut.setEntity(entity);
+            
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpPut);
+            if (response.getEntity() != null
+                    && response.getStatusLine().getStatusCode() == 200) {
+                String responseMessage = EntityUtils.toString(response
+                        .getEntity());
+                if (responseMessage != null && responseMessage.length() > 0) {
+                    try {
+                        
+                        ImageRating imgRating = (new ObjectMapper()).readValue(
+                                responseMessage, ImageRating.class);
+                        Editor editor = mSharedPreferencesObj.edit();
+                        editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, false);
+                        editor.commit();
+                        if (imageRating.getId() == null) {
+                            AisleImageDetails aisleImageDetails = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleImageForImageId(
+                                            String.valueOf(imgRating.mImageId),
+                                            String.valueOf(imgRating.mAisleId),
+                                            false);
+                            if (aisleImageDetails != null) {
+                                for (ImageRating listImageRating : aisleImageDetails.mRatingsList) {
+                                    if (listImageRating != null
+                                            && listImageRating.getId() == null) {
+                                        listImageRating.mId = imageRating.mId;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .getNetworkHandler()
+                                .isRatingObjectWaitingtoUpload(
+                                        imgRating.mImageId, imgRating.mLiked,
+                                        imgRating.mId);
+                        updateImageRatingToDb(imgRating, likeCount, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    
+                } else {
+                    imageRating.mId = 0001L;
+                    updateImageRatingToDb(imageRating, likeCount, true);
+                    Editor editor = mSharedPreferencesObj.edit();
+                    editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                    editor.commit();
+                }
+            } else {
+                imageRating.mId = 0001L;
+                updateImageRatingToDb(imageRating, likeCount, true);
+                Editor editor = mSharedPreferencesObj.edit();
+                editor.putBoolean(VueConstants.IS_IMAGE_DIRTY, true);
+                editor.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

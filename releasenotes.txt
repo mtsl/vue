@@ -1,0 +1,7 @@
+-> Change server url from canary to development
+
+-> Change the GCM server project id from canary to development.
+
+-> Change the version name from versionnumber_pre-release-test to versionnumber and increament the versionnumber and version code.
+
+-> Change the mixpanel testing token to playstore token(token given by Vidya)

@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -37,7 +38,8 @@ public class Help extends Activity {
     ViewPager mHelpPager;
     private LayoutInflater mInflater;
     private int mHelpScreens;
-    private String helpScreens[] = { "imageOne", "imageTwo", "imageThree" };
+    private String helpScreens[] = { "imageOneNew", "imageTwoNew",
+            "imageThreeNew" };
     FileCache mFileCache;
     int mScreenWidth, mScreenHeight, mCurrentPosition;
     String mFromWhere;
@@ -88,6 +90,9 @@ public class Help extends Activity {
                             Intent i = new Intent(Help.this,
                                     VueLoginActivity.class);
                             Bundle b = new Bundle();
+                            b.putBoolean(
+                                    VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                                    true);
                             b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG,
                                     false);
                             b.putString(VueConstants.FROM_INVITEFRIENDS, null);
@@ -113,7 +118,25 @@ public class Help extends Activity {
     public void onResume() {
         super.onResume();
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                int drawable = R.drawable.helpfour;
+                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                        drawable);
+                File f = mFileCache.getHelpFile("imageFourNew");
+                Utils.saveBitmap(largeIcon, f);
+                largeIcon.recycle();
+                largeIcon = null;
+                
+            }
+        }).start();
     
+    }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         
@@ -132,12 +155,17 @@ public class Help extends Activity {
                             storedVueUser.getFirstName());
                     VueApplication.getInstance().setmUserId(
                             storedVueUser.getId());
+                    VueApplication.getInstance().setmUserEmail(
+                            storedVueUser.getEmail());
                     VueApplication.getInstance().setmUserName(
                             storedVueUser.getFirstName() + " "
                                     + storedVueUser.getLastName());
                 } else {
                     Intent i = new Intent(Help.this, VueLoginActivity.class);
                     Bundle b = new Bundle();
+                    b.putBoolean(
+                            VueConstants.SHOW_AISLE_SWIPE_HELP_LAYOUT_FLAG,
+                            true);
                     b.putBoolean(VueConstants.CANCEL_BTN_DISABLE_FLAG, false);
                     b.putString(VueConstants.FROM_INVITEFRIENDS, null);
                     b.putBoolean(VueConstants.FBLOGIN_FROM_DETAILS_SHARE, false);
@@ -263,11 +291,11 @@ public class Help extends Activity {
     private File drawableToBitmap(int position) {
         
         int drawable = 0;
-        if (helpScreens[position].equalsIgnoreCase("imageOne")) {
+        if (helpScreens[position].equalsIgnoreCase("imageOneNew")) {
             drawable = R.drawable.helpone;
-        } else if (helpScreens[position].equalsIgnoreCase("imageTwo")) {
+        } else if (helpScreens[position].equalsIgnoreCase("imageTwoNew")) {
             drawable = R.drawable.helptwo;
-        } else if (helpScreens[position].equalsIgnoreCase("imageThree")) {
+        } else if (helpScreens[position].equalsIgnoreCase("imageThreeNew")) {
             drawable = R.drawable.helpthree;
         }
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
@@ -309,8 +337,12 @@ public class Help extends Activity {
             File f = mFileCache.getHelpFile(helpScreens[mCurrentPosition]);
             Bitmap bmp = decodeFile(f, mScreenHeight, mScreenWidth);
             if (bmp == null) {
-                f = drawableToBitmap(mCurrentPosition);
-                bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+                try {
+                    f = drawableToBitmap(mCurrentPosition);
+                    bmp = decodeFile(f, mScreenHeight, mScreenWidth);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             return bmp;
         }

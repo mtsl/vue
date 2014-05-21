@@ -1,8 +1,10 @@
 package com.lateralthoughts.vue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +21,7 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     private Context mContext;
     AisleContentClickListener mClickListener;
     private static final String AISLE_STAGE_FOUR = "completed";
+    AisleContentBrowser aisleContentBrowserHelp;
     
     public LandingPageViewAdapter(Context context,
             AisleContentClickListener clickListener) {
@@ -31,19 +34,12 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
     @Override
     public int getCount() {
         int count = mVueTrendingAislesDataModel.getAisleCount();
-        if (count == 0) {
-            mClickListener.showProgressBar();
-        } else {
-            mClickListener.hideProgressBar();
-        }
         return count;
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        
         ViewHolder holder;
-        
         int actualPosition = position;
         if (null == convertView) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
@@ -77,10 +73,13 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
                     .findViewById(R.id.descriptor_aisle_context);
             holder.aisleselectlay = (LinearLayout) convertView
                     .findViewById(R.id.aisleselectlay);
+            holder.no_image_lay = (LinearLayout) convertView
+                    .findViewById(R.id.no_image_lay);
             holder.uniqueContentId = AisleWindowContent.EMPTY_AISLE_CONTENT_ID;
             convertView.setTag(holder);
         }
         holder = (ViewHolder) convertView.getTag();
+        
         holder.aisleContentBrowser.setAisleContentClickListener(mClickListener);
         holder.mWindowContent = (AisleWindowContent) getItem(position);
         int scrollIndex = 0;
@@ -95,10 +94,46 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.aisleselectlay.setVisibility(View.GONE);
         }
-        mLoader.getAisleContentIntoView(holder, scrollIndex, actualPosition,
-                false, mClickListener, "left", holder.starIcon,
-                holder.socialCard);
+        
+        if (!AisleLoader.isScrolling && !AisleLoader.trendingSwipeBlock) {
+            if (holder.aisleContentBrowser.getImageCount() > 1
+                    && aisleContentBrowserHelp == null) {
+                aisleContentBrowserHelp = holder.aisleContentBrowser;
+            }  
+        } else {
+            aisleContentBrowserHelp = null;
+        }
         AisleContext context = holder.mWindowContent.getAisleContext();
+        if (context.mIsEmptyAisle) {
+            final AisleWindowContent mWindowContent = holder.mWindowContent;
+            holder.no_image_lay.setVisibility(View.VISIBLE);
+            holder.aisleContentBrowser.setVisibility(View.GONE);
+            holder.starIcon.setVisibility(View.GONE);
+            holder.no_image_lay.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    VueApplication.getInstance()
+                            .setPendingAisle(mWindowContent);
+                    Intent intent = new Intent();
+                    intent.setClass(VueApplication.getInstance(),
+                            AisleDetailsViewActivity.class);
+                    VueApplication.getInstance().setClickedWindowID(
+                            mWindowContent.getAisleContext().mAisleId);
+                    VueApplication.getInstance().setClickedWindowCount(0);
+                    VueApplication.getInstance().setmAisleImgCurrentPos(0);
+                    mContext.startActivity(intent);
+                }
+            });
+        } else {
+            holder.no_image_lay.setVisibility(View.GONE);
+            holder.aisleContentBrowser.setVisibility(View.VISIBLE);
+            holder.starIcon.setVisibility(View.VISIBLE);
+            mLoader.getAisleContentIntoView(holder, scrollIndex,
+                    actualPosition, false, mClickListener, "left",
+                    holder.starIcon, holder.socialCard);
+        }
+        
         String mVueusername = null;
         if (context.mFirstName != null && context.mLastName != null) {
             mVueusername = context.mFirstName + " " + context.mLastName;
@@ -177,8 +212,19 @@ public class LandingPageViewAdapter extends TrendingAislesGenericAdapter {
         } else {
             holder.shareImage.setImageResource(R.drawable.share_gray);
         }
-        holder.share_count.setText(String.valueOf(holder.mWindowContent
-                .getAisleContext().mShareCount));
+        holder.share_count.setVisibility(View.GONE);
+        holder.likeCount.setVisibility(View.GONE);
+        holder.bookMarkCount.setVisibility(View.GONE);
         return convertView;
+    }
+    
+    public void swipeFromAdapterImage() {
+        if (!AisleLoader.isScrolling && aisleContentBrowserHelp != null) {
+            try {
+                aisleContentBrowserHelp.moveToNextChild();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

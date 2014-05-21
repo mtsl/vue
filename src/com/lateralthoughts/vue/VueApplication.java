@@ -3,6 +3,9 @@ package com.lateralthoughts.vue;
 import gcm.com.vue.android.gcmclient.RegisterGCMClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -11,12 +14,14 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 import android.util.TypedValue;
@@ -25,10 +30,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.crittercism.app.Crittercism;
-import com.lateralthoughts.vue.ui.ScaleImageView;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.ListFragementObj;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
+import com.lateralthoughts.vue.utils.SortResolveInfoBasedOnAppName;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -37,7 +42,7 @@ public class VueApplication extends Application {
     private static final String CRITTERCISM_APP_ID = "5153c41e558d6a2403000009";
     private HttpClient mHttpClient;
     private FileCache mFileCache;
-    private ScaleImageView mEmptyImageView;
+    // private ScaleImageView mEmptyImageView;
     private String mWindowID;
     private int mWindowCount;
     private int mStatusBarHeight;
@@ -54,10 +59,34 @@ public class VueApplication extends Application {
     public long mLaunchTime;
     public long mLastRecordedTime;
     ListFragementObj mListRefresobj;
-    public String MIXPANEL_TOKEN = "d5ac13097eaf8acefc264d21457307a1";
+    public boolean mInstalledAppsLoadStatus = false;
+    public String mFBLoginFailureReason = null;
+    public String MIXPANEL_TOKEN = "72f1b89ae2fc217079ef18cd9a67150b"; // "72f1b89ae2fc217079ef18cd9a67150b";
+                                                                       // //
+                                                                       // "Vue
+    // India
+    // Team
+    // Mixpanel
+    // token
+    // for
+    // Vue
+    // development
+    // testing
+    // "178a869c17a98b1f044ae5548ad9f4c4";
+    //
+    // Vidya
+    // token
+    // for Playstore version
     
     public static final String MORE_AISLES_REQUEST_TAG = "MoreAislesTag";
     public static final String LOAD_IMAGES_REQUEST_TAG = "LoadImagesTag";
+    public static final int LOG_LOW = 0;
+    public static final int LOG_MED = 1;
+    public static final int LOG_HIGH = 2;
+    public boolean isUserSwipeAisle = false;
+    private AisleWindowContent mAisleWindow;
+    public boolean isPostingOnFriendsWallFlag = false;
+    public String twitterActivityName = "com.twitter.android.StartActivity";
     
     public int getmStatusBarHeight() {
         return mStatusBarHeight;
@@ -70,7 +99,7 @@ public class VueApplication extends Application {
     public int mScreenHeight;
     public int mScreenWidth;
     private int mTextSize = 18;
-    public Context mVueApplicationContext;
+    // public Context mVueApplicationContext;
     private int mAisleImgCurrentPos;
     
     private String mUserInitials = null;
@@ -94,6 +123,16 @@ public class VueApplication extends Application {
     private boolean mFinishDetailsScreenFlag;
     
     private Long mUserId = null;
+    private String mUserEmail = null;
+    
+    public String getmUserEmail() {
+        return mUserEmail;
+    }
+    
+    public void setmUserEmail(String mUserEmail) {
+        this.mUserEmail = mUserEmail;
+    }
+    
     private String mUserName = null;
     
     public String getmUserName() {
@@ -124,28 +163,18 @@ public class VueApplication extends Application {
     private RequestQueue mVolleyRequestQueue;
     public static final String[] SHOPPINGAPP_NAMES_ARRAY = { "Etsy", "Fancy",
             "Wanelo", "Amazon", "Pinterest" };
-    public static final String[] SHOPPINGAPP_ACTIVITIES_ARRAY = {
-            "com.etsy.android.ui.HomeActivity", "com.thefancy.app.common.Main",
-            "com.wanelo.android.ui.activity.LoginActivity",
-            "com.amazon.mShop.home.HomeActivity",
-            "com.pinterest.activity.PinterestActivity" };
     public static final String[] SHOPPINGAPP_PACKAGES_ARRAY = {
             "com.etsy.android", "com.thefancy.app", "com.wanelo.android",
             "com.amazon.mShop.android", "com.pinterest" };
     
     public boolean mIsTrendingSelectedFromBezelMenuFlag = false;
-    private final int MAX_BITMAP_COUNT = 512;
     
     @Override
     public void onCreate() {
         super.onCreate();
-        
         sInstance = this;
-        mVueApplicationContext = this;
-        
         RegisterGCMClient.registerClient(VueApplication.getInstance(),
                 UrlConstants.CURRENT_SERVER_PROJECT_ID);
-        
         ScaledImageViewFactory.getInstance(this);
         AisleWindowContentFactory.getInstance(this);
         mHttpClient = new DefaultHttpClient();
@@ -153,51 +182,29 @@ public class VueApplication extends Application {
         ContentAdapterFactory.getInstance(this);
         // create the JSONObject. (Do not forget to import org.json.JSONObject!)
         JSONObject crittercismConfig = new JSONObject();
-        try {
-            crittercismConfig.put("shouldCollectLogcat", true); // send logcat
-                                                                // data for
-                                                                // devices with
-                                                                // API Level 16
-                                                                // and higher
-        } catch (JSONException je) {
-        }
         
-        mEmptyImageView = new ScaleImageView(this);
-        Drawable d = getResources().getDrawable(R.drawable.aisle_content_empty);
-        mEmptyImageView.setImageDrawable(d);
+        try {
+            crittercismConfig.put("shouldCollectLogcat", true); // send
+        }
+        // logcat // data for // devices with // API Level 16 // and higher }
+        catch (JSONException je) {
+        }
         
         DisplayMetrics dm = getResources().getDisplayMetrics();
         mScreenHeight = dm.heightPixels;
         mScreenWidth = dm.widthPixels;
         mVolleyRequestQueue = Volley.newRequestQueue(this);
-        
-        mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
-        for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
-            if (Utils.appInstalledOrNot(SHOPPINGAPP_PACKAGES_ARRAY[i], this)) {
-                Drawable appIcon = null;
-                try {
-                    appIcon = this.getPackageManager().getApplicationIcon(
-                            SHOPPINGAPP_PACKAGES_ARRAY[i]);
-                } catch (NameNotFoundException e) {
-                }
-                ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
-                        SHOPPINGAPP_NAMES_ARRAY[i],
-                        SHOPPINGAPP_ACTIVITIES_ARRAY[i],
-                        SHOPPINGAPP_PACKAGES_ARRAY[i], appIcon);
-                mShoppingApplicationDetailsList.add(shoppingApplicationDetails);
-            }
-        }
-        
-        mMoreInstalledApplicationDetailsList = Utils
-                .getInstalledApplicationsList(getApplicationContext());
-        
         Crittercism.init(getApplicationContext(), CRITTERCISM_APP_ID,
                 crittercismConfig);
-        
         mImageLoader = new NetworkImageLoader(mVolleyRequestQueue,
                 new ImageLoader.ImageCache() {
-                    private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(
-                            MAX_BITMAP_COUNT);
+                    int cacheSize = 10 * 1024 * 1024;
+                    LruCache<String, Bitmap> mCache = new LruCache(cacheSize) {
+                        protected int sizeOf(String key, Bitmap value) {
+                            return value.getByteCount();
+                            
+                        }
+                    };
                     
                     public void putBitmap(String url, Bitmap bitmap) {
                         mCache.put(url, bitmap);
@@ -207,7 +214,6 @@ public class VueApplication extends Application {
                         return mCache.get(url);
                     }
                 });
-        
     }
     
     public static VueApplication getInstance() {
@@ -215,10 +221,16 @@ public class VueApplication extends Application {
     }
     
     public HttpClient getHttpClient() {
+        if (mHttpClient == null) {
+            mHttpClient = new DefaultHttpClient();
+        }
         return mHttpClient;
     }
     
     public FileCache getFileCache() {
+        if (mFileCache == null) {
+            mFileCache = new FileCache(this);
+        }
         return mFileCache;
     }
     
@@ -311,5 +323,98 @@ public class VueApplication extends Application {
         Editor editor = sharedPreferencesObj.edit();
         editor.putLong(VueConstants.SCREEN_REFRESH_TIME, time_in_mins);
         editor.commit();
+    }
+    
+    public void setPendingAisle(AisleWindowContent aisleWindow) {
+        mAisleWindow = aisleWindow;
+    }
+    
+    public AisleWindowContent getPedningAisle() {
+        return mAisleWindow;
+    }
+    
+    public void getInstalledApplications(final Context context) {
+        new Thread(new Runnable() {
+            
+            @SuppressWarnings("unchecked")
+            @Override
+            public void run() {
+                mInstalledAppsLoadStatus = false;
+                mShoppingApplicationDetailsList = new ArrayList<ShoppingApplicationDetails>();
+                Intent intent = new Intent("android.intent.action.MAIN", null);
+                intent.addCategory("android.intent.category.LAUNCHER");
+                List<ResolveInfo> activities = context.getPackageManager()
+                        .queryIntentActivities(intent, 0);
+                if (activities != null) {
+                    Collections.sort(activities,
+                            new SortResolveInfoBasedOnAppName());
+                }
+                PackageManager pm = context.getPackageManager();
+                final Object a[] = activities.toArray();
+                for (int i = 0; i < activities.size(); i++) {
+                    boolean isSystemApp = false;
+                    try {
+                        isSystemApp = Utils.isSystemPackage(pm
+                                .getPackageInfo(
+                                        ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName,
+                                        PackageManager.GET_ACTIVITIES));
+                    } catch (NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    String packageName = ((ResolveInfo) a[i]).activityInfo.applicationInfo.packageName;
+                    if (!isSystemApp
+                            && !(packageName.equals("com.lateralthoughts.vue"))
+                            && (Arrays
+                                    .asList(VueApplication.SHOPPINGAPP_PACKAGES_ARRAY)
+                                    .contains(packageName))) {
+                        ShoppingApplicationDetails shoppingApplicationDetails = new ShoppingApplicationDetails(
+                                ((ResolveInfo) a[i]).activityInfo.applicationInfo
+                                        .loadLabel(context.getPackageManager())
+                                        .toString(),
+                                ((ResolveInfo) a[i]).activityInfo.name,
+                                packageName, null);
+                        mShoppingApplicationDetailsList
+                                .add(shoppingApplicationDetails);
+                    }
+                }
+                orderAppList();
+                Intent shareIntent = new Intent(
+                        android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                List<ResolveInfo> activities1 = context.getPackageManager()
+                        .queryIntentActivities(shareIntent, 0);
+                final Object a1[] = activities1.toArray();
+                for (int i = 0; i < activities1.size(); i++) {
+                    String packageName = ((ResolveInfo) a1[i]).activityInfo.applicationInfo.packageName;
+                    if ((packageName.equals(VueConstants.TWITTER_PACKAGE_NAME))) {
+                        if (packageName
+                                .equals(VueConstants.TWITTER_PACKAGE_NAME)) {
+                            VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a1[i]).activityInfo.name;
+                            break;
+                        }
+                    }
+                }
+                mInstalledAppsLoadStatus = true;
+            }
+        }).start();
+        
+    }
+    
+    private void orderAppList() {
+        if (mShoppingApplicationDetailsList != null) {
+            for (int i = 0; i < SHOPPINGAPP_NAMES_ARRAY.length; i++) {
+                for (ShoppingApplicationDetails shoppingApplicationDetails : mShoppingApplicationDetailsList) {
+                    if (shoppingApplicationDetails.getAppName()
+                            .equalsIgnoreCase(SHOPPINGAPP_NAMES_ARRAY[i])) {
+                        mShoppingApplicationDetailsList
+                                .remove(shoppingApplicationDetails);
+                        mShoppingApplicationDetailsList.add(i,
+                                shoppingApplicationDetails);
+                        break;
+                    }
+                }
+                
+            }
+        }
     }
 }

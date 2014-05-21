@@ -16,6 +16,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,10 +30,13 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lateralthoughts.vue.AisleContext;
+import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleManager;
 import com.lateralthoughts.vue.AisleManager.AisleAddCallback;
 import com.lateralthoughts.vue.AisleManager.AisleUpdateCallback;
@@ -47,21 +51,24 @@ import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueContentGateway;
 import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
 import com.lateralthoughts.vue.domain.Aisle;
 import com.lateralthoughts.vue.domain.AisleBookmark;
 import com.lateralthoughts.vue.domain.Image;
 import com.lateralthoughts.vue.domain.ImageComment;
 import com.lateralthoughts.vue.domain.ImageCommentRequest;
+import com.lateralthoughts.vue.domain.ImageRatingQueue;
+import com.lateralthoughts.vue.domain.NotificationAisle;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.parser.ImageComments;
 import com.lateralthoughts.vue.parser.Parser;
 import com.lateralthoughts.vue.ui.NotifyProgress;
 import com.lateralthoughts.vue.ui.StackViews;
+import com.lateralthoughts.vue.ui.TrendingRefreshReceiver;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
 public class NetworkHandler {
-    
     Context mContext;
     private static final String SEARCH_REQUEST_URL = "http://2-java.vueapi-canary.appspot.com/api/getaisleswithmatchingkeyword/";
     public DataBaseManager dbManager;
@@ -77,6 +84,12 @@ public class NetworkHandler {
     private SharedPreferences mSharedPreferencesObj;
     public ArrayList<String> bookmarkedList = new ArrayList<String>();
     private ArrayList<String> ratedImageList = new ArrayList<String>();
+    private String userProfileUrl;
+    private boolean mUserPointsLoaded = false;
+    private boolean mUserBookmarksLoaded = false;
+    private boolean mUserRatedImagesLoaded = false;
+    ArrayList<String> sharedList = new ArrayList<String>();
+    ArrayList<ImageRatingQueue> imageRatingQueueList = new ArrayList<ImageRatingQueue>();
     
     public NetworkHandler(Context context) {
         mContext = context;
@@ -95,7 +108,6 @@ public class NetworkHandler {
     
     // while user scrolls down get next 10 aisles
     public void requestMoreAisle(boolean loadMore, String screenname) {
-        
         if (VueTrendingAislesDataModel
                 .getInstance(VueApplication.getInstance())
                 .isMoreDataAvailable()) {
@@ -155,8 +167,10 @@ public class NetworkHandler {
     }
     
     public void requestUpdateAisle(Aisle aisle,
-            AisleUpdateCallback aisleUpdateCallback) {
-        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback);
+            AisleUpdateCallback aisleUpdateCallback,
+            boolean fromDetailsScreenFlag) {
+        AisleManager.getAisleManager().updateAisle(aisle, aisleUpdateCallback,
+                fromDetailsScreenFlag);
     }
     
     // request the server to create an empty aisle.
@@ -169,10 +183,11 @@ public class NetworkHandler {
     }
     
     public void requestForAddImage(AisleContext aisleContext,
-            boolean fromDetailsScreenFlag, String imageId, VueImage image,
-            ImageAddedCallback imageAddedCallback) {
+            boolean fromDetailsScreenFlag, String imageId, String lookingfor,
+            VueImage image, ImageAddedCallback imageAddedCallback) {
         AisleManager.getAisleManager().addImageToAisle(aisleContext,
-                fromDetailsScreenFlag, imageId, image, imageAddedCallback);
+                fromDetailsScreenFlag, imageId, lookingfor, image,
+                imageAddedCallback);
     }
     
     public void requestForUploadImage(File imageFile,
@@ -236,23 +251,33 @@ public class NetworkHandler {
         
     }
     
-    public void loadInitialData(boolean loadMore, Handler mHandler,
+    public void loadInitialData(boolean loadMore, final Handler mHandler,
             String screenName) {
-        getBookmarkAisleByUser();
+        getAllSharedIds();
+        // getBookmarkAisleByUser();
+        getBookMarkAisleByUserRequest();
         getRatedImageList();
         
         offset = 0;
         if (!VueConnectivityManager.isNetworkConnected(mContext)) {
             Toast.makeText(mContext, R.string.no_network, Toast.LENGTH_SHORT)
                     .show();
-            ArrayList<AisleWindowContent> aisleContentArray = dbManager
-                    .getAislesFromDB(null, false);
-            if (aisleContentArray.size() == 0) {
-                return;
-            }
-            Message msg = new Message();
-            msg.obj = aisleContentArray;
-            mHandler.sendMessage(msg);
+            new Handler().postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    // context is not ready initallly so use some delay.
+                    ArrayList<AisleWindowContent> aisleContentArray = dbManager
+                            .getAislesFromDB(null, false);
+                    if (aisleContentArray.size() == 0) {
+                        return;
+                    }
+                    Message msg = new Message();
+                    msg.obj = aisleContentArray;
+                    mHandler.sendMessage(msg);
+                    
+                }
+            }, 1000);
             
         } else {
             mLimit = 30;
@@ -368,6 +393,75 @@ public class NetworkHandler {
                                                         .reverse(mAislesList);
                                                 for (int i = 0; i < mAislesList
                                                         .size(); i++) {
+                                                    if (mAislesList.get(i)
+                                                            .getImageList() == null) {
+                                                        
+                                                        mAislesList.remove(i);
+                                                        continue;
+                                                        
+                                                        // TODO: UNCOMMENT THIS
+                                                        // CODE WHEN NO IMAGE
+                                                        // AISLE FEATURE ENABLED
+                                                        // AND COMMENTED OUT
+                                                        // ABOUT TWO LINES.
+                                                        
+                                                        // Empty ailse handling.
+                                                        /*
+                                                         * ArrayList<
+                                                         * AisleImageDetails>
+                                                         * imageItemsArray = new
+                                                         * ArrayList
+                                                         * <AisleImageDetails
+                                                         * >();
+                                                         * AisleImageDetails
+                                                         * imageDetails = new
+                                                         * AisleImageDetails();
+                                                         * imageItemsArray
+                                                         * .add(imageDetails);
+                                                         * imageDetails
+                                                         * .mImageUrl =
+                                                         * VueConstants
+                                                         * .NO_IMAGE_URL;
+                                                         * imageDetails
+                                                         * .mAvailableWidth =
+                                                         * VueApplication
+                                                         * .getInstance()
+                                                         * .getPixel(
+                                                         * VueConstants
+                                                         * .NO_IMAGE_WIDTH);
+                                                         * imageDetails
+                                                         * .mAvailableHeight =
+                                                         * VueApplication
+                                                         * .getInstance()
+                                                         * .getPixel(
+                                                         * VueConstants
+                                                         * .NO_IMAGE_HEIGHT);
+                                                         * AisleWindowContent
+                                                         * aisleWindow =
+                                                         * VueTrendingAislesDataModel
+                                                         * .getInstance(
+                                                         * VueApplication
+                                                         * .getInstance())
+                                                         * .getAisleItem(
+                                                         * mAislesList .get(i)
+                                                         * .getAisleContext
+                                                         * ().mAisleId);
+                                                         * AisleContext userInfo
+                                                         * = mAislesList .get(i)
+                                                         * .getAisleContext();
+                                                         * userInfo
+                                                         * .mIsEmptyAisle =
+                                                         * true; aisleWindow
+                                                         * .addAisleContent(
+                                                         * userInfo,
+                                                         * imageItemsArray);
+                                                         * mAislesList
+                                                         * .remove(i);
+                                                         * mAislesList.add(i,
+                                                         * aisleWindow);
+                                                         */
+                                                        
+                                                    }
                                                     VueTrendingAislesDataModel
                                                             .getInstance(
                                                                     VueApplication
@@ -385,6 +479,36 @@ public class NetworkHandler {
                                                                         .getInstance())
                                                         .dataObserver();
                                                 // adding my aisle to db.
+                                                for (int index = 0; index < mAislesList
+                                                        .size(); index++) {
+                                                    if (mAislesList.get(index)
+                                                            .getImageList()
+                                                            .size() == 1) {
+                                                        AisleImageDetails imageDetails = mAislesList
+                                                                .get(index)
+                                                                .getImageList()
+                                                                .get(0);
+                                                        if (imageDetails.mImageUrl
+                                                                .equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+                                                            AisleWindowContent aisleWindow = new AisleWindowContent(
+                                                                    mAislesList
+                                                                            .get(index)
+                                                                            .getAisleContext().mAisleId);
+                                                            aisleWindow
+                                                                    .addAisleContent(
+                                                                            mAislesList
+                                                                                    .get(index)
+                                                                                    .getAisleContext(),
+                                                                            null);
+                                                            mAislesList
+                                                                    .remove(index);
+                                                            mAislesList
+                                                                    .add(index,
+                                                                            aisleWindow);
+                                                        }
+                                                    }
+                                                    
+                                                }
                                                 DataBaseManager
                                                         .getInstance(
                                                                 VueApplication
@@ -464,7 +588,7 @@ public class NetworkHandler {
             public void run() {
                 try {
                     String userId = getUserId();
-                    if (userId == null) {
+                    if (userId == null || mUserBookmarksLoaded) {
                         return;
                     }
                     URL url = new URL(UrlConstants.GET_BOOKMARK_Aisles + "/"
@@ -479,12 +603,14 @@ public class NetworkHandler {
                         if (responseMessage != null) {
                             ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
                                     .parseBookmarkedAisles(responseMessage);
+                            mUserBookmarksLoaded = true;
                             bookmarkedList.clear();
+                            boolean isDirty = false;
                             for (AisleBookmark aB : bookmarkedAisles) {
                                 DataBaseManager.getInstance(mContext)
                                         .updateBookmarkAisles(aB.getId(),
                                                 Long.toString(aB.getAisleId()),
-                                                aB.getBookmarked());
+                                                aB.getBookmarked(), isDirty);
                                 
                                 if (aB.getBookmarked()) {
                                     bookmarkedList.add(String.valueOf(aB
@@ -503,6 +629,50 @@ public class NetworkHandler {
             }
         }).start();
         
+    }
+    
+    public void getBookMarkAisleByUserRequest() {
+        String userId = getUserId();
+        if (userId == null || mUserBookmarksLoaded) {
+            return;
+        }
+        
+        JsonArrayRequest vueRequest = new JsonArrayRequest(
+                UrlConstants.GET_BOOKMARK_Aisles + "/" + userId + "/" + "0",
+                new Response.Listener<JSONArray>() {
+                    
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (null != response) {
+                            ArrayList<AisleBookmark> bookmarkedAisles = new Parser()
+                                    .parseBookmarkedAisles(response.toString());
+                            mUserBookmarksLoaded = true;
+                            bookmarkedList.clear();
+                            boolean isDirty = false;
+                            for (AisleBookmark aB : bookmarkedAisles) {
+                                DataBaseManager.getInstance(mContext)
+                                        .updateBookmarkAisles(aB.getId(),
+                                                Long.toString(aB.getAisleId()),
+                                                aB.getBookmarked(), isDirty);
+                                
+                                if (aB.getBookmarked()) {
+                                    bookmarkedList.add(String.valueOf(aB
+                                            .getAisleId()));
+                                }
+                            }
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .updateBookmarkAisleStatus(bookmarkedList);
+                        }
+                        
+                    }
+                }, new Response.ErrorListener() {
+                    
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
     }
     
     public boolean isAisleBookmarked(String aisleId) {
@@ -557,13 +727,13 @@ public class NetworkHandler {
         String userId = null;
         if (storedVueUser != null) {
             userId = Long.valueOf(storedVueUser.getId()).toString();
-            storedVueUser.getUserImageURL();
+            userProfileUrl = storedVueUser.getUserImageURL();
         }
         return userId;
     }
     
-    public ImageComment createImageComment(ImageCommentRequest comment)
-            throws Exception {
+    public ImageComment createImageComment(ImageCommentRequest comment,
+            long diryTime) throws Exception {
         ImageComment createdImageComment = null;
         ObjectMapper mapper = new ObjectMapper();
         if (VueConnectivityManager.isNetworkConnected(mContext)) {
@@ -576,7 +746,6 @@ public class NetworkHandler {
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
                     "application/json;charset=UTF-8"));
             httpPut.setEntity(entity);
-            
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpPut);
             if (response.getEntity() != null
@@ -584,8 +753,8 @@ public class NetworkHandler {
                 String responseMessage = EntityUtils.toString(response
                         .getEntity());
                 if (responseMessage.length() > 0) {
-                    createdImageComment = (new ObjectMapper()).readValue(
-                            responseMessage, ImageComment.class);
+                    createdImageComment = new Parser()
+                            .parseCommentResponse(responseMessage);
                     Editor editor = mSharedPreferencesObj.edit();
                     editor.putBoolean(VueConstants.IS_COMMENT_DIRTY, false);
                     editor.commit();
@@ -630,7 +799,7 @@ public class NetworkHandler {
      */
     public void getRatedImageList() {
         String userId = getUserId();
-        if (userId == null) {
+        if (userId == null || mUserRatedImagesLoaded) {
             return;
         }
         JsonArrayRequest vueRequest = new JsonArrayRequest(
@@ -646,21 +815,49 @@ public class NetworkHandler {
                                     retrievedImageRating = Parser
                                             .parseRatedImages(response
                                                     .toString());
-                                    
+                                    String temp = "";
                                     if (retrievedImageRating != null
                                             && retrievedImageRating.size() > 0) {
                                         ratedImageList.clear();
+                                        mUserRatedImagesLoaded = true;
                                         for (int index = 0; index < retrievedImageRating
                                                 .size(); index++) {
-                                            ratedImageList.add(String
-                                                    .valueOf(retrievedImageRating
-                                                            .get(index)
-                                                            .getImageId()));
+                                            boolean currentRateStatus = retrievedImageRating
+                                                    .get(index).mLiked;
+                                            temp = temp
+                                                    + " ImageId: "
+                                                    + retrievedImageRating.get(
+                                                            index).getImageId()
+                                                    + "  RateId: "
+                                                    + retrievedImageRating.get(
+                                                            index).getId()
+                                                    + " RateStatus: "
+                                                    + retrievedImageRating
+                                                            .get(index).mLiked
+                                                    + "\n";
+                                            
+                                            if (currentRateStatus) {
+                                                
+                                                ratedImageList.add(String
+                                                        .valueOf(retrievedImageRating
+                                                                .get(index)
+                                                                .getImageId()));
+                                            }
                                         }
                                     }
+                                    // these likes are by the user add 2 points
+                                    // per each like.
+                                    int likesCount = 0;
+                                    if (ratedImageList != null) {
+                                        likesCount = ratedImageList.size();
+                                    }
+                                    likesCount = likesCount * 2;
+                                    Utils.sUserPoints += likesCount;
+                                    
                                     DataBaseManager.getInstance(mContext)
                                             .insertRatedImages(
-                                                    retrievedImageRating, true);
+                                                    retrievedImageRating, true,
+                                                    false);
                                     VueTrendingAislesDataModel.getInstance(
                                             VueApplication.getInstance())
                                             .updateImageRatingStatus(
@@ -717,12 +914,343 @@ public class NetworkHandler {
         }
         return isImageRated;
     }
-    public void modifyImageRatedStatus(String imageId,boolean isAddRequest) {
-       
-          if(isAddRequest) {
-              ratedImageList.add(imageId);
-          } else {
-              ratedImageList.remove(imageId);
-          }
+    
+    public void modifyImageRatedStatus(String imageId, boolean isAddRequest) {
+        
+        if (isAddRequest) {
+            ratedImageList.add(imageId);
+        } else {
+            ratedImageList.remove(imageId);
+        }
+    }
+    
+    public void getMyAislesPoints() {
+        try {
+            String userId = getUserId();
+            if (userId == null || mUserPointsLoaded) {
+                return;
+            }
+            Utils.sUserPoints = 0;
+            int count = 0;
+            ArrayList<AisleWindowContent> windowList = getAislesByUser(userId);
+            if (windowList != null) {
+                mUserPointsLoaded = true;
+                // for each aisle add 10 points
+                count = windowList.size() * 10;
+                Utils.sUserPoints += count;
+                ArrayList<AisleImageDetails> imageList;
+                for (int i = 0; i < windowList.size(); i++) {
+                    imageList = windowList.get(i).getImageList();
+                    if (imageList != null) {
+                        for (AisleImageDetails imageDetails : imageList) {
+                            likesCountByOtherUsers(imageDetails);
+                            commentCountByOtherUsers(imageDetails);
+                            if (!imageDetails.mOwnerUserId.equals(userId)) {
+                                // if others add image to your aisle.
+                                Utils.sUserPoints += 4;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // caliculate all likes in your aisle other than your likes
+    private void likesCountByOtherUsers(AisleImageDetails imageDetails) {
+        int likesCount = imageDetails.mLikesCount;
+        boolean isImageInRatedList = false;
+        for (ImageRating imageRating : imageDetails.mRatingsList) {
+            isImageInRatedList = getImageRateStatus(String.valueOf(imageRating
+                    .getImageId()));
+            if (isImageInRatedList) {
+                break;
+            }
+        }
+        if (isImageInRatedList) {
+            // if this image is liked by you dont add that count it is already
+            // added
+            likesCount -= 1;
+        }
+        if (likesCount > 0) {
+            likesCount += likesCount * 2;
+            Utils.sUserPoints += likesCount;
+        }
+        
+    }
+    
+    // comments added by other users to your images in your aisle.
+    private void commentCountByOtherUsers(AisleImageDetails imageDetails) {
+        if (imageDetails.mCommentsList != null) {
+            int commentCount = 0;
+            for (ImageComments imageComment : imageDetails.mCommentsList) {
+                String commenterProfileUrl = imageComment.mCommenterUrl;
+                if (commenterProfileUrl != null && userProfileUrl != null
+                        && commenterProfileUrl.equalsIgnoreCase(userProfileUrl)) {
+                    // this comment is belongs to user in his own aisle.
+                } else {
+                    // commentcount belongs to other users.
+                    commentCount++;
+                }
+            }
+            commentCount = commentCount * 2;
+            Utils.sUserPoints += commentCount;
+        }
+    }
+    
+    public void getLatestTrendingAisles(final TrendingRefreshReceiver receiver) {
+        int limit = 30, offset = 0;
+        final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL + "/"
+                + limit + "/" + offset;
+        @SuppressWarnings("rawtypes")
+        Response.Listener listener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                if (null != jsonArray) {
+                    ArrayList<AisleWindowContent> refreshList = new Parser()
+                            .parseTrendingAislesResultData(
+                                    jsonArray.toString(), true);
+                    ArrayList<AisleWindowContent> newList = new ArrayList<AisleWindowContent>();
+                    for (AisleWindowContent aisle : refreshList) {
+                        boolean isAisleExist = VueTrendingAislesDataModel
+                                .getInstance(VueApplication.getInstance())
+                                .isAisleExists(aisle);
+                        if (!isAisleExist) {
+                            newList.add(aisle);
+                        } else {
+                            int position = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAilsePosition(aisle);
+                            AisleWindowContent aisleWindow = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleAt(position);
+                            ArrayList<AisleImageDetails> imageList = aisle
+                                    .getImageList();
+                            ArrayList<String> imageIds = new ArrayList<String>();
+                            for (AisleImageDetails existingImageDetails : aisleWindow
+                                    .getImageList()) {
+                                imageIds.add(existingImageDetails.mId);
+                                
+                            }
+                            boolean isNewImageAddedToAisle = false;
+                            // if new image added to the existing aisle show
+                            // that at top of the list on refresh function
+                            // calls.
+                            for (AisleImageDetails imageDetails : imageList) {
+                                if (!imageIds.contains(imageDetails.mId)) {
+                                    isNewImageAddedToAisle = true;
+                                }
+                            }
+                            if (isNewImageAddedToAisle) {
+                                VueTrendingAislesDataModel.getInstance(
+                                        VueApplication.getInstance())
+                                        .removeAisleFromList(position);
+                                newList.add(aisle);
+                            }
+                        }
+                    }
+                    if (newList.size() > 0) {
+                        for (AisleWindowContent aisle : newList) {
+                            VueTrendingAislesDataModel.getInstance(
+                                    VueApplication.getInstance())
+                                    .addItemToListAt(aisle.getAisleId(), aisle,
+                                            0);
+                        }
+                        VueTrendingAislesDataModel.getInstance(
+                                VueApplication.getInstance()).dataObserver();
+                        receiver.onResultReceived(true);
+                    } else {
+                        receiver.onResultReceived(false);
+                        // no updated list.
+                    }
+                }
+            }
+        };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                receiver.onResultReceived(false);
+            }
+        };
+        @SuppressWarnings("unchecked")
+        VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
+                listener, errorListener) {
+        };
+        vueRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VueApplication.getInstance().getRequestQueue().add(vueRequest);
+    }
+    
+    private class VueAislesRequest extends JsonArrayRequest {
+        
+        /**
+         * Creates a new request.
+         * 
+         * @param url
+         *            URL to fetch the JSON from
+         * @param listener
+         *            Listener to receive the JSON response
+         * @param errorListener
+         *            Error listener, or null to ignore errors.
+         */
+        private Priority mPriority = Priority.HIGH;
+        
+        @Override
+        public Priority getPriority() {
+            return mPriority;
+        }
+        
+        public VueAislesRequest(String url, Listener<JSONArray> listener,
+                ErrorListener errorListener) {
+            super(url, listener, errorListener);
+        }
+    }
+    
+    private void getAllSharedIds() {
+        sharedList = DataBaseManager.getInstance(VueApplication.getInstance())
+                .getAllSharedValues();
+    }
+    
+    public boolean isAisleShared(String aisleId) {
+        if (sharedList.contains(aisleId)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public void saveSharedId(String aisleId) {
+        if (!sharedList.contains(aisleId)) {
+            sharedList.add(aisleId);
+        }
+    }
+    
+    /*
+     * if it is the first rating object come again dont issue second netowrk
+     * call just save the latest rating object in the queue. After receiving the
+     * first rating response based on the liked status issue the request again.
+     */
+    public boolean addImageRatingObject(ImageRatingQueue imageRatingQueueObj) {
+        boolean isImageRatingQueueObjExist = false;
+        long imageId = imageRatingQueueObj.imageRating.mImageId;
+        for (int i = 0; i < imageRatingQueueList.size(); i++) {
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList
+                    .get(i);
+            if (imageId == temImageRatingQueueObj.imageRating.mImageId) {
+                imageRatingQueueList.remove(temImageRatingQueueObj);
+                isImageRatingQueueObjExist = true;
+                break;
+            }
+        }
+        imageRatingQueueList.add(imageRatingQueueObj);
+        return isImageRatingQueueObjExist;
+    }
+    
+    public boolean isRatingObjectWaitingtoUpload(long imageId, boolean isLiked,
+            Long id) {
+        for (int i = 0; i < imageRatingQueueList.size(); i++) {
+            ImageRatingQueue temImageRatingQueueObj = imageRatingQueueList
+                    .get(i);
+            if (imageId == temImageRatingQueueObj.imageRating.mImageId) {
+                imageRatingQueueList.remove(temImageRatingQueueObj);
+                if (temImageRatingQueueObj.imageRating.mLiked != isLiked) {
+                    // start the request here to upload imageRating.
+                    try {
+                        temImageRatingQueueObj.imageRating.mId = id;
+                        AisleManager.getAisleManager().updateRating(
+                                temImageRatingQueueObj.imageRating,
+                                temImageRatingQueueObj.likeCount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                } else {
+                    // do nothing.
+                }
+                return false;
+                
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * load the notification aisles
+     */
+    private void loadNotificationAisles() {
+        final ArrayList<NotificationAisle> notificationAislesList = DataBaseManager
+                .getInstance(VueApplication.getInstance())
+                .readAllIdsFromNotificationTable();
+        if (notificationAislesList != null && notificationAislesList.size() > 0) {
+            final ArrayList<AisleWindowContent> notificationListFromServer = new ArrayList<AisleWindowContent>();
+            final ArrayList<String> notificationAisleIdsList = new ArrayList<String>();
+            new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    for (int i = 0; i < notificationAislesList.size(); i++) {
+                        try {
+                            String url2 = UrlConstants.GET_AISLE_RESTURL
+                                    + notificationAislesList.get(i)
+                                            .getAisleId();
+                            URL url = new URL(url2);
+                            HttpPut httpPut = new HttpPut(url.toString());
+                            StringEntity entity = new StringEntity("");
+                            entity.setContentType("application/json;charset=UTF-8");
+                            entity.setContentEncoding(new BasicHeader(
+                                    HTTP.CONTENT_TYPE,
+                                    "application/json;charset=UTF-8"));
+                            httpPut.setEntity(entity);
+                            DefaultHttpClient httpClient = new DefaultHttpClient();
+                            HttpResponse response = httpClient.execute(httpPut);
+                            if (response.getEntity() != null
+                                    && response.getStatusLine().getStatusCode() == 200) {
+                                Parser parser = new Parser();
+                                JSONObject jsonObject = new JSONObject(response
+                                        .toString());
+                                AisleWindowContent aisleItem = parser
+                                        .getBookmarkedAisle(jsonObject);
+                                notificationListFromServer.add(aisleItem);
+                                notificationAisleIdsList.add(aisleItem
+                                        .getAisleId());
+                                // check this aisle is in Db or not.
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // update in notification table and insert into aisles
+                    // table.
+                    DataBaseManager.getInstance(VueApplication.getInstance())
+                            .addTrentingAislesFromServerToDB(
+                                    VueApplication.getInstance(),
+                                    notificationListFromServer,
+                                    VueTrendingAislesDataModel.getInstance(
+                                            VueApplication.getInstance())
+                                            .getNetworkHandler().offset,
+                                    DataBaseManager.AISLE_CREATED);
+                    
+                }
+            }).start();
+        }
+    }
+    
+    public VueUser getUserFromServerByUserId(long userId) throws Exception {
+        VueUser retrievedUser = null;
+        URL url = new URL(UrlConstants.GET_USER_RESTURL + userId);
+        HttpGet httpGet = new HttpGet(url.toString());
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        
+        HttpResponse response = httpClient.execute(httpGet);
+        if (response.getEntity() != null
+                && response.getStatusLine().getStatusCode() == 200) {
+            String responseMessage = EntityUtils.toString(response.getEntity());
+            if (responseMessage.length() > 0) {
+                retrievedUser = new Parser().parseUserData(responseMessage);
+            }
+        }
+        return retrievedUser;
     }
 }

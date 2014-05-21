@@ -1,7 +1,13 @@
 package com.lateralthoughts.vue.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -16,6 +22,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Environment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -31,6 +38,7 @@ import com.lateralthoughts.vue.VueLandingPageActivity;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
 import com.lateralthoughts.vue.domain.VueImage;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.parser.Parser;
 
 public class AddImageToAisleBackgroundThread implements Runnable,
@@ -44,11 +52,12 @@ public class AddImageToAisleBackgroundThread implements Runnable,
     private String mImageId;
     private ImageAddedCallback mImageAddedCallback;
     private AisleContext mAisleContext;
+    private String mLookingFor = null;
     
     @SuppressWarnings("static-access")
     public AddImageToAisleBackgroundThread(AisleContext aisleContext,
             VueImage vueImage, boolean fromDetailsScreenFlag, String imageId,
-            ImageAddedCallback imageAddedCallback) {
+            String lookingfor, ImageAddedCallback imageAddedCallback) {
         mNotificationManager = (NotificationManager) VueApplication
                 .getInstance().getSystemService(
                         VueApplication.getInstance().NOTIFICATION_SERVICE);
@@ -57,6 +66,7 @@ public class AddImageToAisleBackgroundThread implements Runnable,
         mImageId = imageId;
         mImageAddedCallback = imageAddedCallback;
         mAisleContext = aisleContext;
+        mLookingFor = lookingfor;
     }
     
     @Override
@@ -98,6 +108,8 @@ public class AddImageToAisleBackgroundThread implements Runnable,
             HttpPut httpPut = new HttpPut(url.toString());
             CountingStringEntity entity = new CountingStringEntity(
                     mapper.writeValueAsString(mVueImage));
+            writeToSdcard("\nImageCreationgRequest is:  "
+                    + mapper.writeValueAsString(mVueImage) + "\n");
             entity.setUploadListener(this);
             entity.setContentType("application/json;charset=UTF-8");
             entity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
@@ -137,6 +149,13 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                     @Override
                     public void run() {
                         if (null != mResponseMessage) {
+                            if (mResponseMessage.length() < 10) {
+                                writeToSdcard("ImageCreation Failed got empty response from server\n response message is: "
+                                        + mResponseMessage);
+                            } else {
+                                writeToSdcard("ImageCreation Success");
+                            }
+                            
                             if (!mFromDetailsScreenFlag) {
                                 try {
                                     AisleImageDetails aisleImageDetails = new Parser()
@@ -144,7 +163,16 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                     mResponseMessage));
                                     if (aisleImageDetails != null) {
                                         mImageAddedCallback
-                                                .onImageAdded(aisleImageDetails.mId);
+                                                .onImageAdded(
+                                                        aisleImageDetails.mOwnerAisleId,
+                                                        aisleImageDetails.mId,
+                                                        mLookingFor,
+                                                        aisleImageDetails.mDetailsUrl,
+                                                        aisleImageDetails.mAvailableWidth
+                                                                + " X "
+                                                                + aisleImageDetails.mAvailableHeight,
+                                                        aisleImageDetails.mStore,
+                                                        mFromDetailsScreenFlag);
                                         AisleWindowContent aisleItem = null;
                                         if (mAisleContext != null) {
                                             ArrayList<AisleImageDetails> arrayList = new ArrayList<AisleImageDetails>();
@@ -270,10 +298,14 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                             }
                                         }
                                     } else {
-                                        mImageAddedCallback.onImageAdded(null);
+                                        mImageAddedCallback.onImageAdded(null,
+                                                null, null, null, null, null,
+                                                mFromDetailsScreenFlag);
                                     }
                                 } catch (JSONException e) {
-                                    mImageAddedCallback.onImageAdded(null);
+                                    mImageAddedCallback.onImageAdded(null,
+                                            null, null, null, null, null,
+                                            mFromDetailsScreenFlag);
                                     e.printStackTrace();
                                 }
                             } else {
@@ -286,7 +318,16 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                 }
                                 if (aisleImageDetails != null) {
                                     mImageAddedCallback
-                                            .onImageAdded(aisleImageDetails.mId);
+                                            .onImageAdded(
+                                                    aisleImageDetails.mOwnerAisleId,
+                                                    aisleImageDetails.mId,
+                                                    mLookingFor,
+                                                    aisleImageDetails.mDetailsUrl,
+                                                    aisleImageDetails.mAvailableWidth
+                                                            + " X "
+                                                            + aisleImageDetails.mAvailableHeight,
+                                                    aisleImageDetails.mStore,
+                                                    mFromDetailsScreenFlag);
                                     AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
                                             .getInstance(
                                                     VueApplication
@@ -316,44 +357,76 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                                                             VueApplication
                                                                     .getInstance())
                                                     .dataObserver();
-                                            try {
-                                                String s[] = { aisleImageDetails.mOwnerAisleId };
-                                                ArrayList<AisleWindowContent> list = DataBaseManager
-                                                        .getInstance(
-                                                                VueApplication
-                                                                        .getInstance())
-                                                        .getAislesFromDB(s,
-                                                                false);
-                                                if (list != null) {
-                                                    list.get(0)
-                                                            .getImageList()
-                                                            .add(aisleImageDetails);
-                                                    DataBaseManager
-                                                            .getInstance(
-                                                                    VueApplication
-                                                                            .getInstance())
-                                                            .addTrentingAislesFromServerToDB(
-                                                                    VueApplication
-                                                                            .getInstance(),
-                                                                    list,
-                                                                    VueTrendingAislesDataModel
-                                                                            .getInstance(
-                                                                                    VueApplication
-                                                                                            .getInstance())
-                                                                            .getNetworkHandler().offset,
-                                                                    DataBaseManager.MY_AISLES);
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
                                         }
                                     }
+                                    if (VueApplication.getInstance()
+                                            .getPedningAisle() != null) {
+                                        
+                                        VueApplication
+                                                .getInstance()
+                                                .getPedningAisle()
+                                                .getAisleImageForImageId(
+                                                        mImageId,
+                                                        aisleImageDetails.mImageUrl,
+                                                        aisleImageDetails.mId);
+                                        VueApplication
+                                                .getInstance()
+                                                .getPedningAisle()
+                                                .addAisleContent(
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getPedningAisle()
+                                                                .getAisleContext(),
+                                                        VueApplication
+                                                                .getInstance()
+                                                                .getPedningAisle()
+                                                                .getImageList());
+                                        VueTrendingAislesDataModel.getInstance(
+                                                VueApplication.getInstance())
+                                                .dataObserver();
+                                    }
+                                    try {
+                                        String s[] = { aisleImageDetails.mOwnerAisleId };
+                                        ArrayList<AisleWindowContent> list = DataBaseManager
+                                                .getInstance(
+                                                        VueApplication
+                                                                .getInstance())
+                                                .getAislesFromDB(s, false);
+                                        if (list != null) {
+                                            ArrayList<AisleImageDetails> aisleImageList = list
+                                                    .get(0).getImageList();
+                                            if (aisleImageList == null) {
+                                                aisleImageList = new ArrayList<AisleImageDetails>();
+                                            }
+                                            aisleImageList
+                                                    .add(aisleImageDetails);
+                                            DataBaseManager
+                                                    .getInstance(
+                                                            VueApplication
+                                                                    .getInstance())
+                                                    .addTrentingAislesFromServerToDB(
+                                                            VueApplication
+                                                                    .getInstance(),
+                                                            list,
+                                                            VueTrendingAislesDataModel
+                                                                    .getInstance(
+                                                                            VueApplication
+                                                                                    .getInstance())
+                                                                    .getNetworkHandler().offset,
+                                                            DataBaseManager.MY_AISLES);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 } else {
-                                    mImageAddedCallback.onImageAdded(null);
+                                    mImageAddedCallback.onImageAdded(null,
+                                            null, null, null, null, null,
+                                            mFromDetailsScreenFlag);
                                 }
                             }
                         } else {
-                            mImageAddedCallback.onImageAdded(null);
+                            mImageAddedCallback.onImageAdded(null, null, null,
+                                    null, null, null, mFromDetailsScreenFlag);
                             Toast.makeText(
                                     VueApplication.getInstance(),
                                     VueApplication
@@ -366,5 +439,38 @@ public class AddImageToAisleBackgroundThread implements Runnable,
                         }
                     }
                 });
+    }
+    
+    private void writeToSdcard(String message) {
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(path + "/ImageCreationResponse/");
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "/" + "ImageCreationResponse"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file, true)));
+            out.write("\n" + message + "\n");
+            out.flush();
+            out.close();
+            
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        }
     }
 }

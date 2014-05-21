@@ -9,6 +9,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,10 +38,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
+import com.android.volley.toolbox.NetworkImageView;
 import com.lateralthoughts.vue.ui.AisleContentBrowser;
 import com.lateralthoughts.vue.ui.HorizontalListView;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.BitmapLoaderUtils;
 import com.lateralthoughts.vue.utils.Utils;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -67,20 +71,38 @@ public class AisleDetailsViewActivity extends Activity {
     private LinearLayout mContentLinearLay;
     private boolean mIsSlidePanleLoaded = false;
     private ComparisionAdapter mBottomAdapter, mTopAdapter;
-    private DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private FrameLayout mDrawerLeft, mDrawerRight;
+    public FrameLayout mDrawerLeft, mDrawerRight;
     private com.lateralthoughts.vue.VueListFragment mSlidListFrag;
     private MixpanelAPI mixpanel;
+    private boolean mHasToHelpShow;
     
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mixpanel = MixpanelAPI.getInstance(this, VueApplication.getInstance().MIXPANEL_TOKEN);
+        mixpanel = MixpanelAPI.getInstance(this,
+                VueApplication.getInstance().MIXPANEL_TOKEN);
         setContentView(R.layout.aisle_details_activity_landing);
         mDrawerRight = (FrameLayout) findViewById(R.id.drawer_right);
+        boolean hasToOpen = false;
+        if (VueApplication.getInstance().getClickedWindowCount() > 1) {
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            hasToOpen = sharedPreferencesObj.getBoolean(
+                    VueConstants.DETAILS_HELP_SCREEN_ACCES, false);
+            if (hasToOpen) {
+                mHasToHelpShow = isDetailsHelpShown();
+            }
+        }
         initialize();
+        if (!mHasToHelpShow) {
+            DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
+                    VueApplication.getInstance().getPixel(320),
+                    LinearLayout.LayoutParams.MATCH_PARENT, Gravity.END);
+            mDrawerRight.setLayoutParams(layoutParams);
+        }
         mDrawerLeft = (FrameLayout) findViewById(R.id.content_frame2);
         
         mSlidListFrag = (VueListFragment) getFragmentManager()
@@ -147,19 +169,20 @@ public class AisleDetailsViewActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     final int position, long arg3) {
-                final ImageView img = (ImageView) arg1
-                        .findViewById(R.id.compare_like_dislike);
-                img.setImageResource(R.drawable.heart);
-                img.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        img.setVisibility(View.INVISIBLE);
-                        mVueAiselFragment
-                                .changeLikeCount(position, CLICK_EVENT);
-                    }
-                }, mLikeImageShowTime);
-                
+                if (loginChcecking()) {
+                    final ImageView img = (ImageView) arg1
+                            .findViewById(R.id.compare_like_dislike);
+                    img.setImageResource(R.drawable.heart);
+                    img.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            img.setVisibility(View.INVISIBLE);
+                            mVueAiselFragment.changeLikeCount(position,
+                                    CLICK_EVENT);
+                        }
+                    }, mLikeImageShowTime);
+                }
             }
         });
         mTopScroller.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -167,18 +190,20 @@ public class AisleDetailsViewActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                     final int position, long arg3) {
-                final ImageView img = (ImageView) arg1
-                        .findViewById(R.id.compare_like_dislike);
-                img.setImageResource(R.drawable.heart_dark);
-                img.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        img.setVisibility(View.INVISIBLE);
-                        mVueAiselFragment.changeLikeCount(position,
-                                LONG_PRESS_EVENT);
-                    }
-                }, mLikeImageShowTime);
+                if (loginChcecking()) {
+                    final ImageView img = (ImageView) arg1
+                            .findViewById(R.id.compare_like_dislike);
+                    img.setImageResource(R.drawable.heart_dark);
+                    img.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            img.setVisibility(View.INVISIBLE);
+                            mVueAiselFragment.changeLikeCount(position,
+                                    LONG_PRESS_EVENT);
+                        }
+                    }, mLikeImageShowTime);
+                }
                 return false;
             }
         });
@@ -187,19 +212,20 @@ public class AisleDetailsViewActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     final int position, long arg3) {
-                final ImageView img = (ImageView) arg1
-                        .findViewById(R.id.compare_like_dislike);
-                img.setImageResource(R.drawable.heart);
-                img.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        img.setVisibility(View.INVISIBLE);
-                        mVueAiselFragment
-                                .changeLikeCount(position, CLICK_EVENT);
-                    }
-                }, mLikeImageShowTime);
-                
+                if (loginChcecking()) {
+                    final ImageView img = (ImageView) arg1
+                            .findViewById(R.id.compare_like_dislike);
+                    img.setImageResource(R.drawable.heart);
+                    img.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            img.setVisibility(View.INVISIBLE);
+                            mVueAiselFragment.changeLikeCount(position,
+                                    CLICK_EVENT);
+                        }
+                    }, mLikeImageShowTime);
+                }
             }
         });
         mBottomScroller
@@ -208,18 +234,20 @@ public class AisleDetailsViewActivity extends Activity {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0,
                             View arg1, final int position, long arg3) {
-                        final ImageView img = (ImageView) arg1
-                                .findViewById(R.id.compare_like_dislike);
-                        img.setImageResource(R.drawable.heart_dark);
-                        img.setVisibility(View.VISIBLE);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                img.setVisibility(View.INVISIBLE);
-                                mVueAiselFragment.changeLikeCount(position,
-                                        LONG_PRESS_EVENT);
-                            }
-                        }, mLikeImageShowTime);
+                        if (loginChcecking()) {
+                            final ImageView img = (ImageView) arg1
+                                    .findViewById(R.id.compare_like_dislike);
+                            img.setImageResource(R.drawable.heart_dark);
+                            img.setVisibility(View.VISIBLE);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img.setVisibility(View.INVISIBLE);
+                                    mVueAiselFragment.changeLikeCount(position,
+                                            LONG_PRESS_EVENT);
+                                }
+                            }, mLikeImageShowTime);
+                        }
                         return false;
                     }
                 });
@@ -230,6 +258,7 @@ public class AisleDetailsViewActivity extends Activity {
         mixpanel.flush();
         super.onBackPressed();
     }
+    
     private void initialize() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -311,17 +340,12 @@ public class AisleDetailsViewActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(DETAILS_SCREEN_VISITOR, null);
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
-        FlurryAgent.logEvent(DETAILS_SCREEN_VISITOR);
         super.onStart();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
     }
     
     class ComparisionAdapter extends BaseAdapter {
@@ -352,20 +376,22 @@ public class AisleDetailsViewActivity extends Activity {
             if (convertView == null) {
                 mViewHolder = new ViewHolder();
                 convertView = minflater.inflate(R.layout.vuecompareimg, null);
-                mViewHolder.img = (ImageView) convertView
+                mViewHolder.compareImage = (ImageView) convertView
                         .findViewById(R.id.vue_compareimg);
                 mViewHolder.likeImage = (ImageView) convertView
                         .findViewById(R.id.compare_like_dislike);
-                mViewHolder.pb = (ProgressBar) convertView
-                        .findViewById(R.id.progressBar1);
+                /*
+                 * mViewHolder.pb = (ProgressBar) convertView
+                 * .findViewById(R.id.progressBar1);
+                 */
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                         mComparisionScreenHeight / 2,
                         mComparisionScreenHeight / 2);
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
                 params.setMargins(VueApplication.getInstance().getPixel(10), 0,
                         0, 0);
-                mViewHolder.img.setLayoutParams(params);
-                mViewHolder.img.setBackgroundColor(Color
+                mViewHolder.compareImage.setLayoutParams(params);
+                mViewHolder.compareImage.setBackgroundColor(Color
                         .parseColor(getResources().getString(R.color.white)));
                 RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -376,21 +402,36 @@ public class AisleDetailsViewActivity extends Activity {
             mViewHolder = (ViewHolder) convertView.getTag();
             mViewHolder.likeImage.setVisibility(View.INVISIBLE);
             mViewHolder.likeImage.setImageResource(R.drawable.thumb_up);
-            mViewHolder.img.setImageResource(R.drawable.no_image);
-            BitmapWorkerTask task = new BitmapWorkerTask(null, mViewHolder.img,
-                    mComparisionScreenHeight / 2, mViewHolder.pb);
-            String[] imagesArray = {
-                    mImageDetailsArr.get(position).mCustomImageUrl,
-                    mImageDetailsArr.get(position).mImageUrl };
-            task.execute(imagesArray);
-            
+            mViewHolder.compareImage.setImageResource(R.drawable.no_image);
+            /*
+             * BitmapWorkerTask task = new BitmapWorkerTask(null,
+             * mViewHolder.compareImage, mComparisionScreenHeight / 2,
+             * mViewHolder.pb,
+             * mImageDetailsArr.get(position).mIsFromLocalSystem); String[]
+             * imagesArray = { mImageDetailsArr.get(position).mCustomImageUrl,
+             * mImageDetailsArr.get(position).mImageUrl };
+             * task.execute(imagesArray);
+             */
+            if (!mImageDetailsArr.get(position).mIsFromLocalSystem) {
+                loadBitmap(mImageDetailsArr.get(position).mImageUrl,
+                        mComparisionScreenHeight / 2, mViewHolder.compareImage);
+            } else {
+                BitmapWorkerTask task = new BitmapWorkerTask(null,
+                        mViewHolder.compareImage, mComparisionScreenHeight / 2,
+                        mViewHolder.pb,
+                        mImageDetailsArr.get(position).mIsFromLocalSystem);
+                String[] imagesArray = {
+                        mImageDetailsArr.get(position).mCustomImageUrl,
+                        mImageDetailsArr.get(position).mImageUrl };
+                task.execute(imagesArray);
+            }
             return convertView;
         }
         
     }
     
     private class ViewHolder {
-        ImageView img;
+        ImageView compareImage;
         ImageView likeImage;
         ProgressBar pb;
     }
@@ -441,6 +482,59 @@ public class AisleDetailsViewActivity extends Activity {
                 }
                 
             }, mComparisionDelay);
+        }
+        if (VueApplication.getInstance().getClickedWindowCount() > 1) {
+            
+            // For the first time when user opens the details screen
+            // open a comparison screen after completion of ui
+            // and close it in 1 sec.
+            
+            if (mHasToHelpShow) {
+                final int waitDelay = 2000;
+                final int comparisonShowTime = 1000;
+                new Handler().postDelayed(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        mDrawerLayout.openDrawer(mDrawerRight);
+                        new Handler().postDelayed(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                mDrawerLayout.closeDrawer(mDrawerRight);
+                                new Handler().postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(
+                                                VueApplication.getInstance()
+                                                        .getPixel(320),
+                                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                                Gravity.END);
+                                        mDrawerRight
+                                                .setLayoutParams(layoutParams);
+                                        if (null != mImageDetailsArr
+                                                && mImageDetailsArr.size() != 0) {
+                                            mBottomAdapter = new ComparisionAdapter(
+                                                    AisleDetailsViewActivity.this);
+                                            mTopAdapter = new ComparisionAdapter(
+                                                    AisleDetailsViewActivity.this);
+                                            mBottomScroller
+                                                    .setAdapter(mBottomAdapter);
+                                            mTopScroller
+                                                    .setAdapter(mTopAdapter);
+                                            
+                                        }
+                                        
+                                    }
+                                }, 1000);
+                            }
+                        }, comparisonShowTime);
+                        
+                    }
+                }, waitDelay);
+                
+            }
         }
     }
     
@@ -517,6 +611,13 @@ public class AisleDetailsViewActivity extends Activity {
                 clearBitmaps();
                 super.onBackPressed();
             }
+            VueApplication.getInstance().setPendingAisle(null);
+            SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                    VueConstants.SHAREDPREFERENCE_NAME, 0);
+            Editor editor = sharedPreferencesObj.edit();
+            editor.putLong(VueConstants.DETAIALS_HELP_SHOWN_TIME,
+                    System.currentTimeMillis());
+            editor.commit();
         }
         return false;
         
@@ -557,39 +658,60 @@ public class AisleDetailsViewActivity extends Activity {
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_SAYSOMETHINGABOUTAISLE);
                 String category = b
                         .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY);
-                if (lookingfor != null && lookingfor.trim().length() > 0
-                        && !lookingfor.equals("Looking")) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mLookingForItem = lookingfor;
-                }
-                if (occasion != null && occasion.trim().length() > 0
-                        && !occasion.trim().equals("Occasion")) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mOccasion = occasion;
-                }
-                if (category != null && category.trim().length() > 0) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mCategory = category;
-                }
-                if (description != null && description.trim().length() > 0) {
-                    VueTrendingAislesDataModel
-                            .getInstance(AisleDetailsViewActivity.this)
-                            .getAisleAt(
-                                    VueApplication.getInstance()
-                                            .getClickedWindowID())
-                            .getAisleContext().mDescription = description;
+                if (VueApplication.getInstance().getPedningAisle() == null) {
+                    if (lookingfor != null && lookingfor.trim().length() > 0
+                            && !lookingfor.equals("Looking")) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mLookingForItem = lookingfor;
+                    }
+                    if (occasion != null && occasion.trim().length() > 0
+                            && !occasion.trim().equals("Occasion")) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mOccasion = occasion;
+                    }
+                    if (category != null && category.trim().length() > 0) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mCategory = category;
+                    }
+                    if (description != null && description.trim().length() > 0) {
+                        VueTrendingAislesDataModel
+                                .getInstance(AisleDetailsViewActivity.this)
+                                .getAisleAt(
+                                        VueApplication.getInstance()
+                                                .getClickedWindowID())
+                                .getAisleContext().mDescription = description;
+                    }
+                } else {
+                    if (lookingfor != null && lookingfor.trim().length() > 0
+                            && !lookingfor.equals("Looking")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mLookingForItem = lookingfor;
+                    }
+                    if (occasion != null && occasion.trim().length() > 0
+                            && !occasion.trim().equals("Occasion")) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mOccasion = occasion;
+                    }
+                    if (category != null && category.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mCategory = category;
+                    }
+                    if (description != null && description.trim().length() > 0) {
+                        VueApplication.getInstance().getPedningAisle()
+                                .getAisleContext().mDescription = description;
+                    }
                 }
                 mVueAiselFragment.notifyAdapter();
                 ArrayList<String> findAtArrayList = b
@@ -630,20 +752,24 @@ public class AisleDetailsViewActivity extends Activity {
         private String url = null;
         private int mBestHeight;
         private ProgressBar progressBar;
+        boolean sdCardFlag = false;
         
         public BitmapWorkerTask(AisleContentBrowser vFlipper,
-                ImageView imageView, int bestHeight, ProgressBar bp) {
+                ImageView imageView, int bestHeight, ProgressBar bp,
+                boolean flag) {
             // Use a WeakReference to ensure the ImageView can be garbage
             // collected
             progressBar = bp;
             imageViewReference = new WeakReference<ImageView>(imageView);
             mBestHeight = bestHeight;
+            sdCardFlag = flag;
         }
         
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
+            if (progressBar != null)
+                progressBar.setVisibility(View.VISIBLE);
         }
         
         // Decode image in background.
@@ -652,11 +778,12 @@ public class AisleDetailsViewActivity extends Activity {
             url = params[0];
             Bitmap bmp = null;
             // we want to get the bitmap and also add it into the memory cache
-            bmp = mBitmapLoaderUtils
-                    .getBitmap(url, params[1], true, mBestHeight,
-                            VueApplication.getInstance()
-                                    .getVueDetailsCardWidth() / 2,
-                            Utils.DETAILS_SCREEN);
+            if (!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL)) {
+                bmp = mBitmapLoaderUtils.getBitmap(url, params[1], true,
+                        mBestHeight, VueApplication.getInstance()
+                                .getVueDetailsCardWidth() / 2,
+                        Utils.DETAILS_SCREEN, sdCardFlag);
+            }
             return bmp;
         }
         
@@ -664,7 +791,9 @@ public class AisleDetailsViewActivity extends Activity {
         @SuppressWarnings("null")
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            progressBar.setVisibility(View.GONE);
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
             if (imageViewReference != null && bitmap != null) {
                 final ImageView imageView = imageViewReference.get();
                 if (imageView != null) {
@@ -700,9 +829,6 @@ public class AisleDetailsViewActivity extends Activity {
         } catch (Exception e2) {
             e2.printStackTrace();
         }
-        b1.putBoolean(
-                VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
-                isUserAisleFlag);
         b1.putString(
                 VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_LOOKINGFOR,
                 lookingFor);
@@ -730,9 +856,23 @@ public class AisleDetailsViewActivity extends Activity {
                     imagePath);
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     false);
+            b1.putBoolean(
+                    VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                    isUserAisleFlag);
         } else {
             b1.putBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG,
                     true);
+            if (VueApplication.getInstance().getmUserEmail() != null
+                    && VueApplication.getInstance().getmUserEmail()
+                            .equals(VueConstants.ADMIN_MAIL_ADDRESS)) {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        true);
+            } else {
+                b1.putBoolean(
+                        VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG,
+                        isUserAisleFlag);
+            }
         }
         intent.putExtras(b1);
         this.startActivityForResult(
@@ -802,4 +942,81 @@ public class AisleDetailsViewActivity extends Activity {
         }
     }
     
+    public boolean isDetailsHelpShown() {
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isHelpBlocked = sharedPreferencesObj.getBoolean(
+                VueConstants.DETAIALS_HELP_BLOCK, false);
+        boolean hasToShowHelp = sharedPreferencesObj.getBoolean(
+                VueConstants.DETAIALS_HELP_SHOWN, false);
+        Editor editor = sharedPreferencesObj.edit();
+        if (isHelpBlocked) {
+            return false;
+        } else if (!hasToShowHelp) {
+            editor.putBoolean(VueConstants.DETAIALS_HELP_SHOWN, true);
+            editor.putBoolean(VueConstants.DETAIALS_HELP_BLOCK, true);
+            editor.commit();
+            return true;
+        } else {
+            long currentTime = System.currentTimeMillis();
+            long savedTime = sharedPreferencesObj.getLong(
+                    VueConstants.DETAIALS_HELP_SHOWN_TIME, 0);
+            long millies = currentTime - savedTime;
+            int secs = (int) (millies / 1000);
+            int mins = secs / 60;
+            int hours = mins / 60;
+            if (hours > 48) {
+                // after two days if not seen the comparison screen
+                // show it once and blocked the help.
+                editor.putBoolean(VueConstants.DETAIALS_HELP_BLOCK, true);
+                editor.commit();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+    }
+    
+    private boolean loginChcecking() {
+        SharedPreferences sharedPreferencesObj = this.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        boolean isUserLoggedInFlag = sharedPreferencesObj.getBoolean(
+                VueConstants.VUE_LOGIN, false);
+        if (isUserLoggedInFlag) {
+            VueUser storedVueUser = null;
+            try {
+                storedVueUser = Utils.readUserObjectFromFile(this,
+                        VueConstants.VUE_APP_USEROBJECT__FILENAME);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            if (storedVueUser != null && storedVueUser.getId() != null) {
+                return true;
+            } else {
+                Toast.makeText(
+                        this,
+                        this.getResources().getString(
+                                R.string.vue_server_login_mesg),
+                        Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    this,
+                    this.getResources().getString(
+                            R.string.vue_fb_gplus_login_mesg),
+                    Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+    
+    public void loadBitmap(String url, int height, ImageView imageView) {
+        int width = VueApplication.getInstance().getVueDetailsCardWidth() / 2;
+        if (!url.equalsIgnoreCase(VueConstants.NO_IMAGE_URL) && url != null) {
+            ((NetworkImageView) imageView).setImageUrl(url, VueApplication
+                    .getInstance().getImageCacheLoader(), width, height,
+                    NetworkImageView.BitmapProfile.ProfileDetailsView);
+        }
+        
+    }
 }

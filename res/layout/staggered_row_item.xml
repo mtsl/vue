@@ -43,6 +43,22 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="2dp"
             android:visibility="gone" />
+           <LinearLayout
+            android:id="@+id/no_image_lay"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#80000000"
+            android:visibility="gone"
+             >
+
+            <TextView
+                android:id="@+id/no_image_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="no item yet" />
+        </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
@@ -118,8 +134,8 @@
 
                 <ImageView
                     android:id="@+id/shareImage"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="4dp"
@@ -143,8 +159,8 @@
 
                 <ImageView
                     android:id="@+id/bookmarkImage"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="4dp"
@@ -168,8 +184,8 @@
 
                 <ImageView
                     android:id="@+id/like_img"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="4dp"

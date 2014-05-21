@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.lateralthoughts.vue.AisleContext;
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.AisleWindowContent;
@@ -18,8 +20,11 @@ import com.lateralthoughts.vue.ImageRating;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.VueTrendingAislesDataModel;
-import com.lateralthoughts.vue.VueUser;
+import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.connectivity.VueConnectivityManager;
 import com.lateralthoughts.vue.domain.AisleBookmark;
+import com.lateralthoughts.vue.domain.ImageComment;
+import com.lateralthoughts.vue.user.VueUser;
 import com.lateralthoughts.vue.utils.UrlConstants;
 
 public class Parser {
@@ -28,11 +33,11 @@ public class Parser {
     // the following strings are pre-defined to help with JSON parsing
     // the tags defined here should be in sync the API documentation for the
     // backend
-    
     // AisleImageObjects but re-uses the
     // imageItemsArray. Instead the called function clones and keeps a copy.
     // This is pretty inconsistent.
     // Let the allocation happen in one place for both items. Fix this!
+    private boolean isEmptyAilseCached = false;
     
     public ArrayList<AisleWindowContent> parseTrendingAislesResultData(
             String resultString, boolean loadMore) {
@@ -40,13 +45,14 @@ public class Parser {
         ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
         
         JSONArray contentArray = null;
-        
         contentArray = handleResponse(resultString, loadMore);
         if (contentArray == null) {
             return aisleWindowContentList;
         }
         try {
-            aisleWindowContentList = parseAisleInformation(contentArray);
+            isEmptyAilseCached = true;
+            aisleWindowContentList = parseAisleInformation(contentArray,
+                    isEmptyAilseCached);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -67,58 +73,29 @@ public class Parser {
         return contentArray;
     }
     
-    public AisleWindowContent getAisleCotent(String response) {
-        AisleWindowContent aisleWindowContent = null;
-        AisleContext aisleContext = null;
-        ArrayList<AisleImageDetails> arrayList = new ArrayList<AisleImageDetails>();
-        
-        if (null != response) {
-            
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                aisleContext = parseAisleData(jsonObject);
-                AisleImageDetails aisleImageDetails = null;
-                try {
-                    aisleImageDetails = parseAisleImageData(jsonObject
-                            .getJSONObject("aisleImage"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-                if (aisleImageDetails != null
-                        && aisleImageDetails.mImageUrl != null
-                        && aisleImageDetails.mImageUrl.trim().length() > 0) {
-                    arrayList.add(aisleImageDetails);
-                    aisleWindowContent = VueTrendingAislesDataModel
-                            .getInstance(VueApplication.getInstance())
-                            .getAisle(aisleContext.mAisleId);
-                    aisleWindowContent.addAisleContent(aisleContext, arrayList);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        return aisleWindowContent;
-    }
-    
     public AisleImageDetails parseAisleImageData(JSONObject jsonObject)
             throws JSONException {
+        // get the image data from image object
         AisleImageDetails aisleImageDetails = new AisleImageDetails();
         aisleImageDetails.mId = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_ID);
+        aisleImageDetails.mTitle = jsonObject
+                .getString(VueConstants.AISLE_IMAGE_TITLE);
+        aisleImageDetails.mAvailableHeight = jsonObject
+                .getInt(VueConstants.AISLE_IMAGE_HEIGHT);
+        aisleImageDetails.mStore = jsonObject
+                .getString(VueConstants.AISLE_IMAGE_STORE);
+        aisleImageDetails.mImageUrl = jsonObject
+                .getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
+        aisleImageDetails.mAvailableWidth = jsonObject
+                .getInt(VueConstants.AISLE_IMAGE_WIDTH);
+        aisleImageDetails.mDetailsUrl = jsonObject
+                .getString(VueConstants.AISLE_IMAGE_DETAILS_URL);
         aisleImageDetails.mOwnerUserId = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_OWNERUSER_ID);
         aisleImageDetails.mOwnerAisleId = jsonObject
                 .getString(VueConstants.AISLE_IMAGE_OWNER_AISLE_ID);
-        aisleImageDetails.mDetalsUrl = jsonObject
-                .getString(VueConstants.AISLE_IMAGE_DETAILS_URL);
-        aisleImageDetails.mAvailableHeight = jsonObject
-                .getInt(VueConstants.AISLE_IMAGE_HEIGHT);
-        aisleImageDetails.mAvailableWidth = jsonObject
-                .getInt(VueConstants.AISLE_IMAGE_WIDTH);
-        aisleImageDetails.mImageUrl = jsonObject
-                .getString(VueConstants.AISLE_IMAGE_IMAGE_URL);
-        
+        // get the image rating list
         JSONArray ratingJsonArray = jsonObject
                 .getJSONArray(VueConstants.AISLE_IMAGE_RATINGS);
         ArrayList<ImageRating> ratingList = new ArrayList<ImageRating>();
@@ -130,16 +107,16 @@ public class Parser {
                 imgRatings = new ImageRating();
                 imgRatings.mId = ratingObj
                         .getLong(VueConstants.AISLE_IMAGE_RATING_ID);
-                imgRatings.mImageId = ratingObj
-                        .getLong(VueConstants.AISLE_IMAGE_RATING_IMAGEID);
-                imgRatings.mAisleId = ratingObj
-                        .getLong(VueConstants.AISLE_IMAGE_RATING_AISLEID);
                 imgRatings.mLastModifiedTimestamp = ratingObj
                         .getLong(VueConstants.AISLE_IMAGE_RATING_LASTMODIFIED_TIME);
                 imgRatings.mImageRatingOwnerFirstName = ratingObj
                         .getString(VueConstants.AISLE_IMAGE_RATING_OWNER_FIRST_NAME);
+                imgRatings.mImageId = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_IMAGEID);
                 imgRatings.mImageRatingOwnerLastName = ratingObj
                         .getString(VueConstants.AISLE_IMAGE_RATING_OWNER_LAST_NAME);
+                imgRatings.mAisleId = ratingObj
+                        .getLong(VueConstants.AISLE_IMAGE_RATING_AISLEID);
                 imgRatings.mLiked = ratingObj
                         .getBoolean(VueConstants.AISLE_IMAGE_RATING_LIKED);
                 if (imgRatings.mLiked) {
@@ -150,13 +127,10 @@ public class Parser {
         }
         aisleImageDetails.mRatingsList = ratingList;
         aisleImageDetails.mLikesCount = ratingLikeCount;
-        aisleImageDetails.mStore = jsonObject
-                .getString(VueConstants.AISLE_IMAGE_STORE);
-        aisleImageDetails.mTitle = jsonObject
-                .getString(VueConstants.AISLE_IMAGE_TITLE);
+        
+        // get the image comment data.
         JSONArray jsonArray = jsonObject
                 .getJSONArray(VueConstants.AISLE_IMAGE_COMMENTS);
-        
         ArrayList<ImageComments> commentList = new ArrayList<ImageComments>();
         if (jsonArray != null) {
             ImageComments imgComments;
@@ -165,10 +139,6 @@ public class Parser {
                 imgComments = new ImageComments();
                 imgComments.mId = commnetObj
                         .getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID);
-                imgComments.mImageId = commnetObj
-                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
-                imgComments.mComment = commnetObj
-                        .getString(VueConstants.COMMENT);
                 if (commnetObj.getString(
                         VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
                         .equals("null")) {
@@ -178,12 +148,20 @@ public class Parser {
                     imgComments.mLastModifiedTimestamp = commnetObj
                             .getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME);
                 }
-                imgComments.mCommenterUrl = commnetObj
-                        .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
                 imgComments.mCommenterLastName = commnetObj
                         .getString(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME);
+                imgComments.mCommenterUrl = commnetObj
+                        .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL);
+                imgComments.mImageId = commnetObj
+                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID);
+                
                 imgComments.mCommenterFirstName = commnetObj
                         .getString(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME);
+                imgComments.mOwnerUserId = commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTS_USERID);
+                
+                imgComments.mComment = commnetObj
+                        .getString(VueConstants.COMMENT);
                 commentList.add(imgComments);
             }
         }
@@ -199,7 +177,9 @@ public class Parser {
             JSONArray aisleArray = jsonResponse.getJSONArray("aisles");
             
             if (aisleArray != null) {
-                aisleWindowContentList = parseAisleInformation(aisleArray);
+                isEmptyAilseCached = true;
+                aisleWindowContentList = parseAisleInformation(aisleArray,
+                        isEmptyAilseCached);
             }
             
         } catch (Exception e) {
@@ -211,7 +191,7 @@ public class Parser {
     public ArrayList<AisleImageDetails> getImagesForAisleId(String aisleId)
             throws Exception {
         ArrayList<AisleImageDetails> imageList = new ArrayList<AisleImageDetails>();
-        String imageRequestUrl = UrlConstants.GET_IMAGES_FOR_AISLE + aisleId;
+        String imageRequestUrl = UrlConstants.GET_IMAGELIST_RESTURL + aisleId;
         URL url = new URL(imageRequestUrl);
         HttpGet httpGet = new HttpGet(url.toString());
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -242,38 +222,53 @@ public class Parser {
         return imageList;
     }
     
-    public AisleWindowContent getAisleForAisleId(String aisleId) {
+    public AisleWindowContent getAisleForAisleIdFromServerORDatabase(
+            String aisleId, boolean dontGetFromDatabase) {
         try {
-            URL url = new URL(UrlConstants.GET_AISLE_RESTURL + aisleId);
-            HttpGet httpGet = new HttpGet(url.toString());
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpResponse response = httpClient.execute(httpGet);
-            if (response.getEntity() != null
-                    && response.getStatusLine().getStatusCode() == 200) {
-                String responseMessage = EntityUtils.toString(response
-                        .getEntity());
-                if (responseMessage.length() > 0) {
-                    AisleContext aisleContext = parseAisleData(new JSONObject(
-                            responseMessage));
-                    ArrayList<AisleImageDetails> aisleImageDetailsList = null;
-                    try {
-                        aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (VueConnectivityManager.isNetworkConnected(VueApplication
+                    .getInstance())) {
+                URL url = new URL(UrlConstants.GET_AISLE_RESTURL + aisleId);
+                HttpGet httpGet = new HttpGet(url.toString());
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpResponse response = httpClient.execute(httpGet);
+                if (response.getEntity() != null
+                        && response.getStatusLine().getStatusCode() == 200) {
+                    String responseMessage = EntityUtils.toString(response
+                            .getEntity());
+                    if (responseMessage.length() > 0) {
+                        AisleContext aisleContext = parseAisleData(new JSONObject(
+                                responseMessage));
+                        ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+                        try {
+                            aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (aisleImageDetailsList != null
+                                && aisleImageDetailsList.size() > 0) {
+                            AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .getAisleItem(aisleContext.mAisleId);
+                            aisleWindowContent.addAisleContent(aisleContext,
+                                    aisleImageDetailsList);
+                            VueTrendingAislesDataModel
+                                    .getInstance(VueApplication.getInstance())
+                                    .addItemToList(
+                                            aisleWindowContent
+                                                    .getAisleContext().mAisleId,
+                                            aisleWindowContent);
+                            
+                            return aisleWindowContent;
+                        }
                     }
-                    if (aisleImageDetailsList != null
-                            && aisleImageDetailsList.size() > 0) {
-                        AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
-                                .getInstance(VueApplication.getInstance())
-                                .getAisleItem(aisleContext.mAisleId);
-                        aisleWindowContent.addAisleContent(aisleContext,
-                                aisleImageDetailsList);
-                        VueTrendingAislesDataModel.getInstance(
-                                VueApplication.getInstance()).addItemToList(
-                                aisleWindowContent.getAisleContext().mAisleId,
-                                aisleWindowContent);
-                        
-                        return aisleWindowContent;
+                }
+            } else {
+                if (!dontGetFromDatabase) {
+                    ArrayList<AisleWindowContent> aisleList = DataBaseManager
+                            .getInstance(VueApplication.getInstance())
+                            .getAisleByAisleId(aisleId);
+                    if (aisleList != null && aisleList.size() > 0) {
+                        return aisleList.get(0);
                     }
                 }
             }
@@ -284,17 +279,34 @@ public class Parser {
     }
     
     private ArrayList<AisleWindowContent> parseAisleInformation(
-            JSONArray jsonArray) throws JSONException {
+            JSONArray jsonArray, boolean isEmptyAilseCached)
+            throws JSONException {
         ArrayList<AisleWindowContent> aisleWindowContentList = new ArrayList<AisleWindowContent>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject ailseItem = jsonArray.getJSONObject(i);
             AisleContext aisleContext = parseAisleData(ailseItem);
-            ArrayList<AisleImageDetails> aisleImageDetailsList = null;
+            ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();
             try {
-                aisleImageDetailsList = getImagesForAisleId(aisleContext.mAisleId);
+                JSONObject imageObject = ailseItem
+                        .getJSONObject(VueConstants.AISLE_IMAGE_OBJECT);
+                JSONArray ImageListJson = imageObject
+                        .getJSONArray(VueConstants.AISLE_IMAGE_LIST);
+                for (int index = 0; index < ImageListJson.length(); index++) {
+                    AisleImageDetails aisleImageDetails = parseAisleImageData(ImageListJson
+                            .getJSONObject(index));
+                    if (aisleImageDetails.mImageUrl != null
+                            && (!aisleImageDetails.mImageUrl
+                                    .contains("randomurl.com"))
+                            && aisleImageDetails.mImageUrl.trim().length() > 0
+                            && aisleImageDetails.mAvailableHeight != 0
+                            && aisleImageDetails.mAvailableWidth != 0) {
+                        aisleImageDetailsList.add(aisleImageDetails);
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
             if (aisleImageDetailsList != null
                     && aisleImageDetailsList.size() > 0) {
                 AisleWindowContent aisleWindowContent = VueTrendingAislesDataModel
@@ -303,20 +315,76 @@ public class Parser {
                 aisleWindowContent.addAisleContent(aisleContext,
                         aisleImageDetailsList);
                 aisleWindowContentList.add(aisleWindowContent);
+            } else if (isEmptyAilseCached) {
+                // TODO: UNCOMMENT THIS CODE WHEN NO IMAGE AISLE FEATURE
+                // ENABLED.
+                /*
+                 * AisleWindowContent aisleWindowContent = new
+                 * AisleWindowContent( aisleContext.mAisleId);
+                 * aisleWindowContent.addAisleContent(aisleContext, null);
+                 * aisleWindowContentList.add(aisleWindowContent);
+                 */
             }
         }
         return aisleWindowContentList;
+    }
+    
+    // gets an aisle from the jsonObject.
+    public AisleWindowContent getBookmarkedAisle(JSONObject josnObject) {
+        AisleContext aisleContext = parseAisleData(josnObject);
+        ArrayList<AisleImageDetails> aisleImageDetailsList = new ArrayList<AisleImageDetails>();
+        try {
+            JSONObject imageObject = josnObject
+                    .getJSONObject(VueConstants.AISLE_IMAGE_OBJECT);
+            JSONArray ImageListJson = imageObject
+                    .getJSONArray(VueConstants.AISLE_IMAGE_LIST);
+            for (int index = 0; index < ImageListJson.length(); index++) {
+                AisleImageDetails aisleImageDetails = parseAisleImageData(ImageListJson
+                        .getJSONObject(index));
+                if (aisleImageDetails.mImageUrl != null
+                        && (!aisleImageDetails.mImageUrl
+                                .contains("randomurl.com"))
+                        && aisleImageDetails.mImageUrl.trim().length() > 0
+                        && aisleImageDetails.mAvailableHeight != 0
+                        && aisleImageDetails.mAvailableWidth != 0) {
+                    aisleImageDetailsList.add(aisleImageDetails);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        AisleWindowContent aisleItem = new AisleWindowContent(
+                aisleContext.mAisleId);
+        if (aisleImageDetailsList != null && aisleImageDetailsList.size() > 0) {
+            aisleItem.addAisleContent(aisleContext, aisleImageDetailsList);
+        }
+        return aisleItem;
     }
     
     public AisleContext parseAisleData(JSONObject josnObject) {
         AisleContext aisleContext = new AisleContext();
         try {
             aisleContext.mAisleId = josnObject.getString(VueConstants.AISLE_ID);
+            String aisleOwnerImageUrl = josnObject
+                    .optString(VueConstants.AISLE_OWNER_IMAGE_URL);
+            if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
+                aisleContext.mAisleOwnerImageURL = null;
+            } else {
+                aisleContext.mAisleOwnerImageURL = aisleOwnerImageUrl;
+            }
+            String lastName = josnObject
+                    .getString(VueConstants.AISLE_OWNER_LASTNAME);
             aisleContext.mCategory = josnObject
                     .getString(VueConstants.AISLE_CATEGORY);
-            aisleContext.mLookingForItem = josnObject
-                    .getString(VueConstants.AISLE_LOOKINGFOR);
-            aisleContext.mName = josnObject.getString(VueConstants.AISLE_NAME);
+            aisleContext.mBookmarkCount = josnObject
+                    .getInt(VueConstants.AISLE_BOOKMARK_COUNT);
+            String description = josnObject
+                    .getString(VueConstants.AISLE_DESCRIPTION);
+            if (description == null || description.equals("null")) {
+                aisleContext.mDescription = "";
+            } else {
+                aisleContext.mDescription = description;
+            }
             String occasion = josnObject
                     .getString(VueConstants.AISLE_OCCASSION);
             if (occasion == null || occasion.equals("null")) {
@@ -324,12 +392,14 @@ public class Parser {
             } else {
                 aisleContext.mOccasion = occasion;
             }
-            aisleContext.mUserId = josnObject
-                    .getString(VueConstants.AISLE_OWNER_USER_ID);
+            aisleContext.mName = josnObject.getString(VueConstants.AISLE_NAME);
             String firstName = josnObject
                     .getString(VueConstants.AISLE_OWNER_FIRSTNAME);
-            String lastName = josnObject
-                    .getString(VueConstants.AISLE_OWNER_LASTNAME);
+            aisleContext.mUserId = josnObject
+                    .getString(VueConstants.AISLE_OWNER_USER_ID);
+            aisleContext.mLookingForItem = josnObject
+                    .getString(VueConstants.AISLE_LOOKINGFOR);
+            
             if (firstName == null || firstName.equals("null")) {
                 aisleContext.mFirstName = " ";
                 firstName = null;
@@ -345,22 +415,6 @@ public class Parser {
             if (firstName == null && lastName == null) {
                 aisleContext.mFirstName = "Anonymous";
             }
-            String description = josnObject
-                    .getString(VueConstants.AISLE_DESCRIPTION);
-            if (description == null || description.equals("null")) {
-                aisleContext.mDescription = "";
-            } else {
-                aisleContext.mDescription = description;
-            }
-            String aisleOwnerImageUrl = josnObject
-                    .optString(VueConstants.AISLE_OWNER_IMAGE_URL);
-            if (aisleOwnerImageUrl == null || aisleOwnerImageUrl.equals("null")) {
-                aisleContext.mAisleOwnerImageURL = null;
-            } else {
-                aisleContext.mAisleOwnerImageURL = aisleOwnerImageUrl;
-            }
-            aisleContext.mBookmarkCount = josnObject
-                    .getInt(VueConstants.AISLE_BOOKMARK_COUNT);
             
         } catch (JSONException e) {
             e.printStackTrace();
@@ -473,38 +527,40 @@ public class Parser {
     
     private static ArrayList<ImageRating> removeDuplicateImageRating(
             ArrayList<ImageRating> imgRatingList) {
-        int size = imgRatingList.size();
-        for (int i = 0; i < size; i++) {
-            ImageRating current;
-            if (imgRatingList.size() > i) {
-                current = imgRatingList.get(i);
-            } else {
-                break;
-            }
-            for (int j = 0; j < i; ++j) {
-                ImageRating previous;
-                if (imgRatingList.size() > j) {
-                    previous = imgRatingList.get(j);
-                } else {
-                    break;
+        ArrayList<ImageRating> dummyList = new ArrayList<ImageRating>();
+        ArrayList<ImageRating> tempList = new ArrayList<ImageRating>();
+        ArrayList<ImageRating> finalList = new ArrayList<ImageRating>();
+        
+        for (ImageRating item : imgRatingList) {
+            dummyList.add(item);
+        }
+        for (ImageRating item : imgRatingList) {
+            tempList.clear();
+            for (ImageRating item2 : dummyList) {
+                if (item.mImageId.longValue() == item2.mImageId.longValue()) {
+                    tempList.add(item2);
+                    
                 }
-                final boolean relation = previous.compareTo(current);
-                if (relation) {
-                    int isGrater = previous
-                            .compareTime(current.mLastModifiedTimestamp);
-                    if (isGrater == ImageRating.NEW_TIME_STAMP) {
-                        imgRatingList.remove(i);
-                    } else {
-                        imgRatingList.remove(j);
+            }
+            if (tempList.size() > 0) {
+                for (ImageRating tempItem : tempList) {
+                    dummyList.remove(tempItem);
+                }
+                ImageRating finalItem = tempList.get(0);
+                for (ImageRating tempItem : tempList) {
+                    if (finalItem.mLastModifiedTimestamp < tempItem.mLastModifiedTimestamp) {
+                        finalItem = tempItem;
                     }
                 }
+                finalList.add(finalItem);
             }
         }
-        return imgRatingList;
+        return finalList;
     }
     
     private static ArrayList<AisleBookmark> removeDuplicateBookmarkedAisles(
             ArrayList<AisleBookmark> bookmarkedAisles) {
+        
         int size = bookmarkedAisles.size();
         for (int i = 0; i < size; i++) {
             AisleBookmark current;
@@ -540,5 +596,45 @@ public class Parser {
             }
         }
         return bookmarkedAisles;
+    }
+    
+    public ImageComment parseCommentResponse(String response) {
+        try {
+            if (response != null) {
+                JSONObject commnetObj = new JSONObject(response);
+                ImageComment imgComments = new ImageComment();
+                imgComments.setId(commnetObj
+                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_ID));
+                if (commnetObj.getString(
+                        VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME)
+                        .equals("null")) {
+                    imgComments
+                            .setCreatedTimestamp(commnetObj
+                                    .getLong(VueConstants.AISLE_IMAGE_COMMENTS_CREATED_TIME));
+                } else {
+                    imgComments
+                            .setLastModifiedTimestamp(commnetObj
+                                    .getLong(VueConstants.AISLE_IMAGE_COMMENTS_LASTMODIFIED_TIME));
+                }
+                imgComments
+                        .setCommenterLastName(commnetObj
+                                .getString(VueConstants.AISLE_IMAGE_COMMENTER_LAST_NAME));
+                imgComments.setImageCommentOwnerImageURL(commnetObj
+                        .getString(VueConstants.IMAGE_COMMENT_OWNER_IMAGE_URL));
+                imgComments.setOwnerImageId(commnetObj
+                        .getLong(VueConstants.AISLE_IMAGE_COMMENTS_IMAGEID));
+                imgComments
+                        .setCommenterFirstName(commnetObj
+                                .getString(VueConstants.AISLE_IMAGE_COMMENTER_FIRST_NAME));
+                imgComments.setOwnerUserId(Long.valueOf(commnetObj
+                        .getString(VueConstants.AISLE_IMAGE_COMMENTS_USERID)));
+                imgComments.setComment(commnetObj
+                        .getString(VueConstants.COMMENT));
+                return imgComments;
+            }
+            return null;
+        } catch (Exception e) {
+        }
+        return null;
     }
 }

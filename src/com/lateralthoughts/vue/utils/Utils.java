@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,11 +17,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -38,18 +41,18 @@ import android.provider.MediaStore;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lateralthoughts.vue.AisleImageDetails;
 import com.lateralthoughts.vue.DataentryImage;
 import com.lateralthoughts.vue.R;
 import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
-import com.lateralthoughts.vue.VueUser;
-import com.lateralthoughts.vue.VueUserProfile;
+import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.user.VueUserProfile;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class Utils {
     private static final String CURRENT_FONT_SIZE = "currentFontSize";
@@ -64,6 +67,9 @@ public class Utils {
     public static String mChangeAilseId;
     public static boolean sIsAisleChanged = false;
     public static boolean sAinmate = true;
+    public static int sUserPoints;
+    public static boolean sIsLoged = true;
+    public static int sAisleParserCount = -1;
     
     public static void CopyStream(InputStream is, OutputStream os) {
         final int buffer_size = 1024;
@@ -339,12 +345,11 @@ public class Utils {
         return twoWeeksDifferenceTime + "";
     }
     
-    public static Bitmap getBitmap() {
-        Bitmap icon = BitmapFactory.decodeResource(
-                VueApplication.getInstance().mVueApplicationContext
-                        .getResources(), R.drawable.ic_launcher);
-        return icon;
-    }
+    /*
+     * public static Bitmap getBitmap() { Bitmap icon =
+     * BitmapFactory.decodeResource( VueApplication.getInstance()
+     * .getResources(), R.drawable.ic_launcher); return icon; }
+     */
     
     public static boolean appInstalledOrNot(String uri, Context context) {
         PackageManager pm = context.getPackageManager();
@@ -374,13 +379,14 @@ public class Utils {
         return null;
     }
     
-    public static void writeUserObjectToFile(Context context, String fileName,
-            VueUser vueUser) throws Exception {
+    public static VueUser writeUserObjectToFile(Context context,
+            String fileName, VueUser vueUser) throws Exception {
         FileOutputStream fos = context.openFileOutput(fileName,
                 Context.MODE_PRIVATE);
         ObjectOutputStream os = new ObjectOutputStream(fos);
         os.writeObject(vueUser);
         os.close();
+        return vueUser;
     }
     
     public static VueUser readUserObjectFromFile(Context context,
@@ -551,6 +557,14 @@ public class Utils {
                 VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION, null);
     }
     
+    public static boolean getDataentryTopAddImageIncreamentMixpanelPostCount(
+            Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        return sharedPreferences.getBoolean(
+                VueConstants.INCREAMENT_MIXPANEL_POSTCOUNT, false);
+    }
+    
     public static String getDataentryTopAddImageAisleCategory(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 VueConstants.SHAREDPREFERENCE_NAME, 0);
@@ -573,6 +587,7 @@ public class Utils {
         editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_LOOKINGFOR,
                 lookingfor);
         editor.commit();
+        
     }
     
     public static void putDataentryTopAddImageAisleOccasion(Context context,
@@ -582,6 +597,15 @@ public class Utils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(VueConstants.DATAENTRY_TOP_ADDIMAGE_AISLE_OCCASION,
                 occasion);
+        editor.commit();
+    }
+    
+    public static void putDataentryTopAddImageIncreamentMixpanelPostCount(
+            Context context, boolean flag) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                VueConstants.SHAREDPREFERENCE_NAME, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(VueConstants.INCREAMENT_MIXPANEL_POSTCOUNT, flag);
         editor.commit();
     }
     
@@ -711,33 +735,28 @@ public class Utils {
     
     public static void showAlertMessageForBackendNotIntegrated(
             final Activity activity, final boolean finishActivity) {
-        final Dialog dialog = new Dialog(activity,
-                R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        View networkdialogline = dialog.findViewById(R.id.networkdialogline);
-        TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView okButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
-        messagetext.setText("Sorry, Server side integration is pending.");
-        okButton.setText("OK");
-        noButton.setVisibility(View.GONE);
-        networkdialogline.setVisibility(View.GONE);
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnDismissListener(new OnDismissListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                activity);
+        alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder
+                .setMessage("Sorry, Server side integration is pending.");
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onCancel(DialogInterface dialog) {
                 if (finishActivity) {
                     activity.finish();
                 }
             }
         });
-        dialog.show();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     @SuppressWarnings("unchecked")
@@ -783,8 +802,10 @@ public class Utils {
                                 .loadLabel(context.getPackageManager())
                                 .toString(),
                         ((ResolveInfo) a[i]).activityInfo.name, packageName,
-                        ((ResolveInfo) a[i]).activityInfo.applicationInfo
-                                .loadIcon(context.getPackageManager()));
+                        null);
+                if (packageName.equals(VueConstants.TWITTER_PACKAGE_NAME)) {
+                    VueApplication.getInstance().twitterActivityName = ((ResolveInfo) a[i]).activityInfo.name;
+                }
                 installedApplicationdetailsList.add(shoppingApplicationDetails);
             }
         }
@@ -820,5 +841,170 @@ public class Utils {
         default:
             return "SAT";
         }
+    }
+    
+    public static String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11) {
+            month = months[num];
+        }
+        return month;
+    }
+    
+    public static long dateDifference(long date) {
+        try {
+            long differenceInHours = (System.currentTimeMillis() - date)
+                    / (1000 * 60 * 60);
+            return differenceInHours;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
+    public static void saveUserPoints(String key, int value, Context context) {
+        int prevPoints = getUserPoints();
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int count = sharedPreferencesObj.getInt(key, 0);
+        count = count + value;
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putInt(key, count);
+        editor.commit();
+        int currentPoints = getUserPoints();
+        if (prevPoints < 100 && currentPoints >= 100) {
+            boolean isDialogShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.USER_POINTS_DIALOG_SHOWN, false);
+            if (context != null && !isDialogShown) {
+                showRewardDialog(currentPoints, context);
+            } else {
+            }
+        } else if (currentPoints >= 100) {
+            boolean isDialogShown = sharedPreferencesObj.getBoolean(
+                    VueConstants.USER_POINTS_DIALOG_SHOWN, false);
+            if (!isDialogShown && context != null) {
+                showRewardDialog(currentPoints, context);
+            }
+        }
+    }
+    
+    private static void showRewardDialog(int currentPoints, Context context) {
+        showRewardsDialog("", currentPoints, context);
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor2 = sharedPreferencesObj.edit();
+        editor2.putBoolean(VueConstants.USER_POINTS_DIALOG_SHOWN, true);
+        editor2.commit();
+    }
+    
+    public static int getUserPoints() {
+        SharedPreferences sharedPreferencesObj = VueApplication.getInstance()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int likesCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_LIKES_POINTS, 0);
+        int CommentsCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_COMMENTS_POINTS, 0);
+        int addImageCount = sharedPreferencesObj.getInt(
+                VueConstants.USER_ADD_IAMGE_POINTS, 0);
+        int inviteFriends = sharedPreferencesObj.getInt(
+                VueConstants.USER_INVITE_FRIEND_POINTS, 0);
+        int totalCount = likesCount + CommentsCount + addImageCount
+                + inviteFriends;
+        int installPoints = 5;
+        totalCount = totalCount + sUserPoints + installPoints;
+        
+        return totalCount;
+        
+    }
+    
+    private static void showRewardsDialog(String userType, int pointsEarned,
+            final Context context) {
+        if (context == null) {
+            return;
+        }
+        if (pointsEarned < 100) {
+            userType = "bronze";
+        } else {
+            userType = "silver";
+        }
+        if (userType.equals("silver")) {
+            StringBuilder sb = new StringBuilder(
+                    "Congratulations! You are now a Silver Vuer! As a thank you, we will gladly send you $5 to shop online.");
+            // AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+            // new
+            // ContextThemeWrapper(getActivity(),R.style.AlertDialogCustom));
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    new ContextThemeWrapper(context, R.style.AppBaseTheme));
+            alertDialogBuilder.setTitle("Vue");
+            alertDialogBuilder.setMessage(sb.toString());
+            alertDialogBuilder.setPositiveButton(context.getResources()
+                    .getString(R.string.redeem_it_now),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            VueUser storedVueUser = null;
+                            try {
+                                storedVueUser = Utils
+                                        .readUserObjectFromFile(
+                                                context,
+                                                VueConstants.VUE_APP_USEROBJECT__FILENAME);
+                                if (storedVueUser != null) {
+                                    JSONObject nameTag = new JSONObject();
+                                    nameTag.put("Redeem", "RedeemItNow");
+                                    nameTag.put("Id", storedVueUser.getId());
+                                    nameTag.put("Email",
+                                            storedVueUser.getEmail());
+                                    SharedPreferences sharedPreferencesObj = VueApplication
+                                            .getInstance()
+                                            .getSharedPreferences(
+                                                    VueConstants.SHAREDPREFERENCE_NAME,
+                                                    0);
+                                    Editor editor = sharedPreferencesObj.edit();
+                                    editor.putBoolean(
+                                            VueConstants.USER_POINTS_DIALOG_SHOWN,
+                                            true);
+                                    editor.commit();
+                                    MixpanelAPI mixpanel = MixpanelAPI
+                                            .getInstance(
+                                                    context,
+                                                    VueApplication
+                                                            .getInstance().MIXPANEL_TOKEN);
+                                    mixpanel.track("Coupon", nameTag);
+                                }
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            
+                            Toast.makeText(
+                                    context,
+                                    "Thank you for being such an awesome Vuer! Expect to see the rewards from us shortly in your email inbox.",
+                                    Toast.LENGTH_LONG).show();
+                            
+                        }
+                    });
+            alertDialogBuilder.setNegativeButton(context.getResources()
+                    .getString(R.string.continue_earning),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            
+                            dialog.cancel();
+                            
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
+    }
+    
+    public static Uri takeScreenshot(Activity activity) {
+        View rootView = activity.findViewById(android.R.id.content)
+                .getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = rootView.getDrawingCache();
+        File file = new FileCache(activity)
+                .getVueAppUserProfilePictureFile(VueConstants.BUG_REPORT_SCREENSHOT);
+        saveBitmap(bitmap, file);
+        return Uri.fromFile(file);
     }
 }

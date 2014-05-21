@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="96dp"
+    android:background="@drawable/bg_card_layout" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+              >
+
+            <TextView
+                android:id="@+id/initial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 android:textStyle="bold"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="A"
+                android:textSize="48dp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lookingfor_lay"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/child_itemTextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/looking_for"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="10dp"
+                android:text="Looking for the black shirt"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Vue</string>
-    <string name="app_version">Version: Alpha 1.0 \n\n</string>
+    <string name="app_version">Version: Beta 1.10 \n\n</string>
     <string name="app_id">606559369366437</string> <!-- Krishna id - 288419657969615 ; Vinodh id -  606559369366437; Surendra id -   769961779687972 -->
     <string name="instagram_client_id">379d744556c743c090c8a2014779f59f</string>
     <string name="instagram_client_secret">fd6ec75e44054da1a5088ad2d72f2253</string>
@@ -10,12 +10,17 @@
     <string name="discard_comment">Would you like to discard the comment?</string>
     <string name="trending">Trending</string>
     <string name="trending_aisles_tag">aisle/trending</string>
+    <string name="vue_fb_gplus_login_mesg">Please login with Facebook or Google+</string>
+    <string name="vue_server_login_mesg">Please wait while uploading user details to server</string>
     <string name="dataentry_edit_permission">Do you want to change the existing data?</string>
     <string name="dataentry_mandtory_field_mesg">Please enter Lookingfor.</string>
     <string name="dataentry_mandtory_field_add_aisleimage_mesg">Please Add Aisle Image.</string>
     <string name="limit_tag">limit</string>
     <string name="offset_tag">offset</string>
     <string name="uploading_mesg">Uploading...</string>
+    <string name="uploading_aisle_mesg">Uploading Aisle...</string>
+    <string name="uploaded_aisle_mesg">Aisle was created</string>
+    <string name="uploading_image_mesg">Uploading Image...</string>
     <string name="deleting_mesg">Deleting...</string>
     <string name="upload_successful_mesg">Upload successful</string>
     <string name="delete_successful_mesg">Delete successful</string>
@@ -55,6 +60,7 @@
     <string name="yes_mesg">Yes</string>
     <string name="fb_no_friends">There are no friends to show.</string>
     <string name="no_mesg">No</string>
+    <string name="send_feedback">Send Feedback</string>
     <string name="com_facebook_loading">Loading...</string>
     <string name="com_facebook_internet_permission_error_title">AndroidManifest Error</string>
     <string name="com_facebook_internet_permission_error_message">WebView login requires INTERNET permission</string>
@@ -81,9 +87,14 @@
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">Ok</string>
+    <string name="continue_earning">Continue earning</string>
+    <string name="redeem_it_now">Redeem it now</string>
     <string name="cache_dirname">GoogleImgApp_Cache</string>
     <string name="profile">Profile</string>
     <string name="create_aisle">Create Aisle</string>
+    <string name="report_bug">Report Bug</string>
+    <string name="pending_aisle">Pending Aisles</string>
+    <string name="rfresh_aisle">Refresh Aisles</string>
     <string name="edit_aisle">Edit Aisle</string>
     <string name="add_image">Add Image</string>
     <string name="no_network">No network, check network settings</string>
@@ -94,9 +105,11 @@
     <string name="decision_screen_title">Select your choice</string>
     <string name="hint_search">Search</string>
     <string name="sidemenu_option_Trending_Aisles">Trending</string>
+    <string name="pending_aisle_option">Pending Aisles</string>
     <string name="sidemenu_option_Me">Me</string>
     <string name="sidemenu_option_Categories">Categories</string>
     <string name="sidemeun_option_Settings">Settings</string>
+    <string name="sidemeun_option_Notifications">Notifications</string>
     <string name="sidemenu_option_Profile">Profile</string>
     <string name="sidemenu_option_Invite_Friends">Invite Friends</string>
     <string name="sidemenu_option_Help">Help</string>
@@ -117,6 +130,7 @@
     <string name="sidemenu_sub_option_Interactions">Interactions</string>
     <string name="sidemenu_sub_option_Bookmarks">Bookmarks</string>
     <string name="sidemenu_sub_option_Recently_Viewed_Aisles">Recently viewed</string>
+    <string name="sidemenu_sub_option_My_Pointss">My Points</string>
     <string name="done">Done</string>
     <string name="more">More</string>
     <string name="browser">Browser</string>
@@ -131,7 +145,7 @@
     <string name="email_id">vue@thesilverlabs.com</string>
     <string name="vue_content">Privacy Policy</string>
     <string name="vue_terms">Terms of Service</string>
-    <string name="about_tabel_Content_text">1. Introduction \n2. Terms of Service \n3. Privacy Policy \n4. Contact us</string>
+    <string name="about_tabel_Content_text">1. Introduction \n2. Privacy Policy \n3. Terms of Service \n4. Contact us</string>
     <string name="feedback_form_text_info">Please write to us about how we might improve fashionwrap to suit your needs. Whether you would like us to cover more topics, improve the user experiences, or do something else better, please write to us. We will appreciate it very much!</string>
     <string name="aboutedittext">Type your message here</string>
     <string name="clear">Clear</string>
@@ -139,6 +153,7 @@
     <string name="data_entry_invite_friends_mandatory_mesg">Please choose atleast one friends to invite</string>
     <string name="no_camera_label">Sorry, Threre is no camera in this device.</string>
     <string name="invite">Invite</string>
+    <string name="no_notification_text">0 messages\nWhen you have message they will show here.</string>
     <string name="abouttextfedbacktext">\nPlease write to us about how we might improve</string>
     <string name="abouttextfedbacktexttwo">to suit your needs. We will appreciate it very much!</string>
     <string name="abouttextfedbacktextt">Email will be sent using gmail. Your phone model, dimensions, resolutions and OS version are included with this message.</string>
@@ -153,10 +168,12 @@
           We will use this information to make the experience better for you. 
 
 We may change this privacy policy from time to time.  Please check back to see if there have been any updates.  </string>
-    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant PintVueerest and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, re-pin, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe violates these Terms or our policies.</string>
+    <string name="terms_of_service">You retain all rights in, and are solely responsible for, the content you post to Vue. You grant Vue and its users a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, share, modify, create derivative works, perform, and distribute your content on Vue solely for the purposes of operating, developing, providing, and using the products. We reserve the right to remove or modify content for any reason, including content that we believe is inappropriate, violates these Terms or our policies.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
+    <string name="invite_friends">Invite friends now</string>
+    <string name="remind_later">Remind me later</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="helptext">Create an aisle around something you are looking for.  Add one or more images of your choices.  Let others help you pick.  Or, perhaps even suggest the best things to get.  Do it together with friends!</string>
     <string name="frombezel">FromBezel</string>
@@ -166,8 +183,15 @@ We may change this privacy policy from time to time.  Please check back to see i
     <string name="com_mixpanel_android_previous">Previous question</string>
     <string name="com_mixpanel_android_logo">By Mixpanel</string>
     <string name="com_mixpanel_android_exit">Exit</string>
+    <string name="app_link">https://play.google.com/store/search?q=Silverlabs%20Vue</string>
+    <string name="suggest_something_owner">Add an item to this aisle</string>
+    <string name="suggest_something_guest">Suggest something</string>
+    <string name="facebook_session_expire_mesg">Facebook Session is expired. Could you please try after login with facebook app.</string>
+    <string name="show_notifications">ShowNotifications</string>
 
     <color name="com_mixpanel_android_selected">#66ffffff</color>
+        <string name="undo">Undo</string>
+    <string name="undoall">Undo All</string>
     <!-- MixPanel -->
 
 </resources>

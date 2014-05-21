@@ -8,8 +8,10 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -30,7 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.utils.FileCache;
 import com.lateralthoughts.vue.utils.OtherSourceImageDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -302,14 +303,12 @@ public class DataEntryActivity extends Activity {
                 mDataEntryFragment.mCategoryheading
                         .setText(b
                                 .getString(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_CATEGORY));
-                mDataEntryFragment.mCategoryheadingLayout
-                        .setVisibility(View.VISIBLE);
             }
             if (mDataEntryFragment.mFromDetailsScreenFlag) {
                 mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
                 mDataEntryFragment.mFindatLayout.setVisibility(View.GONE);
                 mDataEntryFragment.mSaySomethingAboutAisle
-                        .setVisibility(View.GONE);
+                        .setVisibility(View.VISIBLE);
                 mDataEntryFragment.mSaysomethingClose.setVisibility(View.GONE);
                 mDataEntryFragment.mIsUserAisleFlag = b
                         .getBoolean(VueConstants.FROM_DETAILS_SCREEN_TO_CREATE_AISLE_SCREEN_IS_USER_AISLE_FLAG);
@@ -330,14 +329,34 @@ public class DataEntryActivity extends Activity {
                     firstTimeFlag = true;
                 }
                 if (firstTimeFlag) {
-                    mDataEntryFragment
-                            .showDetailsScreenImagesInDataentryScreen();
+                    if (VueApplication.getInstance().getPedningAisle() == null) {
+                        mDataEntryFragment
+                                .showDetailsScreenImagesInDataentryScreen();
+                    }
                 }
                 getActionBar().setTitle(
                         getResources().getString(
                                 R.string.add_imae_to_aisle_screen_title));
                 if (b.getBoolean(VueConstants.EDIT_IMAGE_FROM_DETAILS_SCREEN_FALG)) {
                     getActionBar().setTitle("Delete Images");
+                    mDataEntryFragment.mOccasionLayout.setVisibility(View.GONE);
+                    mDataEntryFragment.mFindatLayout.setVisibility(View.GONE);
+                    mDataEntryFragment.mSaySomethingAboutAisle
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mSaysomethingClose
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mLookingForPopup
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mLookingForListviewLayout
+                            .setVisibility(View.GONE);
+                    mDataEntryFragment.mMainHeadingRow.setClickable(false);
+                    mDataEntryFragment.mMainHeadingRow.setEnabled(false);
+                    mVueDataentryKeyboardLayout.setVisibility(View.GONE);
+                    mVueDataentryKeyboardDone.setVisibility(View.GONE);
+                    mVueDataentryKeyboardCancel.setVisibility(View.GONE);
+                    mVueDataentryPostLayout.setVisibility(View.GONE);
+                    mVueDataentryDeleteLayout.setVisibility(View.GONE);
+                    showDefaultActionbar();
                     mDataEntryFragment.mDataEntryAislesViewpager
                             .setVisibility(View.VISIBLE);
                     try {
@@ -419,8 +438,6 @@ public class DataEntryActivity extends Activity {
                                     R.string.add_imae_to_aisle_screen_title));
                     mDataEntryFragment.mMainHeadingRow
                             .setVisibility(View.VISIBLE);
-                    mDataEntryFragment.mCategoryheadingLayout
-                            .setVisibility(View.VISIBLE);
                 }
                 if (b.getParcelableArrayList(VueConstants.FROM_OTHER_SOURCES_IMAGE_URIS) != null) {
                     ArrayList<Uri> imageUrisList = b
@@ -462,6 +479,12 @@ public class DataEntryActivity extends Activity {
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }
+            }
+        } else {
+            if (mDataEntryFragment.mAisleImagePathList.size() == 0) {
+                mDataEntryFragment.mAddAnItemToAisle
+                        .setVisibility(View.VISIBLE);
+                mDataEntryFragment.lookingForTextClickFunctionality();
             }
         }
     }
@@ -569,17 +592,13 @@ public class DataEntryActivity extends Activity {
     
     @Override
     protected void onStart() {
-        mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
-        FlurryAgent.onStartSession(this, Utils.FLURRY_APP_KEY);
-        FlurryAgent.onPageView();
-        FlurryAgent.logEvent(CREATE_AISLE_SCREEN_VISITORS);
+        // mixpanel.track(CREATE_AISLE_SCREEN_VISITORS, null);
         super.onStart();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
         mixpanel.flush();
         
     }
@@ -609,6 +628,8 @@ public class DataEntryActivity extends Activity {
                     mDataEntryFragment.mFindAtText.setText("");
                     mDataEntryFragment.mOtherSourceSelectedImageStore = "UnKnown";
                     mDataEntryFragment.mOtherSourceSelectedImageUrl = null;
+                    mDataEntryFragment.mAddAnItemToAisle
+                            .setVisibility(View.GONE);
                     mDataEntryFragment.setGalleryORCameraImage(imagePath,
                             false, this);
                 }
@@ -661,73 +682,73 @@ public class DataEntryActivity extends Activity {
     
     private void showDiscardOtherAppImageDialog(
             final String addImageCancelAlertMesg) {
-        final Dialog dialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vue_popup);
-        final TextView noButton = (TextView) dialog.findViewById(R.id.nobutton);
-        TextView yesButton = (TextView) dialog.findViewById(R.id.okbutton);
-        TextView messagetext = (TextView) dialog.findViewById(R.id.messagetext);
+        String message = "";
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Vue");
         if (addImageCancelAlertMesg != null) {
-            messagetext.setText(addImageCancelAlertMesg);
+            message = addImageCancelAlertMesg;
         } else {
-            messagetext.setText(getResources().getString(
-                    R.string.discard_dataentry_screen_changes));
+            message = getResources().getString(
+                    R.string.discard_dataentry_screen_changes);
         }
-        yesButton.setText("Yes");
-        noButton.setText("No");
-        yesButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
-                Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this,
-                        -1);
-                Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
-                Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
-                        false);
-                Utils.putDataentryTopAddImageAisleFlag(DataEntryActivity.this,
-                        false);
-                Utils.putDataentryTopAddImageAisleLookingFor(
-                        DataEntryActivity.this, null);
-                Utils.putDataentryTopAddImageAisleCategory(
-                        DataEntryActivity.this, null);
-                Utils.putDataentryTopAddImageAisleOccasion(
-                        DataEntryActivity.this, null);
-                Utils.putDataentryTopAddImageAisleDescription(
-                        DataEntryActivity.this, null);
-                ArrayList<DataentryImage> mAisleImagePathList = null;
-                try {
-                    mAisleImagePathList = Utils.readAisleImagePathListFromFile(
-                            DataEntryActivity.this,
-                            VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
-                    mAisleImagePathList.clear();
-                    Utils.writeAisleImagePathListToFile(DataEntryActivity.this,
-                            VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
-                            mAisleImagePathList);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                FileCache fileCache = new FileCache(VueApplication
-                        .getInstance());
-                fileCache.clearVueAppResizedPictures();
-                finish();
-            }
-        });
-        noButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-                if (addImageCancelAlertMesg != null) {
-                    Utils.putTouchToChnageImagePosition(DataEntryActivity.this,
-                            -1);
-                    Utils.putTouchToChnageImageTempPosition(
-                            DataEntryActivity.this, -1);
-                    Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
-                            false);
-                    mDataEntryFragment
-                            .addImageToAisleButtonClickFunctionality(true);
-                }
-            }
-        });
-        dialog.show();
+       alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   Utils.putTouchToChnageImagePosition(DataEntryActivity.this, -1);
+                   Utils.putTouchToChnageImageTempPosition(DataEntryActivity.this,
+                           -1);
+                   Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
+                   Utils.putDataentryAddImageAisleFlag(DataEntryActivity.this,
+                           false);
+                   Utils.putDataentryTopAddImageAisleFlag(DataEntryActivity.this,
+                           false);
+                   Utils.putDataentryTopAddImageAisleLookingFor(
+                           DataEntryActivity.this, null);
+                   Utils.putDataentryTopAddImageAisleCategory(
+                           DataEntryActivity.this, null);
+                   Utils.putDataentryTopAddImageAisleOccasion(
+                           DataEntryActivity.this, null);
+                   Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                           DataEntryActivity.this, false);
+                   Utils.putDataentryTopAddImageAisleDescription(
+                           DataEntryActivity.this, null);
+                   ArrayList<DataentryImage> mAisleImagePathList = null;
+                   try {
+                       mAisleImagePathList = Utils.readAisleImagePathListFromFile(
+                               DataEntryActivity.this,
+                               VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME);
+                       mAisleImagePathList.clear();
+                       Utils.writeAisleImagePathListToFile(DataEntryActivity.this,
+                               VueConstants.AISLE_IMAGE_PATH_LIST_FILE_NAME,
+                               mAisleImagePathList);
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
+                   FileCache fileCache = new FileCache(VueApplication
+                           .getInstance());
+                   fileCache.clearVueAppResizedPictures();
+                   finish();
+               
+              }
+             });
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog,int id) {
+                   dialog.cancel();
+                   if (addImageCancelAlertMesg != null) {
+                       Utils.putTouchToChnageImagePosition(DataEntryActivity.this,
+                               -1);
+                       Utils.putTouchToChnageImageTempPosition(
+                               DataEntryActivity.this, -1);
+                       Utils.putTouchToChnageImageFlag(DataEntryActivity.this,
+                               false);
+                       mDataEntryFragment
+                               .addImageToAisleButtonClickFunctionality(true);
+                   }
+               }
+           });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     public void shareViaVueClicked() {
@@ -740,6 +761,8 @@ public class DataEntryActivity extends Activity {
         Utils.putTouchToChnageImageFlag(DataEntryActivity.this, false);
         Utils.putDataentryTopAddImageAisleCategory(DataEntryActivity.this, null);
         Utils.putDataentryTopAddImageAisleOccasion(DataEntryActivity.this, null);
+        Utils.putDataentryTopAddImageIncreamentMixpanelPostCount(
+                DataEntryActivity.this, false);
         Utils.putDataentryTopAddImageAisleDescription(DataEntryActivity.this,
                 null);
         ArrayList<DataentryImage> mAisleImagePathList = null;

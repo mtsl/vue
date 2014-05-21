@@ -7,19 +7,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,10 +31,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.lateralthoughts.vue.connectivity.DataBaseManager;
+import com.lateralthoughts.vue.logging.Logger;
 import com.lateralthoughts.vue.ui.AisleContentBrowser.AisleContentClickListener;
 import com.lateralthoughts.vue.ui.ArcMenu;
+import com.lateralthoughts.vue.user.VueUser;
+import com.lateralthoughts.vue.utils.Logging;
 import com.lateralthoughts.vue.utils.Utils;
 import com.origamilabs.library.views.StaggeredGridView;
 
@@ -48,7 +48,7 @@ import com.origamilabs.library.views.StaggeredGridView;
 //AisleWindowContent objects. At this point we are ready to setup the adapter for the
 //mTrendingAislesContentView.
 
-public class VueLandingAislesFragment extends Fragment {
+public class VueLandingAislesFragment extends Fragment implements NotifyAislesLoadedFromNetwork {
     private Context mContext;
     private VueContentGateway mVueContentGateway;
     private LandingPageViewAdapter mStaggeredAdapter;
@@ -60,6 +60,10 @@ public class VueLandingAislesFragment extends Fragment {
     
     public boolean mIsIdleState;
     private ProgressBar mTrendingLoad;
+    private boolean mHelpDialogShown = false;
+    private boolean mIsMyPointsDownLoadDone = false;
+    private int mGridDynamicMargins;
+    private boolean mShowProgressBarWhenAppropriate;
     
     // TODO: define a public interface that can be implemented by the parent
     // activity so that we can notify it with an ArrayList of AisleWindowContent
@@ -73,7 +77,6 @@ public class VueLandingAislesFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
-        
         // without much ado lets get started with retrieving the trending aisles
         // list
         mVueContentGateway = VueContentGateway.getInstance();
@@ -82,8 +85,8 @@ public class VueLandingAislesFragment extends Fragment {
         }
         
         mAisleClickListener = new AisleClickListener();
-        mStaggeredAdapter = new LandingPageViewAdapter(mContext,
-                mAisleClickListener);
+        mStaggeredAdapter = new LandingPageViewAdapter(mContext, mAisleClickListener);
+        VueTrendingAislesDataModel.getInstance(mContext).registerAisleLoadNotificationListeners(this);
     }
     
     @Override
@@ -107,10 +110,24 @@ public class VueLandingAislesFragment extends Fragment {
                 false);
         mStaggeredView = (StaggeredGridView) v.findViewById(R.id.aisles_grid);
         mTrendingLoad = (ProgressBar) v.findViewById(R.id.trending_load);
-        int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-        mStaggeredView.setItemMargin(margin); // set the GridView margin
-        
-        mStaggeredView.setPadding(margin, 0, margin, 0); // have the margin on
+
+        /*if(null != mAisleClickListener){
+            //Assert here? this can't be happening!
+            mAisleClickListener.hideProgressBar(0);
+        }else{
+            Logging.e("LandingAislesFragment","mAisleClickListener is not initialized but we are trying to hide progress bar!");
+        }*/
+
+        mGridDynamicMargins = getResources().getDimensionPixelSize(R.dimen.margin);
+        mStaggeredView.setItemMargin(mGridDynamicMargins); // set the GridView margin
+        SharedPreferences sharedPreferencesObj = getActivity()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        int trendingSwipeCountMaxReached = sharedPreferencesObj.getInt(
+                VueConstants.TRENDING_SWIPE_COUNT, 0);
+        if (trendingSwipeCountMaxReached > 3) {
+            AisleLoader.trendingSwipeBlock = true;
+        }
+        mStaggeredView.setPadding(mGridDynamicMargins, 0, mGridDynamicMargins, 0); // have the margin on
                                                          // the sides as well
         mStaggeredView.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -133,8 +150,42 @@ public class VueLandingAislesFragment extends Fragment {
                 
                 case SCROLL_STATE_IDLE:
                     mStaggeredAdapter.setIsScrolling(false);
+
                     VueApplication.getInstance().getRequestQueue()
                             .cancelAll(VueApplication.MORE_AISLES_REQUEST_TAG);
+                    if(mShowProgressBarWhenAppropriate){
+
+                        mStaggeredView.invalidate();
+                        mAisleClickListener.showProgressBar(0);
+                    }
+                    AisleLoader.isScrolling = false;
+                    if (!AisleLoader.trendingSwipeBlock) {
+                        // help swipe it should only display for 3 times.
+                        int waitTimeForNotifyAdapter = 400;
+                        final int waitTimeForCalingAnim = 200;
+                        new Handler().postDelayed(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                if (null != mStaggeredAdapter) {
+                                    mStaggeredAdapter.notifyDataSetChanged();
+                                    new Handler().postDelayed(new Runnable() {
+                                        
+                                        @Override
+                                        public void run() {
+                                            mStaggeredAdapter
+                                                    .swipeFromAdapterImage();
+                                            if (AisleLoader.sTrendingSwipeCount > 3) {
+                                                saveAisleSwip(4);
+                                            }
+                                            
+                                        }
+                                    }, waitTimeForCalingAnim);
+                                    
+                                }
+                            }
+                        }, waitTimeForNotifyAdapter);
+                    }
                     break;
                 }
             }
@@ -142,10 +193,7 @@ public class VueLandingAislesFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
-                if (totalItemCount > 0
-                        && mTrendingLoad.getVisibility() == View.VISIBLE) {
-                    mTrendingLoad.setVisibility(View.GONE);
-                }
+                AisleLoader.isScrolling = true;
                 if (VueTrendingAislesDataModel.getInstance(mContext).loadOnRequest
                         && VueLandingPageActivity.mLandingScreenName != null
                         && VueLandingPageActivity.mLandingScreenName
@@ -155,28 +203,39 @@ public class VueLandingAislesFragment extends Fragment {
                     int lastVisiblePosition = firstVisibleItem
                             + visibleItemCount;
                     if ((totalItemCount - lastVisiblePosition) < 5) {
-                        VueTrendingAislesDataModel
-                                .getInstance(mContext)
-                                .getNetworkHandler()
-                                .requestMoreAisle(
-                                        true,
-                                        getResources().getString(
-                                                R.string.trending));
+                        if (!VueContentGateway.mNomoreTrendingAilse) {
+                            mShowProgressBarWhenAppropriate = true;
+                            mStaggeredView.setPadding(mGridDynamicMargins, 0, mGridDynamicMargins, 50);
+                            VueTrendingAislesDataModel
+                                    .getInstance(mContext)
+                                    .getNetworkHandler()
+                                    .requestMoreAisle(true,getResources().getString(R.string.trending));
+                        }else{
+                            mAisleClickListener.hideProgressBar(0);
+                        }
                     }
                 }
                 
             }
         });
         mStaggeredView.setAdapter(mStaggeredAdapter);
+        // TODO: examine this code whether empty space is getting or not in
+        // trending list view.
+        mStaggeredAdapter.notifyDataSetChanged();
         return v;
     }
-    
+
+    @Override
+    public void aislesLoadedFromNetwork() {
+        mAisleClickListener.hideProgressBar(0);
+    }
+
     private class AisleClickListener implements AisleContentClickListener {
         @Override
         public void onAisleClicked(String id, int count, int aisleImgCurrentPos) {
             if (VueLandingPageActivity.mOtherSourceImagePath == null) {
                 VueApplication.getInstance().saveTrendingRefreshTime(0);
-                Map<String, String> articleParams = new HashMap<String, String>();
+                
                 VueUser storedVueUser = null;
                 try {
                     storedVueUser = Utils.readUserObjectFromFile(getActivity(),
@@ -184,32 +243,24 @@ public class VueLandingAislesFragment extends Fragment {
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
-                if (storedVueUser != null) {
-                    articleParams.put("User_Id",
-                            Long.valueOf(storedVueUser.getId()).toString());
-                } else {
-                    articleParams.put("User_Id", "anonymous");
+                if (storedVueUser != null && storedVueUser.getId() != null) {
+                    DataBaseManager.getInstance(mContext)
+                            .updateOrAddRecentlyViewedAisles(id);
+                    Intent intent = new Intent();
+                    intent.setClass(VueApplication.getInstance(),
+                            AisleDetailsViewActivity.class);
+                    VueApplication.getInstance().setClickedWindowID(id);
+                    VueApplication.getInstance().setClickedWindowCount(count);
+                    VueApplication.getInstance().setmAisleImgCurrentPos(
+                            aisleImgCurrentPos);
+                    startActivity(intent);
                 }
-                
-                DataBaseManager.getInstance(mContext)
-                        .updateOrAddRecentlyViewedAisles(id);
-                
-                FlurryAgent.logEvent("User_Select_Aisle", articleParams);
-                Intent intent = new Intent();
-                intent.setClass(VueApplication.getInstance(),
-                        AisleDetailsViewActivity.class);
-                VueApplication.getInstance().setClickedWindowID(id);
-                VueApplication.getInstance().setClickedWindowCount(count);
-                VueApplication.getInstance().setmAisleImgCurrentPos(
-                        aisleImgCurrentPos);
-                startActivity(intent);
             } else {
                 VueLandingPageActivity vueLandingPageActivity = (VueLandingPageActivity) getActivity();
                 vueLandingPageActivity.hideDefaultActionbar();
                 VueLandingPageActivity.mOtherSourceAddImageAisleId = id;
                 notifyAdapters();
             }
-            
         }
         
         @Override
@@ -227,6 +278,7 @@ public class VueLandingAislesFragment extends Fragment {
         public boolean onDoubleTap(String id) {
             AisleWindowContent windowItem = VueTrendingAislesDataModel
                     .getInstance(VueApplication.getInstance()).getAisleAt(id);
+            String profileUrl = windowItem.getAisleContext().mProfileThumbnail;
             int finalWidth = 0, finaHeight = 0;
             if (windowItem.getImageList().get(0).mAvailableHeight >= windowItem
                     .getBestHeightForWindow()) {
@@ -247,6 +299,7 @@ public class VueLandingAislesFragment extends Fragment {
             String writeSdCard = null;
             writeSdCard = "*************************aisle info:"
                     + " started***********************\n";
+            writeSdCard = writeSdCard + "\n ProfileImageUrl: " + profileUrl;
             writeSdCard = writeSdCard + "\nAisleId: " + windowItem.getAisleId()
                     + "\n" + "Smallest Image Height: "
                     + windowItem.getImageList().get(0).mTrendingImageHeight
@@ -273,6 +326,11 @@ public class VueLandingAislesFragment extends Fragment {
             
             writeSdCard = writeSdCard
                     + "\n###################### info end ################################";
+            
+            writeSdCard = writeSdCard + "\n "
+                    + windowItem.getAisleContext().mFirstName + " ???? "
+                    + windowItem.getAisleContext().mLastName;
+            
             writeToSdcard(writeSdCard);
             return false;
         }
@@ -283,18 +341,39 @@ public class VueLandingAislesFragment extends Fragment {
         }
         
         @Override
-        public void hideProgressBar() {
+        public void hideProgressBar(int count) {
             if (mTrendingLoad.getVisibility() == View.VISIBLE) {
                 mTrendingLoad.setVisibility(View.GONE);
+                //notifyAdapters();
+                if (!mIsMyPointsDownLoadDone) {
+                    // load lazily after completion of all trending initial data
+                    // loading
+                    int waitTime = 10000;
+                    new Handler().postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            MyPoints points = new MyPoints();
+                            points.execute();
+                        }
+                    }, waitTime);
+                    
+                }
+                mStaggeredView.setPadding(mGridDynamicMargins,0,mGridDynamicMargins,0);
+                mShowProgressBarWhenAppropriate = false;
+                //mStaggeredView.invalidate();
             }
         }
         
         @Override
-        public void showProgressBar() {
+        public void showProgressBar(int count) {
             if (mTrendingLoad.getVisibility() == View.GONE) {
-                mTrendingLoad.setVisibility(View.VISIBLE);
+                if (VueLandingPageActivity.mLandingScreenActive) {
+                    mTrendingLoad.setVisibility(View.VISIBLE);
+                } else {
+                    mTrendingLoad.setVisibility(View.GONE);
+                }
             }
-            
         }
     }
     
@@ -324,17 +403,18 @@ public class VueLandingAislesFragment extends Fragment {
     }
     
     private void writeToSdcard(String message) {
-        
+        if (!Logger.sWrightToSdCard) {
+            return;
+        }
         String path = Environment.getExternalStorageDirectory().toString();
         File dir = new File(path + "/vueImageDetails/");
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
+        File file = new File(dir, "/" + "vueImageDetails_"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -353,4 +433,36 @@ public class VueLandingAislesFragment extends Fragment {
         }
     }
     
+    private class MyPoints extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            VueLandingPageActivity.sMyPointsAvailable = false;
+        }
+        
+        @Override
+        protected Void doInBackground(Void... params) {
+            mIsMyPointsDownLoadDone = true;
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            VueTrendingAislesDataModel
+                    .getInstance(VueApplication.getInstance())
+                    .getNetworkHandler().getMyAislesPoints();
+            VueLandingPageActivity.sMyPointsAvailable = true;
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+    
+    private void saveAisleSwip(int count) {
+        SharedPreferences sharedPreferencesObj = getActivity()
+                .getSharedPreferences(VueConstants.SHAREDPREFERENCE_NAME, 0);
+        Editor editor = sharedPreferencesObj.edit();
+        editor.putInt(VueConstants.TRENDING_SWIPE_COUNT, count);
+        editor.commit();
+        AisleLoader.trendingSwipeBlock = true;
+    }
 }

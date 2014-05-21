@@ -59,6 +59,7 @@ public class VueTrendingAislesDataModel {
     private final LinkedBlockingQueue<Runnable> threadsQueue = new LinkedBlockingQueue<Runnable>();
     public DataBaseManager mDbManager;
     NetworkHandler mNetworkHandler;
+    ArrayList<NotifyAislesLoadedFromNetwork> mAislesLoadNotificationListeners;
     
     private VueTrendingAislesDataModel(Context context) {
         mContext = context;
@@ -78,6 +79,7 @@ public class VueTrendingAislesDataModel {
                 .currentTimeMillis();
         mNetworkHandler.loadInitialData(loadMore, mHandler, mContext
                 .getResources().getString(R.string.trending));
+        mAislesLoadNotificationListeners = new ArrayList<NotifyAislesLoadedFromNetwork>();
     }
     
     public NetworkHandler getNetworkHandler() {
@@ -203,6 +205,14 @@ public class VueTrendingAislesDataModel {
         return null;
     }
     
+    public boolean isAisleExists(AisleWindowContent aisleItem) {
+        boolean exist = false;
+        if (mAisleContentList.contains(aisleItem)) {
+            exist = true;
+        }
+        return exist;
+    }
+    
     public int getAilsePosition(AisleWindowContent aisleItem) {
         return mAisleContentList.indexOf(aisleItem);
     }
@@ -284,11 +294,14 @@ public class VueTrendingAislesDataModel {
             mIsFromDb = true;
             
             for (AisleWindowContent content : aisleContentArray) {
-                AisleWindowContent aisleItem = getAisleItem(content
-                        .getAisleId());
-                aisleItem.addAisleContent(content.getAisleContext(),
-                        content.getImageList());
-                addItemToList(aisleItem.getAisleId(), aisleItem);
+                
+                if (content.getImageList() != null
+                        && content.getImageList().size() > 0) {
+                    
+                    content.addAisleContent(content.getAisleContext(),
+                            content.getImageList());
+                    addItemToList(content.getAisleId(), content);
+                }
             }
             for (IAisleDataObserver observer : mAisleDataObserver) {
                 observer.onAisleDataUpdated(mAisleContentList.size());
@@ -396,9 +409,18 @@ public class VueTrendingAislesDataModel {
         return userImageList;
     }
     
+    public void registerAisleLoadNotificationListeners(
+            NotifyAislesLoadedFromNetwork listener) {
+        if (null != listener)
+            mAislesLoadNotificationListeners.add(listener);
+    }
+    
     public void dismissProgress() {
         if (mNotifyProgress != null) {
             mNotifyProgress.dismissProgress(mRequestToServer);
+        }
+        for (int i = 0; i < mAislesLoadNotificationListeners.size(); i++) {
+            mAislesLoadNotificationListeners.get(i).aislesLoadedFromNetwork();
         }
     }
     
@@ -431,11 +453,33 @@ public class VueTrendingAislesDataModel {
         if (aisleImageDetails != null && aisleImageDetails.mRatingsList != null
                 && aisleImageDetails.mRatingsList.size() > 0) {
             for (int i = 0; i < aisleImageDetails.mRatingsList.size(); i++) {
-                if (aisleImageDetails.mRatingsList.get(i).mId.equals(ratingId)) {
-                    aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
-                    break;
+                if (aisleImageDetails.mRatingsList.get(i).mId != null) {
+                    if (aisleImageDetails.mRatingsList.get(i).mId
+                            .equals(ratingId)) {
+                        aisleImageDetails.mRatingsList.get(i).mLiked = likeOrDislike;
+                        break;
+                    }
                 }
             }
         }
+    }
+    
+    public ArrayList<String> getImagesForUserAndAisleId(String aisleId,
+            String userId) {
+        AisleWindowContent aisleWindowContent = getAisleAt(aisleId);
+        if (aisleWindowContent != null
+                && aisleWindowContent.getImageList() != null
+                && aisleWindowContent.getImageList().size() > 0) {
+            ArrayList<String> imageOwnerUserIds = new ArrayList<String>();
+            for (int i = 0; i < aisleWindowContent.getImageList().size(); i++) {
+                if (aisleWindowContent.getImageList().get(i).mOwnerUserId
+                        .equals(userId)) {
+                    imageOwnerUserIds.add(aisleWindowContent.getImageList()
+                            .get(i).mOwnerUserId);
+                }
+            }
+            return imageOwnerUserIds;
+        }
+        return null;
     }
 }

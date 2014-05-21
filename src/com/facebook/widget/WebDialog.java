@@ -51,6 +51,7 @@ import com.facebook.internal.ServerProtocol;
 import com.facebook.internal.Utility;
 import com.facebook.internal.Validate;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
 import com.lateralthoughts.vue.VueConstants;
 import com.lateralthoughts.vue.utils.Utils;
 
@@ -206,12 +207,14 @@ public class WebDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Utils.appInstalledOrNot(VueConstants.FACEBOOK_PACKAGE_NAME,
-                getContext())) {
+        if (!VueApplication.getInstance().isPostingOnFriendsWallFlag
+                && Utils.appInstalledOrNot(VueConstants.FACEBOOK_PACKAGE_NAME,
+                        getContext())) {
             Toast.makeText(getContext(),
                     "You don't have the right version of facebook",
                     Toast.LENGTH_LONG).show();
         }
+        VueApplication.getInstance().isPostingOnFriendsWallFlag = false;
         setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {

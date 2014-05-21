@@ -9,13 +9,13 @@
     <com.origamilabs.library.views.StaggeredGridView
         android:id="@+id/aisles_grid"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
+        android:layout_height="wrap_content" />
     <ProgressBar
-        android:id="@+id/trending_load"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+            android:id="@+id/trending_load"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:filterTouchesWhenObscured="true"/>
 
 </RelativeLayout>

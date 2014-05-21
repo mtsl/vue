@@ -73,6 +73,7 @@ public class ArcMenu extends RelativeLayout {
         browserLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                
                 itemClickFunctionality(browserLayout, 2);
             }
         });
@@ -252,10 +253,12 @@ public class ArcMenu extends RelativeLayout {
             } else {
                 if (Utils.appInstalledOrNot(
                         VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0], context)) {
-                    createAisleSelectionActivity.loadShoppingApplication(
-                            VueApplication.SHOPPINGAPP_ACTIVITIES_ARRAY[0],
-                            VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0],
-                            VueApplication.SHOPPINGAPP_NAMES_ARRAY[0]);
+                    createAisleSelectionActivity
+                            .loadShoppingApplication(
+                                    VueApplication.getInstance().mShoppingApplicationDetailsList
+                                            .get(0).getActivityName(),
+                                    VueApplication.SHOPPINGAPP_PACKAGES_ARRAY[0],
+                                    VueApplication.SHOPPINGAPP_NAMES_ARRAY[0]);
                 } else {
                     createAisleSelectionActivity
                             .showAlertMessageForAppInstalation(
@@ -266,6 +269,7 @@ public class ArcMenu extends RelativeLayout {
             break;
         // Browser
         case 2:
+            createAisleSelectionActivity.trackBrowserClickEvent();
             Utils.setLoadDataentryScreenFlag(context, true);
             // Load Browser...
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri

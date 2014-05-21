@@ -27,24 +27,31 @@ public class CrashActivity extends Activity {
      * @param message
      *            String
      */
-    @SuppressWarnings("deprecation")
+ 
     void showAlert(String message) {
-        AlertDialog alert = new AlertDialog.Builder(this).create();
-        alert.setMessage(message);
-        alert.setButton(getResources().getString(R.string.ok),
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton(
+                getResources().getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
+                        
+                        dialog.cancel();
                         finish();
                     }
                 });
-        alert.show();
-        alert.setOnCancelListener(new OnCancelListener() {
+        alertDialogBuilder.setOnCancelListener(new OnCancelListener() {
             
+            @Override
             public void onCancel(DialogInterface dialog) {
                 finish();
+                
             }
         });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        
         return;
     }
     

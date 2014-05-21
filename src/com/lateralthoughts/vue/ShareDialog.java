@@ -3,35 +3,35 @@ package com.lateralthoughts.vue;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.flurry.android.FlurryAgent;
+import com.lateralthoughts.vue.user.VueUserProfile;
 import com.lateralthoughts.vue.utils.InstalledPackageRetriever;
 import com.lateralthoughts.vue.utils.ShoppingApplicationDetails;
 import com.lateralthoughts.vue.utils.Utils;
@@ -47,18 +47,16 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
  */
 public class ShareDialog {
     
-    private LayoutInflater mLayoutInflater;
-    private AlertDialog.Builder mScreenDialog;
     private ArrayList<String> mAppNames = new ArrayList<String>();
     private ArrayList<String> mActivityNames = new ArrayList<String>();
     private ArrayList<String> mPackageNames = new ArrayList<String>();
-    private ArrayList<Drawable> mAppIcons = new ArrayList<Drawable>();
+    private ArrayList<String> mAppIconsPath = new ArrayList<String>();
     private Intent mSendIntent;
     private Context mContext;
     private Activity mActivity;
     private InstalledPackageRetriever mShareIntentObj;
     public boolean mShareIntentCalled = false;
-    private Dialog mDialog;
+    private AlertDialog.Builder mAlertDialogBuilder;
     private int mCurrentAislePosition;
     private ArrayList<clsShare> mImagePathArray;
     private ProgressDialog mShareDialog;
@@ -69,6 +67,10 @@ public class ShareDialog {
     private DataEntryFragment.ShareViaVueListner mDataentryScreenShareViaVueListner;
     private ListView mListview = null;
     private MixpanelAPI mixpanel;
+    private static final String APPLINK = "https://play.google.com/store/apps/details?id=com.lateralthoughts.vue";
+    private JSONObject aisleSharedProps;
+    VueLandingPageActivity.OnShare shareIndicatorObject;
+    private AlertDialog mAlertDialog;
     
     public void dismisDialog() {
         mShareDialog.dismiss();
@@ -79,13 +81,12 @@ public class ShareDialog {
      * @param context
      *            Context
      */
-    public ShareDialog(Context context, Activity activity) {
-        mixpanel = MixpanelAPI.getInstance(activity,
-                VueApplication.getInstance().MIXPANEL_TOKEN);
+    public ShareDialog(Context context, Activity activity,
+            MixpanelAPI mixpanel, JSONObject aisleSharedProps) {
+        this.mixpanel = mixpanel;
         this.mContext = context;
         this.mActivity = activity;
-        mLayoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.aisleSharedProps = aisleSharedProps;
     }
     
     public void share(
@@ -95,7 +96,9 @@ public class ShareDialog {
             int currentAislePosition,
             VueAisleDetailsViewFragment.ShareViaVueListner detailsScreenShareViaVueListner,
             DataEntryFragment.ShareViaVueListner dataentryScreenShareViaVueListner,
-            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner) {
+            VueLandingPageActivity.ShareViaVueListner landingScreenShareViaVueListner,
+            VueLandingPageActivity.OnShare shareIndicatorObj) {
+        shareIndicatorObject = shareIndicatorObj;
         mShareIntentCalled = false;
         mDetailsScreenShareViaVueListner = detailsScreenShareViaVueListner;
         mDataentryScreenShareViaVueListner = dataentryScreenShareViaVueListner;
@@ -104,12 +107,6 @@ public class ShareDialog {
         mCurrentAislePosition = currentAislePosition;
         prepareShareIntentData();
         openScreenDialog();
-    }
-    
-    private void showAllInstalledApplications() {
-        mLoadAllApplications = true;
-        prepareDisplayData(VueApplication.getInstance().mMoreInstalledApplicationDetailsList);
-        mListview.setAdapter(new CustomAdapter());
     }
     
     public void loadShareApplications(
@@ -127,24 +124,52 @@ public class ShareDialog {
                 .getString(R.string.app_name), mContext.getResources()
                 .getString(R.string.sharing_mesg), true);
         mShareDialog.dismiss();
-        mDialog = new Dialog(mContext, R.style.Theme_Dialog_Translucent);
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(R.layout.sharedialogue);
-        TextView dialogtitle = (TextView) mDialog
-                .findViewById(R.id.dialogtitle);
-        mListview = (ListView) mDialog.findViewById(R.id.networklist);
-        TextView okbuton = (TextView) mDialog.findViewById(R.id.shownetworkok);
+        mAlertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(
+                mContext, R.style.AppBaseTheme));
+        mAlertDialogBuilder.setTitle("Share with ...");
         if (mFromCreateAislePopupFlag || mLoadAllApplications) {
-            dialogtitle.setText("Open ...");
+            mAlertDialogBuilder.setTitle("Open ...");
         }
-        mListview.setAdapter(new CustomAdapter());
-        mListview.setDivider(mContext.getResources().getDrawable(
-                R.drawable.share_dialog_divider));
+        mAlertDialogBuilder.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        InputMethodManager i1pm = (InputMethodManager) mContext
+                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        i1pm.hideSoftInputFromWindow(null, 0);
+                        dialog.cancel();
+                    }
+                });
+        mListview = new ListView(mContext);
+        ListAdapter adapter = new ArrayAdapter<String>(mContext,
+                android.R.layout.select_dialog_item, android.R.id.text1,
+                mAppNames) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView) v.findViewById(android.R.id.text1);
+                tv.setTextSize(16);
+                
+                try {
+                    tv.setCompoundDrawablesWithIntrinsicBounds(
+                            mContext.getPackageManager().getApplicationIcon(
+                                    mPackageNames.get(position)), null, null,
+                            null);
+                } catch (NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                int dp5 = (int) (5 * mContext.getResources()
+                        .getDisplayMetrics().density + 0.5f);
+                tv.setCompoundDrawablePadding(dp5);
+                tv.setText(mAppNames.get(position));
+                return v;
+            }
+        };
+        mListview.setAdapter(adapter);
         mListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v,
                     int position, long id) {
-                mixpanel.track("Ailse_shared", null);
-                FlurryAgent.logEvent("Ailse_share");
+                if (shareIndicatorObject != null) {
+                    shareIndicatorObject.onShare(true);
+                }
                 if (mFromCreateAislePopupFlag) {
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     if (createAisleSelectionActivity != null) {
@@ -152,12 +177,10 @@ public class ShareDialog {
                             if (mAppNames.get(position).equals(
                                     mContext.getResources().getString(
                                             R.string.more))) {
-                                // show another dialog for displaying installed
-                                // apps...
-                                showAllInstalledApplications();
+                                // Nothing...
                             }
                         } else {
-                            mDialog.dismiss();
+                            mAlertDialog.dismiss();
                             createAisleSelectionActivity
                                     .loadShoppingApplication(
                                             mActivityNames.get(position),
@@ -166,130 +189,52 @@ public class ShareDialog {
                         }
                     }
                 } else if (mLoadAllApplications) {
-                    mDialog.dismiss();
+                    mAlertDialog.dismiss();
                     CreateAisleSelectionActivity createAisleSelectionActivity = (CreateAisleSelectionActivity) mContext;
                     createAisleSelectionActivity.loadShoppingApplication(
                             mActivityNames.get(position),
                             mPackageNames.get(position),
                             mAppNames.get(position));
                 } else {
-                    shareIntent(position);
+                    String sharedVia = shareIntent(position);
+                    
+                    try {
+                        if (aisleSharedProps != null && sharedVia != null)
+                            aisleSharedProps.put("shared to", sharedVia);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (mixpanel != null)
+                        mixpanel.track("Aisle Shared", aisleSharedProps);
                 }
             }
         });
-        mDialog.setOnDismissListener(new OnDismissListener() {
+        mAlertDialogBuilder.setView(mListview);
+        mAlertDialog = mAlertDialogBuilder.create();
+        mAlertDialog.show();
+        mAlertDialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
                 try {
                     mAppNames.clear();
                     mActivityNames.clear();
-                    mAppIcons.clear();
+                    mAppIconsPath.clear();
                     mPackageNames.clear();
                 } catch (Exception e) {
                 }
                 mShareIntentObj = null;
             }
         });
-        mDialog.show();
-        okbuton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialog.dismiss();
-                InputMethodManager i1pm = (InputMethodManager) mContext
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                i1pm.hideSoftInputFromWindow(null, 0);
-            }
-        });
-        mScreenDialog = new AlertDialog.Builder(mContext);
-        mScreenDialog.setTitle(mContext.getResources().getString(
-                R.string.share_via_mesg));
     }
     
-    /**
-     * Adapter to set on popup dialogue
-     * 
-     * */
-    private class CustomAdapter extends BaseAdapter {
-        /**
-         * returns the count
-         * 
-         * @return int
-         */
-        public int getCount() {
-            return mAppNames.size();
-        }
-        
-        /**
-         * @param arg0
-         *            int
-         * @return Object
-         */
-        public Object getItem(int arg0) {
-            return arg0;
-        }
-        
-        /**
-         * @param arg0
-         *            int
-         * @return long
-         */
-        public long getItemId(int arg0) {
-            return arg0;
-        }
-        
-        /**
-         * @param position
-         *            int
-         * 
-         * @param convertView
-         *            View
-         * @param parent
-         *            ViewGroup
-         * @return View
-         */
-        public View getView(final int position, View convertView,
-                ViewGroup parent) {
-            Holder holderView = null;
-            if (convertView == null) {
-                holderView = new Holder();
-                convertView = mLayoutInflater.inflate(R.layout.sharedialog_row,
-                        null);
-                holderView.network = (TextView) convertView
-                        .findViewById(R.id.gmail);
-                holderView.launcheicon = (ImageView) convertView
-                        .findViewById(R.id.launchericon);
-                convertView.setTag(holderView);
-            } else {
-                holderView = (Holder) convertView.getTag();
-            }
-            if (mAppIcons.get(position) != null) {
-                holderView.launcheicon
-                        .setImageDrawable(mAppIcons.get(position));
-            } else {
-                if (mAppNames.get(position).equals(
-                        mContext.getResources().getString(R.string.more))) {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.more_icon);
-                } else if (mAppNames.get(position).equals(
-                        mContext.getResources().getString(R.string.browser))) {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.browser_icon);
-                } else {
-                    holderView.launcheicon
-                            .setImageResource(R.drawable.vue_launcher_icon);
-                }
-            }
-            holderView.network.setText(mAppNames.get(position));
-            return convertView;
-        }
-    }
-    
-    private void shareIntent(final int position) {
+    private String shareIntent(final int position) {
         mShareDialog.show();
+        String shareVia = null;
         try {
             if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.FACEBOOK_APP_NAME)) {
-                mDialog.dismiss();
+                shareVia = "Facebook";
+                mAlertDialog.dismiss();
                 mShareDialog.dismiss();
                 String shareText = "";
                 // User Aisle...
@@ -297,13 +242,32 @@ public class ShareDialog {
                     shareText = mImagePathArray.get(0).getAisleOwnerName()
                             + " would like your opinion in finding "
                             + mImagePathArray.get(0).getLookingFor()
-                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                            + APPLINK;
+                    
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles!";
+                            + ". Get Vue to create your own aisles! " + APPLINK;
                 }
                 Intent i = new Intent(mContext, VueLoginActivity.class);
                 Bundle b = new Bundle();
@@ -318,22 +282,27 @@ public class ShareDialog {
                 mContext.startActivity(i);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.GOOGLEPLUS_APP_NAME)) {
+                shareVia = "GooglePlus";
                 shareImageAndText(position);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.GMAIL_APP_NAME)) {
+                shareVia = "Gmail";
                 shareImageAndText(position);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.INSTAGRAM_APP_NAME)) {
-                shareSingleImage(position, mCurrentAislePosition);
+                shareVia = "Instagram";
+                shareSingleImage(position, mCurrentAislePosition, false);
             } else if (mAppNames.get(position).equalsIgnoreCase(
                     VueConstants.TWITTER_APP_NAME)) {
-                shareText(position);
+                shareVia = "Twitter";
+                shareSingleImage(position, mCurrentAislePosition, true);
             } else if (mAppNames.get(position)
                     .equalsIgnoreCase(
                             mContext.getApplicationContext()
                                     .getApplicationInfo()
                                     .loadLabel(mContext.getPackageManager())
                                     .toString())) {
+                shareVia = "Vue";
                 if (mImagePathArray.get(mCurrentAislePosition).getAisleId() != null
                         && mImagePathArray.get(mCurrentAislePosition)
                                 .getImageId() != null) {
@@ -342,38 +311,38 @@ public class ShareDialog {
                             mImagePathArray.get(mCurrentAislePosition)
                                     .getImageId());
                 } else {
-                    shareSingleImage(position, mCurrentAislePosition);
+                    shareSingleImage(position, mCurrentAislePosition, false);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mDialog.dismiss();
+            mAlertDialog.dismiss();
             mShareDialog.dismiss();
             showAlertMessageShareError(mAppNames.get(position), false);
         }
+        return shareVia;
     }
     
     private void showAlertMessageShareError(String appName, boolean fberror) {
-        final Dialog gplusdialog = new Dialog(mContext,
-                R.style.Theme_Dialog_Translucent);
-        gplusdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        gplusdialog.setContentView(R.layout.vue_popup);
-        TextView messagetext = (TextView) gplusdialog
-                .findViewById(R.id.messagetext);
-        if (!fberror)
-            messagetext.setText("Unable to Share content to " + appName);
-        else
-            messagetext.setText(appName);
-        TextView noButton = (TextView) gplusdialog.findViewById(R.id.nobutton);
-        noButton.setVisibility(View.GONE);
-        TextView okButton = (TextView) gplusdialog.findViewById(R.id.okbutton);
-        okButton.setText("OK");
-        okButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                gplusdialog.dismiss();
-            }
-        });
-        gplusdialog.show();
+        String message = "";
+        if (!fberror) {
+            message = "Unable to Share content to " + appName;
+        } else {
+            message = appName;
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                mContext);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setTitle("Vue");
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        
     }
     
     private void prepareShareIntentData() {
@@ -384,7 +353,7 @@ public class ShareDialog {
             mShareIntentObj.getInstalledPackages();
             mAppNames = mShareIntentObj.getAppNames();
             mPackageNames = mShareIntentObj.getpackageNames();
-            mAppIcons = mShareIntentObj.getDrawables();
+            mAppIconsPath = mShareIntentObj.getDrawables();
         }
     }
     
@@ -394,31 +363,26 @@ public class ShareDialog {
                 && dataEntryShoppingApplicationsList.size() > 0) {
             mAppNames.clear();
             mActivityNames.clear();
-            mAppIcons.clear();
+            mAppIconsPath.clear();
             mPackageNames.clear();
             for (int i = 0; i < dataEntryShoppingApplicationsList.size(); i++) {
                 mAppNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getAppName());
                 mPackageNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getPackageName());
-                mAppIcons.add(dataEntryShoppingApplicationsList.get(i)
-                        .getAppIcon());
+                mAppIconsPath.add(dataEntryShoppingApplicationsList.get(i)
+                        .getAppIconPath());
                 mActivityNames.add(dataEntryShoppingApplicationsList.get(i)
                         .getActivityName());
             }
         }
     }
     
-    private class Holder {
-        TextView network;
-        ImageView launcheicon;
-    }
-    
     private void shareToVue(String aisleId, String imageId) {
         VueApplication.getInstance().mShareViaVueClickedFlag = true;
         VueApplication.getInstance().mShareViaVueClickedAisleId = aisleId;
         VueApplication.getInstance().mShareViaVueClickedImageId = imageId;
-        mDialog.dismiss();
+        mAlertDialog.dismiss();
         if (mDataentryScreenShareViaVueListner != null) {
             mDataentryScreenShareViaVueListner.onAisleShareToVue();
         } else if (mDetailsScreenShareViaVueListner != null) {
@@ -429,7 +393,7 @@ public class ShareDialog {
     }
     
     private void shareImageAndText(final int position) {
-        mDialog.dismiss();
+        mAlertDialog.dismiss();
         mShareIntentCalled = true;
         mShareDialog.show();
         Thread t = new Thread(new Runnable() {
@@ -472,13 +436,31 @@ public class ShareDialog {
                     shareText = mImagePathArray.get(0).getAisleOwnerName()
                             + " would like your opinion in finding "
                             + mImagePathArray.get(0).getLookingFor()
-                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
+                            + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                            + APPLINK;
                 } else {
-                    shareText = VueApplication.getInstance().getmUserName()
+                    String userName = null;
+                    if (VueApplication.getInstance().getmUserName() != null) {
+                        userName = VueApplication.getInstance().getmUserName();
+                    } else {
+                        VueUserProfile storedUserProfile = null;
+                        try {
+                            storedUserProfile = Utils
+                                    .readUserProfileObjectFromFile(
+                                            mContext,
+                                            VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (storedUserProfile != null) {
+                            userName = storedUserProfile.getUserName();
+                        }
+                    }
+                    shareText = userName
                             + " would like you to check this aisle out on Vue - "
                             + mImagePathArray.get(0).getLookingFor() + " by "
                             + mImagePathArray.get(0).getAisleOwnerName()
-                            + ". Get Vue to create your own aisles!";
+                            + ". Get Vue to create your own aisles! " + APPLINK;
                 }
                 mSendIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
                 mSendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("mailto:"));
@@ -494,7 +476,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -504,7 +486,6 @@ public class ShareDialog {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mScreenDialog.setCancelable(true);
                         mActivity.startActivityForResult(mSendIntent,
                                 VueConstants.SHARE_INTENT_REQUEST_CODE);
                     }
@@ -515,8 +496,8 @@ public class ShareDialog {
     }
     
     private void shareSingleImage(final int position,
-            final int currentAislePosition) {
-        mDialog.dismiss();
+            final int currentAislePosition, final boolean fromTwitterApp) {
+        mAlertDialog.dismiss();
         mShareIntentCalled = true;
         mShareDialog.show();
         Thread t = new Thread(new Runnable() {
@@ -551,8 +532,52 @@ public class ShareDialog {
                     }
                     imageUri = Uri.fromFile(f);
                 }
+                String shareText = "";
+                if (fromTwitterApp) {
+                    shareText = mImagePathArray.get(0).getLookingFor() + " by "
+                            + mImagePathArray.get(0).getAisleOwnerName() + ". "
+                            + APPLINK;
+                } else {
+                    // User Aisle...
+                    if (mImagePathArray.get(0).isUserAisle().equals("1")) {
+                        shareText = mImagePathArray.get(0).getAisleOwnerName()
+                                + " would like your opinion in finding "
+                                + mImagePathArray.get(0).getLookingFor()
+                                + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more. "
+                                + APPLINK;
+                    } else {
+                        String userName = null;
+                        if (VueApplication.getInstance().getmUserName() != null) {
+                            userName = VueApplication.getInstance()
+                                    .getmUserName();
+                        } else {
+                            VueUserProfile storedUserProfile = null;
+                            try {
+                                storedUserProfile = Utils
+                                        .readUserProfileObjectFromFile(
+                                                mContext,
+                                                VueConstants.VUE_APP_USERPROFILEOBJECT__FILENAME);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (storedUserProfile != null) {
+                                userName = storedUserProfile.getUserName();
+                            }
+                        }
+                        shareText = userName
+                                + " would like you to check this aisle out on Vue - "
+                                + mImagePathArray.get(0).getLookingFor()
+                                + " by "
+                                + mImagePathArray.get(0).getAisleOwnerName()
+                                + ". Get Vue to create your own aisles! "
+                                + APPLINK;
+                    }
+                }
+                mSendIntent.setAction(Intent.ACTION_SEND);
                 mSendIntent.setType("image/*");
                 mSendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+                        shareText);
                 String activityname = null;
                 if (mAppNames.get(position).equals(VueConstants.GMAIL_APP_NAME)) {
                     activityname = VueConstants.GMAIL_ACTIVITY_NAME;
@@ -561,7 +586,7 @@ public class ShareDialog {
                     activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.TWITTER_APP_NAME)) {
-                    activityname = VueConstants.TWITTER_ACTIVITY_NAME;
+                    activityname = VueApplication.getInstance().twitterActivityName;
                 } else if (mAppNames.get(position).equals(
                         VueConstants.INSTAGRAM_APP_NAME)) {
                     activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
@@ -576,7 +601,6 @@ public class ShareDialog {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mScreenDialog.setCancelable(true);
                         mActivity.startActivityForResult(mSendIntent,
                                 VueConstants.SHARE_INTENT_REQUEST_CODE);
                     }
@@ -586,44 +610,8 @@ public class ShareDialog {
         t.start();
     }
     
-    private void shareText(int position) {
-        mDialog.dismiss();
-        mShareIntentCalled = true;
-        mShareDialog.show();
-        String shareText = "";
-        // User Aisle...
-        if (mImagePathArray.get(0).isUserAisle().equals("1")) {
-            shareText = mImagePathArray.get(0).getAisleOwnerName()
-                    + " would like your opinion in finding "
-                    + mImagePathArray.get(0).getLookingFor()
-                    + ". Please help out by liking the picture you choose. Get Vue to create your own aisles and help more.";
-        } else {
-            shareText = VueApplication.getInstance().getmUserName()
-                    + " would like you to check this aisle out on Vue - "
-                    + mImagePathArray.get(0).getLookingFor() + " by "
-                    + mImagePathArray.get(0).getAisleOwnerName()
-                    + ". Get Vue to create your own aisles!";
-        }
-        mSendIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
-        String activityname = null;
-        if (mAppNames.get(position).equals(VueConstants.TWITTER_APP_NAME)) {
-            activityname = VueConstants.TWITTER_ACTIVITY_NAME;
-        } else if (mAppNames.get(position).equals(VueConstants.GMAIL_APP_NAME)) {
-            activityname = VueConstants.GMAIL_ACTIVITY_NAME;
-        } else if (mAppNames.get(position).equals(
-                VueConstants.GOOGLEPLUS_APP_NAME)) {
-            activityname = VueConstants.GOOGLEPLUS_ACTIVITY_NAME;
-        } else if (mAppNames.get(position).equals(
-                VueConstants.INSTAGRAM_APP_NAME)) {
-            activityname = VueConstants.INSTAGRAM_ACTIVITY_NAME;
-        }
-        mSendIntent.setClassName(mPackageNames.get(position), activityname);
-        mScreenDialog.setCancelable(true);
-        mActivity.startActivityForResult(mSendIntent,
-                VueConstants.SHARE_INTENT_REQUEST_CODE);
-    }
-    
     public interface ShareViaVueClickedListner {
         public void onAisleShareToVue();
     }
+    
 }

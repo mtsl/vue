@@ -66,8 +66,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
             ArrayList<AisleWindowContent> content) {
         mContext = c;
         
-        mVueTrendingAislesDataModel = VueTrendingAislesDataModel
-                .getInstance(mContext);
+        mVueTrendingAislesDataModel = VueTrendingAislesDataModel.getInstance(mContext);
         mVueTrendingAislesDataModel.registerAisleDataObserver(this);
         mLoader = AisleLoader.getInstance(mContext);
         mIsScrolling = false;
@@ -127,6 +126,7 @@ public class TrendingAislesGenericAdapter extends BaseAdapter implements
         TextView likeCount, bookMarkCount,share_count;
         ImageView bookmarkImageView,shareImage;
         RelativeLayout socialCard;
+        LinearLayout no_image_lay;
     }
     
 }

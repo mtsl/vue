@@ -16,8 +16,15 @@
 
 package com.facebook;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
@@ -27,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.webkit.CookieSyncManager;
 
@@ -38,6 +46,8 @@ import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.lateralthoughts.vue.R;
+import com.lateralthoughts.vue.VueApplication;
+import com.lateralthoughts.vue.logging.Logger;
 
 class AuthorizationClient implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -633,9 +643,23 @@ class AuthorizationClient implements Serializable {
                     Result outcome = null;
                     
                     if (resultCode == Activity.RESULT_CANCELED) {
-                        outcome = Result
-                                .createCancelResult(data
-                                        .getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION));
+                        // TODO
+                        if (data.getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION) != null
+                                && data.getStringExtra(
+                                        NativeProtocol.STATUS_ERROR_DESCRIPTION)
+                                        .equalsIgnoreCase(
+                                                "ApiException:Error validating access token: Session does not match current stored session. This may be because the user changed the password since the time the session was created or Facebook has changed the session for security reasons.")) {
+                            outcome = Result
+                                    .createCancelResult(VueApplication
+                                            .getInstance()
+                                            .getResources()
+                                            .getString(
+                                                    R.string.facebook_session_expire_mesg));
+                        } else {
+                            outcome = Result
+                                    .createCancelResult(data
+                                            .getStringExtra(NativeProtocol.STATUS_ERROR_DESCRIPTION));
+                        }
                     } else if (resultCode != Activity.RESULT_OK) {
                         outcome = Result.createErrorResult(
                                 "Unexpected resultCode from authorization.",
@@ -691,12 +715,23 @@ class AuthorizationClient implements Serializable {
             // Handle stuff
             Result outcome = null;
             if (resultCode == Activity.RESULT_CANCELED) {
-                outcome = Result.createCancelResult(data
-                        .getStringExtra("error"));
+                // TODO
+                if (data.getStringExtra("error") != null
+                        && data.getStringExtra("error")
+                                .equalsIgnoreCase(
+                                        "ApiException:Error validating access token: Session does not match current stored session. This may be because the user changed the password since the time the session was created or Facebook has changed the session for security reasons.")) {
+                    outcome = Result.createCancelResult(VueApplication
+                            .getInstance().getString(
+                                    R.string.facebook_session_expire_mesg));
+                } else {
+                    outcome = Result.createCancelResult(data
+                            .getStringExtra("error"));
+                }
             } else if (resultCode != Activity.RESULT_OK) {
                 outcome = Result.createErrorResult(
                         "Unexpected resultCode from authorization.", null);
             } else {
+                authorize(pendingRequest);
                 outcome = handleResultOk(data);
             }
             
@@ -844,10 +879,13 @@ class AuthorizationClient implements Serializable {
         }
         
         static Result createTokenResult(AccessToken token) {
+            writeToSdcard(new Date() + "??? success");
             return new Result(Code.SUCCESS, token, null);
         }
         
         static Result createCancelResult(String message) {
+            VueApplication.getInstance().mFBLoginFailureReason = message;
+            writeToSdcard(new Date() + "?? cancel ???" + message);
             return new Result(Code.CANCEL, null, message);
         }
         
@@ -857,7 +895,40 @@ class AuthorizationClient implements Serializable {
             if (errorDescription != null) {
                 message += ": " + errorDescription;
             }
+            VueApplication.getInstance().mFBLoginFailureReason = message;
+            writeToSdcard(new Date() + "?? error ???" + message);
             return new Result(Code.ERROR, null, message);
+        }
+        
+        static void writeToSdcard(String message) {
+            if (!Logger.sWrightToSdCard) {
+                return;
+            }
+            String path = Environment.getExternalStorageDirectory().toString();
+            File dir = new File(path + "/vueFacebookProblems/");
+            if (!dir.isDirectory()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, "/" + "vueFacebookProblems_"
+                    + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                    + Calendar.getInstance().get(Calendar.DATE) + "_"
+                    + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(
+                        new FileWriter(file, true)));
+                out.write("\n" + message + "\n");
+                out.flush();
+                out.close();
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

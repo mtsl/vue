@@ -101,7 +101,6 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                             resultData.getString("result"),
                                             resultData.getBoolean("loadMore"));
                             int offset = resultData.getInt("offset");
-                            
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null
                                     && (VueLandingPageActivity.mLandingScreenName
@@ -118,18 +117,20 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                     refreshListFlag = true;
                                 }
                             }
-                            VueLandingPageActivity.landingPageActivity
-                                    .runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            VueTrendingAislesDataModel
-                                                    .getInstance(
-                                                            VueApplication
-                                                                    .getInstance())
-                                                    .dismissProgress();
-                                            
-                                        }
-                                    });
+                            if (VueLandingPageActivity.landingPageActivity != null) {
+                                VueLandingPageActivity.landingPageActivity
+                                        .runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                VueTrendingAislesDataModel
+                                                        .getInstance(
+                                                                VueApplication
+                                                                        .getInstance())
+                                                        .dismissProgress();
+                                                
+                                            }
+                                        });
+                            }
                             if (VueLandingPageActivity.landingPageActivity != null
                                     && VueLandingPageActivity.mLandingScreenName != null) {
                                 if (VueLandingPageActivity.mLandingScreenName
@@ -146,7 +147,8 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                 }
                             }
                             
-                            if (refreshListFlag) {
+                            if (refreshListFlag
+                                    && VueLandingPageActivity.landingPageActivity != null) {
                                 VueLandingPageActivity.landingPageActivity
                                         .runOnUiThread(new Runnable() {
                                             @Override
@@ -170,22 +172,25 @@ public class TrendingAislesContentParser extends ResultReceiver {
                                                                     .size() > 0) {
                                                         for (int i = 0; i < aislesList
                                                                 .size(); i++) {
-                                                            VueTrendingAislesDataModel model = VueTrendingAislesDataModel
-                                                                    .getInstance(VueApplication
-                                                                            .getInstance());
-                                                            model.addItemToList(
-                                                                    aislesList
+                                                            
+                                                            if (aislesList
+                                                                    .get(i)
+                                                                    .getImageList() != null
+                                                                    && aislesList
                                                                             .get(i)
-                                                                            .getAisleContext().mAisleId,
-                                                                    aislesList
-                                                                            .get(i));
+                                                                            .getImageList()
+                                                                            .size() > 0) {
+                                                                VueTrendingAislesDataModel model = VueTrendingAislesDataModel
+                                                                        .getInstance(VueApplication
+                                                                                .getInstance());
+                                                                model.addItemToList(
+                                                                        aislesList
+                                                                                .get(i)
+                                                                                .getAisleContext().mAisleId,
+                                                                        aislesList
+                                                                                .get(i));
+                                                            }
                                                         }
-                                                        
-                                                        VueTrendingAislesDataModel
-                                                                .getInstance(
-                                                                        VueApplication
-                                                                                .getInstance())
-                                                                .dismissProgress();
                                                         // if this is the
                                                         // first
                                                         // set of

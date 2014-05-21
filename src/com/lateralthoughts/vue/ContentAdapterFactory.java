@@ -28,7 +28,8 @@ public class ContentAdapterFactory {
     private ArrayList<AisleContentAdapter> mAvailableObjects = null;
     private ArrayList<AisleContentAdapter> mObjectsInUse = null;
     
-    private final int POOL_SIZE = 250;
+    //private final int POOL_SIZE = 250;
+    private final int POOL_SIZE = 50;
     private final int POOL_STEP_SIZE = 50;
     private final int POOL_MAX_SIZE = 1000;
     

@@ -11,6 +11,8 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.os.Environment;
 
+import com.lateralthoughts.vue.logging.Logger;
+
 public class ExceptionHandler implements
         java.lang.Thread.UncaughtExceptionHandler {
     
@@ -20,6 +22,7 @@ public class ExceptionHandler implements
      *            Context
      */
     public ExceptionHandler(Activity context) {
+        
     }
     
     /**
@@ -42,11 +45,11 @@ public class ExceptionHandler implements
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
-        File file = new File(dir, "/"
-                + Calendar.getInstance().get(Calendar.DATE)
-                + "-"
-                + Utils.getWeekDay(Calendar.getInstance().get(
-                        Calendar.DAY_OF_WEEK)) + ".txt");
+        File file = new File(dir, "/" + "vueExceptions"
+                + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
+                + Calendar.getInstance().get(Calendar.DATE) + "_"
+                + Calendar.getInstance().get(Calendar.YEAR) + ".txt");
+        
         try {
             file.createNewFile();
         } catch (IOException e) {

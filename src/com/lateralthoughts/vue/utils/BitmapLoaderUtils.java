@@ -43,9 +43,14 @@ public class BitmapLoaderUtils {
      * shared by other components in the internal implementation.
      */
     public Bitmap getBitmap(String url, String serverUrl, boolean cacheBitmap,
-            int bestHeight, int bestWidth, String source) {
-        
-        File f = mFileCache.getFile(url);
+            int bestHeight, int bestWidth, String source,boolean sdCardFlag) {
+        File f;
+        if(sdCardFlag){
+              f = new File(serverUrl);
+        } else {
+             f = mFileCache.getFile(url);
+        }
+       
         
         // from SD cache
         Bitmap b = decodeFile(f, bestHeight, bestWidth, source);
@@ -149,6 +154,7 @@ public class BitmapLoaderUtils {
             }
             return bitmap;
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             
             e.printStackTrace();

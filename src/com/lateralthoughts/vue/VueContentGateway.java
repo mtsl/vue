@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -35,6 +36,7 @@ public class VueContentGateway {
     private final String TAG = "VueContentGateway";
     private static VueContentGateway sInstance;
     private Context mContext; // application context;
+    public static boolean mNomoreTrendingAilse = false;
     
     private ArrayList<ParcelableNameValuePair> mHeaders;
     private ArrayList<ParcelableNameValuePair> mParams;
@@ -68,7 +70,7 @@ public class VueContentGateway {
      * Trending Aisles. The ResultReceiver object will be notified when the list
      * is available
      */
-    public boolean getTrendingAisles(int limit, final int offset,
+    public boolean getTrendingAisles(final int limit, final int offset,
             final ResultReceiver receiver, final boolean loadMore,
             final String screenName) {
         boolean status = true;
@@ -85,11 +87,16 @@ public class VueContentGateway {
         } else if (isConnection) {
             final String requestUrl = UrlConstants.GET_TRENDINGAISLES_RESTURL
                     + "/" + limit + "/" + offset;
+            
             @SuppressWarnings("rawtypes")
             Response.Listener listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
                     if (null != jsonArray) {
+                        if (jsonArray.length() < 5
+                                && screenName.equalsIgnoreCase("Trending")) {
+                            mNomoreTrendingAilse = true;
+                        }
                         Bundle responseBundle = new Bundle();
                         responseBundle
                                 .putString("result", jsonArray.toString());
@@ -120,7 +127,6 @@ public class VueContentGateway {
             VueAislesRequest vueRequest = new VueAislesRequest(requestUrl,
                     listener, errorListener) {
             };
-            
             vueRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, Utils.MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

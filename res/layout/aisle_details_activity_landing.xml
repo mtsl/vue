@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/drawer_right"
-        android:layout_width="320dp"
+        android:layout_width="120dp"
         android:layout_height="fill_parent"
         android:layout_gravity="end" >
 
